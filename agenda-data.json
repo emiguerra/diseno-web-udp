@@ -1,0 +1,90 @@
+[
+  {
+    "tipo": "cultura",
+    "categoria": "Cultura",
+    "fecha": "2026-06-15",
+    "hora": "18:00 — 21:00",
+    "lugar": "Sede República 180",
+    "titulo": "Exposición fin de año Escuela de Diseño",
+    "desc": "Muestra anual de proyectos estudiantiles en las sedes República y Sanfuentes. La exposición reúne el trabajo de talleres, laboratorios y cursos de profundización de todas las menciones del programa.",
+    "url": null,
+    "fuente": "FaAAD"
+  },
+  {
+    "tipo": "academica",
+    "categoria": "Académica",
+    "fecha": "2026-06-22",
+    "hora": "10:00 — 13:00",
+    "lugar": "Auditorio FaAAD",
+    "titulo": "Seminario de investigación proyectual",
+    "desc": "Jornada de presentación de investigaciones en curso de la planta académica. Incluye mesas redondas, ponencias breves y resultados preliminares de proyectos Fondecyt y ANID.",
+    "url": null,
+    "fuente": "FaAAD"
+  },
+  {
+    "tipo": "diseno-chile",
+    "categoria": "Diseño en Chile",
+    "fecha": "2026-07-05",
+    "hora": "11:00 — 20:00",
+    "lugar": "Parque Bicentenario",
+    "titulo": "Feria de diseño independiente Santiago",
+    "desc": "Participación de egresados FaAAD en la feria nacional de diseño chileno. Stands de diseño gráfico, producto e indumentaria con producción local.",
+    "url": null,
+    "fuente": "Diseño Chile"
+  },
+  {
+    "tipo": "alumni",
+    "categoria": "Alumni",
+    "fecha": "2026-07-12",
+    "hora": "19:00 — 21:00",
+    "lugar": "Auditorio Andrés Bello, UDP",
+    "titulo": "Charla alumni: trayectorias en diseño",
+    "desc": "Egresados de distintas generaciones comparten sus experiencias profesionales. Conversación abierta sobre inserción laboral, práctica independiente y los desafíos del diseño contemporáneo en Chile.",
+    "url": null,
+    "fuente": "FaAAD"
+  },
+  {
+    "tipo": "corporativa",
+    "categoria": "Corporativa",
+    "fecha": "2026-07-20",
+    "hora": "09:30 — 11:30",
+    "lugar": "Salón de Honor UDP",
+    "titulo": "Ceremonia de bienvenida nuevos estudiantes",
+    "desc": "Acto de inicio del año académico para estudiantes de primer año. Presentación de autoridades, programa de estudios y actividad de integración con académicos.",
+    "url": null,
+    "fuente": "UDP"
+  },
+  {
+    "tipo": "diseno-faaad",
+    "categoria": "Diseño FaAAD",
+    "fecha": "2026-08-03",
+    "hora": "14:00 — 18:00",
+    "lugar": "Laboratorio OTF, Sanfuentes",
+    "titulo": "Taller abierto Laboratorio OTF",
+    "desc": "Exploración tipográfica abierta a estudiantes de todas las menciones. El Lab OTF presenta sus herramientas de diseño de fuentes variables y abre sus estaciones de trabajo para práctica libre.",
+    "url": null,
+    "fuente": "FaAAD"
+  },
+  {
+    "tipo": "cultura",
+    "categoria": "Cultura",
+    "fecha": "2026-06-28",
+    "hora": "Por confirmar",
+    "lugar": "GAM — Gabriela Mistral, Santiago",
+    "titulo": "Próximamente — Agregar desde gam.cl/calendario",
+    "desc": "Agrega aquí eventos del GAM copiando la fecha, título y descripción desde gam.cl/es/calendario. Cambia este ítem por el evento real.",
+    "url": "https://gam.cl/es/calendario",
+    "fuente": "GAM"
+  },
+  {
+    "tipo": "cultura",
+    "categoria": "Cultura",
+    "fecha": "2026-07-10",
+    "hora": "Por confirmar",
+    "lugar": "CCE Santiago",
+    "titulo": "Próximamente — Agregar desde ccesantiago.cl",
+    "desc": "Agrega aquí eventos del Centro Cultural de España copiando desde ccesantiago.cl/actividades. Cambia este ítem por el evento real.",
+    "url": "https://ccesantiago.cl/actividades",
+    "fuente": "CCE Santiago"
+  }
+]

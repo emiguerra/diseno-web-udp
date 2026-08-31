@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Postula — Diseño FaAAD UDP</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+    <div id="cursor"></div>
+    <div id="cursor-follower"></div>
+
+    <header id="main-header">
+        <div class="header-body">
+        <div class="logo">
+            <a href="index.html"><img src="assets/img/faad/faad_lockupsArtboard 5 copy 4_1@2x.png" alt="FaAAD" style="height:47px;"></a>
+        </div>
+        <nav class="main-nav">
+            <div class="nav-item nav-item-direct">
+                <a href="index.html#archivo">Proyectos</a>
+            </div>
+            <div class="nav-item">
+                <a>Nosotros <span class="nav-arrow">&#8595;</span></a>
+                <div class="dropdown">
+                    <a href="nosotros.html#escuela">Escuela</a>
+                    <a href="nosotros.html#organigrama">Organigrama</a>
+                    <a href="nosotros.html#menciones">Menciones</a>
+                    <a href="nosotros.html#pregrado">Pregrado</a>
+                    <a href="nosotros.html#postgrado">Postgrado</a>
+                    <a href="nosotros.html#convenios">Convenios</a>
+                    <a href="nosotros.html#internacionalizacion">Internacionalización</a>
+                    <a href="nosotros.html#equipo">Equipo docente</a>
+                    <a href="nosotros.html#infraestructura">Infraestructura</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                <a>Noticias <span class="nav-arrow">&#8595;</span></a>
+                <div class="dropdown">
+                    <a href="noticias.html#noticias">Noticias</a>
+                    <a href="noticias.html#agenda">Agenda</a>
+                    <a href="noticias.html#laboral">Laboral</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                <a>Explora <span class="nav-arrow">&#8595;</span></a>
+                <div class="dropdown">
+                    <a href="explora.html#publicaciones">Publicaciones</a>
+                    <a href="explora.html#digital">Digital</a>
+                    <a href="explora.html#prensa">Prensa</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                <a>Postula <span class="nav-arrow">&#8595;</span></a>
+                <div class="dropdown">
+                    <a href="postula.html#oferta">Oferta académica</a>
+                    <a href="postula.html#casos-exito">Red UDP</a>
+                    <a href="postula.html#visita-faaad">Visita FaAAD</a>
+                    <a href="postula.html#vida-estudiantil">Vida estudiantil</a>
+                    <a href="postula.html#presskit">Presskit</a>
+                    <a href="postula.html#infraestructura">Infraestructura</a>
+                    <a href="postula.html#cursos-abiertos">Cursos abiertos</a>
+                </div>
+            </div>
+        </nav>
+        <div class="header-right"></div>
+        </div>
+    </header>
+
+    <main class="wrapper">
+<section id="oferta" class="seccion">
+            <h1>Oferta</h1>
+            <p class="estudia-intro">Conoce los programas de formación disponibles en la Escuela de Diseño UDP y da el primer paso para ser parte de la comunidad FaAAD.</p>
+
+            <div class="oferta-grid">
+                <div class="oferta-card">
+                    <span class="postgrado-tipo">Pregrado</span>
+                    <h2>Diseño con mención</h2>
+                    <p>Licenciatura de 10 semestres en Diseño Gráfico, Industrial, Interacción o Indumentaria. Formación proyectual, teórica y práctica en el corazón de Santiago.</p>
+                    <div class="postgrado-meta"><span>10 semestres</span><span>Diurno</span><span>4 menciones</span></div>
+                    <a class="btn btn-solid" href="#pregrado">Ver malla</a>
+                </div>
+                <div class="oferta-card">
+                    <span class="postgrado-tipo">Postgrado</span>
+                    <h2>Magíster en Diseño Avanzado</h2>
+                    <p>Investigación proyectual de alto nivel orientada a la generación de conocimiento desde la práctica del diseño.</p>
+                    <div class="postgrado-meta"><span>4 semestres</span><span>Presencial</span></div>
+                    <a class="btn btn-solid" href="#postgrado">Ver programa</a>
+                </div>
+                <div class="oferta-card">
+                    <span class="postgrado-tipo">Admisión</span>
+                    <h2>Proceso de admisión</h2>
+                    <p>Fechas, requisitos y vías de postulación para pregrado y postgrado. Proceso DEMRE, portafolio y vías especiales UDP.</p>
+                    <div class="postgrado-meta"><span>PAES regular</span><span>Vías especiales</span></div>
+                    <a class="btn btn-solid" onclick="alert('Ir a admisión UDP')">Postular ahora</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="casos-exito" class="seccion">
+            <h1>Red UDP</h1>
+            <p class="estudia-intro" data-content="casos_exito.intro">Historias reales de estudiantes, alumni y docentes que han transformado su formación en impacto profesional y cultural.</p>
+
+            <div class="casos-tabs">
+                <button class="casos-tab activa" onclick="filtrarCasos('todos', this)">Todos</button>
+                <button class="casos-tab" onclick="filtrarCasos('estudiante', this)">Estudiantes</button>
+                <button class="casos-tab" onclick="filtrarCasos('alumni', this)">Alumni</button>
+                <button class="casos-tab" onclick="filtrarCasos('docente', this)">Profesores</button>
+            </div>
+
+            <div class="casos-grid" id="casos-grid">
+                <div class="caso-card" data-tipo="alumni">
+                    <div class="img-placeholder" style="height:280px;"><img src="assets/img/red-udp/red-udp-alumni-1.jpg" alt="Rodrigo Bravo, egresado Escuela de Diseño UDP" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+                    <div class="caso-body">
+                        <span class="caso-tipo-tag">Alumni</span>
+                        <h3>Rodrigo Bravo</h3>
+                        <p>Egresado de la Escuela de Diseño UDP. Comparte su experiencia profesional en la serie audiovisual Experiencias Alumni Diseño UDP.</p>
+                        <a class="caso-link" href="https://diseno.udp.cl/video/experiencias-alumni-diseno-udp-rodrigo-bravo/" target="_blank" rel="noopener noreferrer">Ver testimonio ↗</a>
+                    </div>
+                </div>
+                <div class="caso-card" data-tipo="estudiante">
+                    <div class="img-placeholder" style="height:280px;"><img src="assets/img/red-udp/red-udp-estudiante.jpg" alt="Aline Israel, estudiante Escuela de Diseño UDP" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+                    <div class="caso-body">
+                        <span class="caso-tipo-tag">Estudiante</span>
+                        <h3>Aline Israel</h3>
+                        <p>Estudiante de la Escuela de Diseño UDP. Comparte su experiencia en la serie audiovisual Experiencias Diseño UDP.</p>
+                        <a class="caso-link" href="https://diseno.udp.cl/video/experiencias-diseno-udp-aline-israel/" target="_blank" rel="noopener noreferrer">Ver testimonio ↗</a>
+                    </div>
+                </div>
+                <div class="caso-card" data-tipo="docente">
+                    <div class="img-placeholder" style="height:280px;"><img src="assets/img/red-udp/red-udp-docente.jpg" alt="Jorge Morales Meneses, profesor titular Escuela de Diseño UDP" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+                    <div class="caso-body">
+                        <span class="caso-tipo-tag">Profesor</span>
+                        <h3>Jorge Morales Meneses</h3>
+                        <p>Profesor titular UDP, Ph.D. Universidad Politécnica de Cataluña. Ex director de la Escuela de Diseño UDP (2012–2021) y director de las revistas TRAMA, ME/MO y Cero.</p>
+                        <a class="caso-link" href="https://diseno.udp.cl/persona/jorge-morales-meneses/" target="_blank" rel="noopener noreferrer">Ver perfil ↗</a>
+                    </div>
+                </div>
+                <div class="caso-card" data-tipo="alumni">
+                    <div class="img-placeholder" style="height:280px;"><img src="assets/img/red-udp/red-udp-alumni-2.jpg" alt="Paula Corrales, egresada Escuela de Diseño UDP" style="width:100%;height:100%;object-fit:cover;display:block;"></div>
+                    <div class="caso-body">
+                        <span class="caso-tipo-tag">Alumni</span>
+                        <h3>Paula Corrales</h3>
+                        <p>Egresada de la Escuela de Diseño UDP. Comparte su experiencia profesional en la serie audiovisual Experiencias Alumni Diseño UDP.</p>
+                        <a class="caso-link" href="https://diseno.udp.cl/video/experiencias-alumni-diseno-udp-paula-corrales/" target="_blank" rel="noopener noreferrer">Ver testimonio ↗</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="visita-faaad" class="seccion">
+            <h1>Visita FaAAD</h1>
+            <p class="estudia-intro" data-content="visita_faaad.intro">Conoce en persona la Escuela de Diseño UDP. Recorremos contigo las sedes, los laboratorios y los talleres para que veas de cerca cómo es estudiar diseño aquí.</p>
+
+            <div class="grid-layout col-2" >
+                <div>
+                    <h2>Visita presencial</h2>
+                    <p data-content="visita_faaad.presencial_desc">Todos los meses organizamos jornadas de puertas abiertas para futuros estudiantes y sus familias. Recorre las instalaciones, conoce docentes y estudiantes en actividad.</p>
+                    <ul style="margin:16px 0; padding-left:0;">
+                        <li style="padding:10px 0; border-bottom:1px dashed var(--gray);">Recorrido por sedes</li>
+                        <li style="padding:10px 0; border-bottom:1px dashed var(--gray);">Charla informativa de admisión</li>
+                        <li style="padding:10px 0; border-bottom:1px dashed var(--gray);">Presentación de proyectos estudiantiles</li>
+                        <li style="padding:10px 0;">Sesión de preguntas con estudiantes</li>
+                    </ul>
+                    <a class="btn btn-solid" onclick="alert('Agendar visita presencial')">Agendar visita</a>
+                </div>
+                <div>
+                    <h2>Visita virtual</h2>
+                    <p data-content="visita_faaad.virtual_desc">Si no puedes venir en persona, organizamos sesiones online con docentes y estudiantes para resolver todas tus dudas sobre la carrera y el proceso de postulación.</p>
+                    <ul style="margin:16px 0; padding-left:0;">
+                        <li style="padding:10px 0; border-bottom:1px dashed var(--gray);">Sesión informativa online</li>
+                        <li style="padding:10px 0; border-bottom:1px dashed var(--gray);">Recorrido virtual 360° por laboratorios</li>
+                        <li style="padding:10px 0;">Chat con estudiantes actuales</li>
+                    </ul>
+                    <a class="btn btn-solid" onclick="alert('Agendar visita virtual')">Agendar sesión online</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="vida-estudiantil" class="seccion">
+            <h1>Vida estudiantil</h1>
+            <p class="estudia-intro" data-content="vida_estudiantil.intro">Ser parte de la FaAAD es más que cursar ramos. Es integrarse a una comunidad creativa activa, con proyectos, talleres, viajes y redes que se construyen durante toda la carrera.</p>
+
+            <div class="menciones-grid" style="grid-template-columns: repeat(3,1fr); margin-top:40px; border: 2px solid var(--fg);">
+                <div class="mencion-card">
+                    <div class="mencion-img img-placeholder"></div>
+                    <div class="mencion-body">
+                        <h2 data-content="vida_estudiantil.comunidad_titulo">Comunidad y cultura</h2>
+                        <p data-content="vida_estudiantil.comunidad_desc">Exposiciones, ferias, fiestas de escuela, cine y actividades culturales que hacen parte del año académico.</p>
+                    </div>
+                </div>
+                <div class="mencion-card">
+                    <div class="mencion-img img-placeholder"></div>
+                    <div class="mencion-body">
+                        <h2 data-content="vida_estudiantil.centros_titulo">Centros de estudiantes</h2>
+                        <p data-content="vida_estudiantil.centros_desc">Representación estudiantil activa que organiza actividades, gestiona espacios y da voz a la comunidad.</p>
+                    </div>
+                </div>
+                <div class="mencion-card">
+                    <div class="mencion-img img-placeholder"></div>
+                    <div class="mencion-body">
+                        <h2 data-content="vida_estudiantil.talleres_titulo">Talleres y electivos</h2>
+                        <p data-content="vida_estudiantil.talleres_desc">Oferta de talleres transversales, electivos y workshops con invitados nacionales e internacionales.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="presskit" class="seccion">
+            <h1>Presskit / Brochure</h1>
+            <p class="estudia-intro">Recursos institucionales de la Escuela de Diseño UDP para medios de comunicación, instituciones y colaboradores.</p>
+
+            <div class="presskit-grid">
+                <div class="presskit-item">
+                    <div class="img-placeholder" style="height:200px;"></div>
+                    <h3>Brochure institucional 2026</h3>
+                    <p>Presentación general de la escuela, programas, menciones y datos clave.</p>
+                    <a class="btn" onclick="alert('Descargar brochure')">Descargar PDF</a>
+                </div>
+                <div class="presskit-item">
+                    <div class="img-placeholder" style="height:200px;"></div>
+                    <h3>Kit de prensa</h3>
+                    <p>Logos, imágenes institucionales, fotos de instalaciones y cuerpo docente en alta resolución.</p>
+                    <a class="btn" onclick="alert('Descargar kit de prensa')">Descargar ZIP</a>
+                </div>
+                <div class="presskit-item">
+                    <div class="img-placeholder" style="height:200px;"></div>
+                    <h3>Manual de identidad</h3>
+                    <p>Guía de uso de la marca FaAAD, tipografías, paleta de color y aplicaciones gráficas.</p>
+                    <a class="btn" onclick="alert('Descargar manual')">Descargar PDF</a>
+                </div>
+                <div class="presskit-item">
+                    <div class="img-placeholder" style="height:200px;"></div>
+                    <h3>Cifras y estadísticas</h3>
+                    <p>Datos de matrícula, empleabilidad, acreditación e indicadores académicos actualizados.</p>
+                    <a class="btn" onclick="alert('Descargar cifras')">Descargar PDF</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="infra-postula" class="seccion">
+            <span class="subs-section-label">Postula</span>
+            <h1>Infraestructura y equipamiento</h1>
+            <p class="estudia-intro">Conoce los espacios en los que estudiarás. La FaAAD cuenta con más de 11.000 m² en dos sedes del barrio universitario de Santiago.</p>
+
+            <div class="infra-grid" >
+                <div class="infra-card">
+                    <div class="img-placeholder" style="height:240px;"></div>
+                    <h3>Av. República 180</h3>
+                    <p>Sede principal. Salas de clase, biblioteca, cafetería, dos auditorios y talleres especializados en 7.794 m².</p>
+                </div>
+                <div class="infra-card">
+                    <div class="img-placeholder" style="height:240px;"></div>
+                    <h3>Salvador Sanfuentes 2221</h3>
+                    <p>Talleres de materiales, auditorio y espacios de fabricación y prototipado en 3.433 m².</p>
+                </div>
+            </div>
+
+            <h2 style="margin-top:50px;">Núcleos productivos</h2>
+            <div class="labs-marquee-wrap">
+                <div class="labs-marquee-track">
+                    <div class="lab-win" >
+                        <div class="lab-win-bar"><div class="lab-win-dots"><span class="lab-win-dot"></span><span class="lab-win-dot"></span><span class="lab-win-dot"></span></div><span class="lab-win-handle">OTF</span></div>
+                        <div class="img-placeholder" style="height:190px;"></div>
+                        <div class="lab-win-body"><span class="lab-win-name">Laboratorio OTF</span><span class="lab-win-sub">Oficina Tipográfica</span><div class="lab-win-tags"><span class="lab-win-tag">Tipografía</span><span class="lab-win-tag">Editorial</span><span class="lab-win-tag">Análogo</span></div><a href="https://www.instagram.com/laboratorio.otf/" target="_blank" rel="noopener" class="lab-win-link">@laboratorio.otf</a></div>
+                    </div>
+                    <div class="lab-win" >
+                        <div class="lab-win-bar"><div class="lab-win-dots"><span class="lab-win-dot"></span><span class="lab-win-dot"></span><span class="lab-win-dot"></span></div><span class="lab-win-handle">LAB 360</span></div>
+                        <div class="img-placeholder" style="height:140px;"></div>
+                        <div class="lab-win-body"><span class="lab-win-name">LAB 360</span><span class="lab-win-sub">Exploración gráfica UDP</span><div class="lab-win-tags"><span class="lab-win-tag">Risografía</span><span class="lab-win-tag">Ilustración</span><span class="lab-win-tag">Gráfica</span></div><a href="https://www.instagram.com/lab360.udp/" target="_blank" rel="noopener" class="lab-win-link">@lab360.udp</a></div>
+                    </div>
+                    <div class="lab-win" >
+                        <div class="lab-win-bar"><div class="lab-win-dots"><span class="lab-win-dot"></span><span class="lab-win-dot"></span><span class="lab-win-dot"></span></div><span class="lab-win-handle">LID</span></div>
+                        <div class="img-placeholder" style="height:220px;"></div>
+                        <div class="lab-win-body"><span class="lab-win-name">LID</span><span class="lab-win-sub">Interacción Digital UDP</span><div class="lab-win-tags"><span class="lab-win-tag">UX / UI</span><span class="lab-win-tag">VR / AR</span><span class="lab-win-tag">Digital</span></div><a href="https://www.instagram.com/lid.udp/" target="_blank" rel="noopener" class="lab-win-link">@lid.udp</a></div>
+                    </div>
+                    <div class="lab-win" >
+                        <div class="lab-win-bar"><div class="lab-win-dots"><span class="lab-win-dot"></span><span class="lab-win-dot"></span><span class="lab-win-dot"></span></div><span class="lab-win-handle">Editorial</span></div>
+                        <div class="img-placeholder" style="height:165px;"></div>
+                        <div class="lab-win-body"><span class="lab-win-name">Centro Editorial</span><span class="lab-win-sub">Diseño UDP</span><div class="lab-win-tags"><span class="lab-win-tag">Publicaciones</span><span class="lab-win-tag">Investigación</span></div><a href="https://www.instagram.com/centroeditorialdisenoudp/" target="_blank" rel="noopener" class="lab-win-link">@centroeditorial</a></div>
+                    </div>
+                    <div class="lab-win" >
+                        <div class="lab-win-bar"><div class="lab-win-dots"><span class="lab-win-dot"></span><span class="lab-win-dot"></span><span class="lab-win-dot"></span></div><span class="lab-win-handle">Pañol</span></div>
+                        <div class="img-placeholder" style="height:180px;"></div>
+                        <div class="lab-win-body"><span class="lab-win-name">Pañol Digital</span><span class="lab-win-sub">Préstamo de equipos</span><div class="lab-win-tags"><span class="lab-win-tag">Herramientas</span><span class="lab-win-tag">Equipamiento</span></div></div>
+                    </div>
+                    <div class="lab-win" >
+                        <div class="lab-win-bar"><div class="lab-win-dots"><span class="lab-win-dot"></span><span class="lab-win-dot"></span><span class="lab-win-dot"></span></div><span class="lab-win-handle">Fab</span></div>
+                        <div class="img-placeholder" style="height:130px;"></div>
+                        <div class="lab-win-body"><span class="lab-win-name">Fab Digital</span><span class="lab-win-sub">Fabricación digital</span><div class="lab-win-tags"><span class="lab-win-tag">CNC</span><span class="lab-win-tag">Láser</span><span class="lab-win-tag">3D</span></div></div>
+                    </div>
+                    <div class="lab-win" >
+                        <div class="lab-win-bar"><div class="lab-win-dots"><span class="lab-win-dot"></span><span class="lab-win-dot"></span><span class="lab-win-dot"></span></div><span class="lab-win-handle">Bio</span></div>
+                        <div class="img-placeholder" style="height:205px;"></div>
+                        <div class="lab-win-body"><span class="lab-win-name">Biomateriales</span><span class="lab-win-sub">Investigación de materiales</span><div class="lab-win-tags"><span class="lab-win-tag">Biodiseño</span><span class="lab-win-tag">Sustentable</span></div></div>
+                    </div>
+                    <!-- duplicado -->
+                    <div class="lab-win" >
+                        <div class="lab-win-bar"><div class="lab-win-dots"><span class="lab-win-dot"></span><span class="lab-win-dot"></span><span class="lab-win-dot"></span></div><span class="lab-win-handle">OTF</span></div>
+                        <div class="img-placeholder" style="height:190px;"></div>
+                        <div class="lab-win-body"><span class="lab-win-name">Laboratorio OTF</span><span class="lab-win-sub">Oficina Tipográfica</span><div class="lab-win-tags"><span class="lab-win-tag">Tipografía</span><span class="lab-win-tag">Editorial</span><span class="lab-win-tag">Análogo</span></div><a href="https://www.instagram.com/laboratorio.otf/" target="_blank" rel="noopener" class="lab-win-link">@laboratorio.otf</a></div>
+                    </div>
+                    <div class="lab-win" >
+                        <div class="lab-win-bar"><div class="lab-win-dots"><span class="lab-win-dot"></span><span class="lab-win-dot"></span><span class="lab-win-dot"></span></div><span class="lab-win-handle">LAB 360</span></div>
+                        <div class="img-placeholder" style="height:140px;"></div>
+                        <div class="lab-win-body"><span class="lab-win-name">LAB 360</span><span class="lab-win-sub">Exploración gráfica UDP</span><div class="lab-win-tags"><span class="lab-win-tag">Risografía</span><span class="lab-win-tag">Ilustración</span><span class="lab-win-tag">Gráfica</span></div><a href="https://www.instagram.com/lab360.udp/" target="_blank" rel="noopener" class="lab-win-link">@lab360.udp</a></div>
+                    </div>
+                    <div class="lab-win" >
+                        <div class="lab-win-bar"><div class="lab-win-dots"><span class="lab-win-dot"></span><span class="lab-win-dot"></span><span class="lab-win-dot"></span></div><span class="lab-win-handle">LID</span></div>
+                        <div class="img-placeholder" style="height:220px;"></div>
+                        <div class="lab-win-body"><span class="lab-win-name">LID</span><span class="lab-win-sub">Interacción Digital UDP</span><div class="lab-win-tags"><span class="lab-win-tag">UX / UI</span><span class="lab-win-tag">VR / AR</span><span class="lab-win-tag">Digital</span></div><a href="https://www.instagram.com/lid.udp/" target="_blank" rel="noopener" class="lab-win-link">@lid.udp</a></div>
+                    </div>
+                    <div class="lab-win" >
+                        <div class="lab-win-bar"><div class="lab-win-dots"><span class="lab-win-dot"></span><span class="lab-win-dot"></span><span class="lab-win-dot"></span></div><span class="lab-win-handle">Editorial</span></div>
+                        <div class="img-placeholder" style="height:165px;"></div>
+                        <div class="lab-win-body"><span class="lab-win-name">Centro Editorial</span><span class="lab-win-sub">Diseño UDP</span><div class="lab-win-tags"><span class="lab-win-tag">Publicaciones</span><span class="lab-win-tag">Investigación</span></div><a href="https://www.instagram.com/centroeditorialdisenoudp/" target="_blank" rel="noopener" class="lab-win-link">@centroeditorial</a></div>
+                    </div>
+                    <div class="lab-win" >
+                        <div class="lab-win-bar"><div class="lab-win-dots"><span class="lab-win-dot"></span><span class="lab-win-dot"></span><span class="lab-win-dot"></span></div><span class="lab-win-handle">Pañol</span></div>
+                        <div class="img-placeholder" style="height:180px;"></div>
+                        <div class="lab-win-body"><span class="lab-win-name">Pañol Digital</span><span class="lab-win-sub">Préstamo de equipos</span><div class="lab-win-tags"><span class="lab-win-tag">Herramientas</span><span class="lab-win-tag">Equipamiento</span></div></div>
+                    </div>
+                    <div class="lab-win" >
+                        <div class="lab-win-bar"><div class="lab-win-dots"><span class="lab-win-dot"></span><span class="lab-win-dot"></span><span class="lab-win-dot"></span></div><span class="lab-win-handle">Fab</span></div>
+                        <div class="img-placeholder" style="height:130px;"></div>
+                        <div class="lab-win-body"><span class="lab-win-name">Fab Digital</span><span class="lab-win-sub">Fabricación digital</span><div class="lab-win-tags"><span class="lab-win-tag">CNC</span><span class="lab-win-tag">Láser</span><span class="lab-win-tag">3D</span></div></div>
+                    </div>
+                    <div class="lab-win" >
+                        <div class="lab-win-bar"><div class="lab-win-dots"><span class="lab-win-dot"></span><span class="lab-win-dot"></span><span class="lab-win-dot"></span></div><span class="lab-win-handle">Bio</span></div>
+                        <div class="img-placeholder" style="height:205px;"></div>
+                        <div class="lab-win-body"><span class="lab-win-name">Biomateriales</span><span class="lab-win-sub">Investigación de materiales</span><div class="lab-win-tags"><span class="lab-win-tag">Biodiseño</span><span class="lab-win-tag">Sustentable</span></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top:36px; text-align:center;">
+                <a class="btn btn-solid" href="#visita-faaad">Agendar visita</a>
+            </div>
+        </section>
+
+        <section id="cursos-abiertos" class="seccion">
+            <span class="subs-section-label">Postula</span>
+            <h1>Postgrado — Cursos abiertos</h1>
+            <p class="estudia-intro" data-content="cursos_abiertos.intro">La Escuela de Diseño UDP ofrece cursos de extensión y formación continua abiertos a profesionales, egresados y público general, sin necesidad de matrícula regular.</p>
+
+            <div class="postgrado-grid" id="cursos-abiertos-grid">
+                <div class="postgrado-card">
+                    <span class="postgrado-tipo">Taller intensivo</span>
+                    <h2>Tipografía y sistemas de identidad</h2>
+                    <p>Taller de 3 días con el equipo del Laboratorio OTF. Diseño y aplicación de sistemas tipográficos contemporáneos.</p>
+                    <div class="postgrado-meta">
+                        <span>3 días</span>
+                        <span>Presencial</span>
+                        <span>Cupos limitados</span>
+                    </div>
+                    <a class="btn" onclick="alert('Inscribirse — Taller tipografía')">Inscribirse</a>
+                </div>
+                <div class="postgrado-card">
+                    <span class="postgrado-tipo">Curso corto</span>
+                    <h2>UX Research aplicado</h2>
+                    <p>Metodologías de investigación centrada en el usuario para proyectos digitales y de servicio. Herramientas prácticas.</p>
+                    <div class="postgrado-meta">
+                        <span>8 semanas</span>
+                        <span>Semipresencial</span>
+                    </div>
+                    <a class="btn" onclick="alert('Inscribirse — UX Research')">Inscribirse</a>
+                </div>
+                <div class="postgrado-card">
+                    <span class="postgrado-tipo">Diplomado</span>
+                    <h2>Diseño de Experiencia e Innovación</h2>
+                    <p>Herramientas de UX, service design e investigación aplicada. Abierto a profesionales de todas las disciplinas.</p>
+                    <div class="postgrado-meta">
+                        <span>2 semestres</span>
+                        <span>Semipresencial</span>
+                    </div>
+                    <a class="btn" onclick="alert('Inscribirse — Diplomado')">Inscribirse</a>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-main">
+
+            <!-- Logo -->
+            <div class="footer-col footer-logo-col">
+                <img src="assets/img/faad/faad_lockupsArtboard 5 copy 4_1@2x.png" alt="FaAAD UDP" class="footer-logo">
+            </div>
+
+            <!-- Portal -->
+            <div class="footer-col">
+                <a href="https://portal.udp.cl" class="footer-portal" target="_blank">Portal UDP</a>
+            </div>
+
+            <!-- Contacto -->
+            <div class="footer-col">
+                <p class="footer-col-title">Facultad de Diseño</p>
+                <p class="footer-addr">República 180<br>Santiago, Chile</p>
+                <a href="mailto:comunicaciones.diseno@mail.udp.cl" class="footer-link" style="margin-top:10px;">comunicaciones.diseno@mail.udp.cl</a>
+            </div>
+
+            <!-- Redes -->
+            <div class="footer-col">
+                <p class="footer-col-title">Redes</p>
+                <a href="https://www.instagram.com/diseno_udp/" class="footer-link" target="_blank">Instagram</a>
+                <a href="https://www.tiktok.com/@disenoudp" class="footer-link" target="_blank">TikTok</a>
+                <a href="https://www.youtube.com/channel/UCHd6f5pWRCJdVgXz6VWTOJw" class="footer-link" target="_blank">YouTube</a>
+                <a href="https://www.linkedin.com/company/disenoudp/" class="footer-link" target="_blank">LinkedIn</a>
+            </div>
+
+            <!-- Menciones -->
+            <div class="footer-col">
+                <p class="footer-col-title">Menciones</p>
+                <a href="index.html#archivo" class="footer-link">Diseño Gráfico</a>
+                <a href="index.html#archivo" class="footer-link">Diseño Industrial</a>
+                <a href="index.html#archivo" class="footer-link">Diseño de Interacción</a>
+                <a href="index.html#archivo" class="footer-link">Textil e Indumentaria</a>
+            </div>
+
+            <!-- Newsletter -->
+            <div class="footer-col footer-newsletter">
+                <p class="footer-col-title">Suscríbete a nuestro boletín</p>
+                <form class="footer-form" onsubmit="return false;">
+                    <div class="footer-input-row">
+                        <input type="text" class="footer-input" placeholder="Nombre y apellido*">
+                    </div>
+                    <div class="footer-input-row footer-input-row--email">
+                        <input type="email" class="footer-input" placeholder="E-mail*">
+                        <button type="submit" class="footer-submit">→</button>
+                    </div>
+                    <label class="footer-check">
+                        <input type="checkbox"> He leído y acepto la <a href="#">Política de privacidad</a>*
+                    </label>
+                </form>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <span>Política de privacidad</span>
+            <span>Universidad Diego Portales</span>
+        </div>
+    </footer>
+
+
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

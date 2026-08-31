@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diseño FaAAD UDP</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+    <div id="cursor"></div>
+    <div id="cursor-follower"></div>
+
+    <header id="main-header">
+        <div class="header-body">
+        <div class="logo">
+            <a href="index.html"><img src="assets/img/faad/faad_lockupsArtboard 5 copy 4_1@2x.png" alt="FaAAD" style="height:47px;"></a>
+        </div>
+        <nav class="main-nav">
+            <div class="nav-item nav-item-direct">
+                <a href="#archivo">Proyectos</a>
+            </div>
+            <div class="nav-item">
+                <a>Nosotros <span class="nav-arrow">&#8595;</span></a>
+                <div class="dropdown">
+                    <a href="nosotros.html#escuela">Escuela</a>
+                    <a href="nosotros.html#organigrama">Organigrama</a>
+                    <a href="nosotros.html#menciones">Menciones</a>
+                    <a href="nosotros.html#pregrado">Pregrado</a>
+                    <a href="nosotros.html#postgrado">Postgrado</a>
+                    <a href="nosotros.html#convenios">Convenios</a>
+                    <a href="nosotros.html#internacionalizacion">Internacionalización</a>
+                    <a href="nosotros.html#equipo">Equipo docente</a>
+                    <a href="nosotros.html#infraestructura">Infraestructura</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                <a>Noticias <span class="nav-arrow">&#8595;</span></a>
+                <div class="dropdown">
+                    <a href="noticias.html#noticias">Noticias</a>
+                    <a href="noticias.html#agenda">Agenda</a>
+                    <a href="noticias.html#laboral">Laboral</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                <a>Explora <span class="nav-arrow">&#8595;</span></a>
+                <div class="dropdown">
+                    <a href="explora.html#publicaciones">Publicaciones</a>
+                    <a href="explora.html#digital">Digital</a>
+                    <a href="explora.html#prensa">Prensa</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                <a>Postula <span class="nav-arrow">&#8595;</span></a>
+                <div class="dropdown">
+                    <a href="postula.html#oferta">Oferta académica</a>
+                    <a href="postula.html#casos-exito">Red UDP</a>
+                    <a href="postula.html#visita-faaad">Visita FaAAD</a>
+                    <a href="postula.html#vida-estudiantil">Vida estudiantil</a>
+                    <a href="postula.html#presskit">Presskit</a>
+                    <a href="postula.html#infraestructura">Infraestructura</a>
+                    <a href="postula.html#cursos-abiertos">Cursos abiertos</a>
+                </div>
+            </div>
+        </nav>
+        <div class="header-right"></div>
+        </div><!-- /header-body -->
+    </header>
+
+    <main class="wrapper">
+<section id="home" class="seccion">
+            <div class="hero-video">
+                <img src="assets/img/example.gif" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;">
+                <div class="hero-video-overlay"></div>
+
+
+                <div class="hero-video-texto">
+                    <p class="hero-frase" id="hero-frase"></p>
+                </div>
+
+                <!-- Banner dentro del hero -->
+                <div class="header-banner" style="position:relative;z-index:2;">
+                    <div class="header-banner-track">
+                        <span class="header-banner-item">Diseño Gráfico</span>
+                        <span class="header-banner-sep">·</span>
+                        <span class="header-banner-item">Diseño Industrial</span>
+                        <span class="header-banner-sep">·</span>
+                        <span class="header-banner-item">Diseño de Interacción</span>
+                        <span class="header-banner-sep">·</span>
+                        <span class="header-banner-item">Diseño de Indumentaria</span>
+                        <span class="header-banner-sep">·</span>
+                        <span class="header-banner-item">Diseño Gráfico</span>
+                        <span class="header-banner-sep">·</span>
+                        <span class="header-banner-item">Diseño Industrial</span>
+                        <span class="header-banner-sep">·</span>
+                        <span class="header-banner-item">Diseño de Interacción</span>
+                        <span class="header-banner-sep">·</span>
+                        <span class="header-banner-item">Diseño de Indumentaria</span>
+                        <span class="header-banner-sep">·</span>
+                        <span class="header-banner-item">Diseño Gráfico</span>
+                        <span class="header-banner-sep">·</span>
+                        <span class="header-banner-item">Diseño Industrial</span>
+                        <span class="header-banner-sep">·</span>
+                        <span class="header-banner-item">Diseño de Interacción</span>
+                        <span class="header-banner-sep">·</span>
+                        <span class="header-banner-item">Diseño de Indumentaria</span>
+                        <span class="header-banner-sep">·</span>
+                        <span class="header-banner-item">Diseño Gráfico</span>
+                        <span class="header-banner-sep">·</span>
+                        <span class="header-banner-item">Diseño Industrial</span>
+                        <span class="header-banner-sep">·</span>
+                        <span class="header-banner-item">Diseño de Interacción</span>
+                        <span class="header-banner-sep">·</span>
+                        <span class="header-banner-item">Diseño de Indumentaria</span>
+                        <span class="header-banner-sep">·</span>
+                    </div>
+                </div>
+            </div>
+
+            <h1>Escuela de Diseño</h1>
+
+        </section>
+        <section id="archivo" class="seccion">
+            <h1>Portafolio</h1>
+
+            <!-- FILTROS — mención + búsqueda -->
+            <div class="arch-filtros">
+                <span class="arch-filtros-label">Filtrar por mención</span>
+                <div class="arch-pills" id="pills-n1">
+                    <button class="arch-pill activa" data-n1="todas" onclick="seleccionarN1(this)">Todas</button>
+                    <button class="arch-pill" data-n1="grafico" onclick="seleccionarN1(this)">Diseño Gráfico</button>
+                    <button class="arch-pill" data-n1="industrial" onclick="seleccionarN1(this)">Diseño Industrial</button>
+                    <button class="arch-pill" data-n1="interaccion" onclick="seleccionarN1(this)">Diseño de Interacción</button>
+                    <button class="arch-pill" data-n1="indumentaria" onclick="seleccionarN1(this)">Textil e Indumentaria</button>
+                </div>
+
+                <div class="arch-search-wrap">
+                    <span class="arch-search-label">Búsqueda por palabras clave</span>
+                    <input type="text" class="arch-search" id="arch-search-input" placeholder="ej: tipografía, biomaterial, cartel, patronaje…" oninput="filtrarProyectos()">
+                    <span class="arch-search-icon">⌕</span>
+                </div>
+            </div>
+
+            <!-- CONTADOR -->
+            <p class="arch-contador" id="arch-contador">Mostrando 5 de 14 proyectos</p>
+
+            <!-- GRILLA DE PROYECTOS -->
+            <div class="arch-grid" id="arch-grid">
+
+                <div class="arch-item" data-mencion="multiple" data-titulo="LIGNUM" data-proyecto="lignum"
+                     data-folder="1pkbwcw9hoUfICb-BVnvuiqrr4PykYbKc" onclick="abrirProyecto('lignum')" style="cursor:pointer">
+                    <div class="arch-img" style="aspect-ratio:3/4"><img src="assets/img/provisorios/lignum.jpg" alt="LIGNUM" referrerpolicy="no-referrer"></div>
+                    <span class="arch-num">(01)</span>
+                    <span class="arch-titulo">LIGNUM</span>
+                    <div class="arch-tags"><span class="arch-tag">Creación</span><span class="arch-tag">Innovación</span><span class="arch-tag">Investigación</span><span class="arch-tag">Proyecto de Título</span></div>
+                </div>
+
+                <div class="arch-item" data-mencion="multiple" data-titulo="Sistema de branding museístico" data-proyecto="sistema-de-branding-museistico"
+                     data-folder="1pRwrdyyaIwy1TQAJQTIYvp5F1ppkn3eG" onclick="abrirProyecto('sistema-de-branding-museistico')" style="cursor:pointer">
+                    <div class="arch-img" style="aspect-ratio:4/3"><img src="assets/img/provisorios/sistema-de-branding-museistico.jpg" alt="Sistema de branding museístico" referrerpolicy="no-referrer"></div>
+                    <span class="arch-num">(02)</span>
+                    <span class="arch-titulo">Sistema de branding museístico</span>
+                    <div class="arch-tags"><span class="arch-tag">Creación</span><span class="arch-tag">Exposición colectiva</span></div>
+                </div>
+
+                <div class="arch-item" data-mencion="multiple" data-titulo="Diseño Abierto 2024" data-proyecto="diseno-abierto-2024"
+                     data-folder="1f2DRjgQmlksx6VMmXyeDjuj_JY1K9kWV" onclick="abrirProyecto('diseno-abierto-2024')" style="cursor:pointer">
+                    <div class="arch-img" style="aspect-ratio:4/3"><img src="assets/img/provisorios/diseno-abierto-2024.jpg" alt="Diseño Abierto 2024" referrerpolicy="no-referrer"></div>
+                    <span class="arch-num">(03)</span>
+                    <span class="arch-titulo">Diseño Abierto 2024</span>
+                    <div class="arch-tags"><span class="arch-tag">Creación</span><span class="arch-tag">Exposición colectiva</span></div>
+                </div>
+
+
+
+                <div class="arch-item" data-mencion="multiple" data-titulo="Por la Hebra" data-proyecto="por-la-hebra"
+                     data-folder="146nCSLS7dKYk-pQM4cViiJn8U8fZqXhy" onclick="abrirProyecto('por-la-hebra')" style="cursor:pointer">
+                    <div class="arch-img" style="aspect-ratio:2/3"><img src="assets/img/provisorios/por-la-hebra.jpg" alt="Por la Hebra" referrerpolicy="no-referrer"></div>
+                    <span class="arch-num">(05)</span>
+                    <span class="arch-titulo">Por la Hebra</span>
+                    <div class="arch-tags"><span class="arch-tag">Creación</span><span class="arch-tag">Exposición colectiva</span></div>
+                </div>
+
+                <div class="arch-item" data-mencion="multiple" data-titulo="Metodología de lectura Veo Leo" data-proyecto="metodologia-de-lectura-veo-leo"
+                     data-folder="1nXaK490_xXBBRnd2FJNSFU0kr3tHlvnt" onclick="abrirProyecto('metodologia-de-lectura-veo-leo')" style="cursor:pointer">
+                    <div class="arch-img" style="aspect-ratio:4/5"><img src="assets/img/provisorios/metodologia-de-lectura-veo-leo.png" alt="Metodología de lectura Veo Leo" referrerpolicy="no-referrer"></div>
+                    <span class="arch-num">(06)</span>
+                    <span class="arch-titulo">Metodología de lectura Veo Leo</span>
+                    <div class="arch-tags"><span class="arch-tag">Publicaciones</span><span class="arch-tag">Innovación</span><span class="arch-tag">Investigación</span></div>
+                </div>
+
+                <div class="arch-item" data-mencion="multiple" data-titulo="Nóctambula" data-proyecto="noctambula"
+                     data-folder="1Y3LINDQ4XkljyQ_erP0f_a51jmoO2jR2" onclick="abrirProyecto('noctambula')" style="cursor:pointer">
+                    <div class="arch-img" style="aspect-ratio:3/4"><img src="assets/img/provisorios/noctambula.jpg" alt="Nóctambula" referrerpolicy="no-referrer"></div>
+                    <span class="arch-num">(07)</span>
+                    <span class="arch-titulo">Nóctambula</span>
+                    <div class="arch-tags"><span class="arch-tag">Creación</span><span class="arch-tag">Exposición individual</span><span class="arch-tag">Investigación</span></div>
+                </div>
+
+                <div class="arch-item" data-mencion="multiple" data-titulo="Mala Muerte" data-proyecto="mala-muerte"
+                     data-folder="10eCJDM2ftCRdk7PcOk248glG4B_mq_LU" onclick="abrirProyecto('mala-muerte')" style="cursor:pointer">
+                    <div class="arch-img" style="aspect-ratio:4/3"><img src="assets/img/provisorios/mala-muerte.jpg" alt="Mala Muerte" referrerpolicy="no-referrer"></div>
+                    <span class="arch-num">(08)</span>
+                    <span class="arch-titulo">Mala Muerte</span>
+                    <div class="arch-tags"><span class="arch-tag">Creación</span><span class="arch-tag">Exposición individual</span><span class="arch-tag">Investigación</span></div>
+                </div>
+
+<div class="arch-item" data-mencion="multiple" data-titulo="Diáfano" data-proyecto="diafano"
+                     data-folder="1KhBTgVZBelGfpjYHxP7Zfw07jGyr1k4g" onclick="abrirProyecto('diafano')" style="cursor:pointer">
+                    <div class="arch-img" style="aspect-ratio:1/1"><img src="assets/img/provisorios/diafano.jpg" alt="Diáfano" referrerpolicy="no-referrer"></div>
+                    <span class="arch-num">(10)</span>
+                    <span class="arch-titulo">Diáfano</span>
+                    <div class="arch-tags"><span class="arch-tag">Creación</span></div>
+                </div>
+
+<div class="arch-item" data-mencion="multiple" data-titulo="SONICAEDRO" data-proyecto="sonicaedro"
+                     data-folder="1O8ugpCQu-zUBqSw_4rOFr2UjpSZwKNU9" onclick="abrirProyecto('sonicaedro')" style="cursor:pointer">
+                    <div class="arch-img" style="aspect-ratio:4/3"><img src="assets/img/provisorios/sonicaedro.png" alt="SONICAEDRO" referrerpolicy="no-referrer"></div>
+                    <span class="arch-num">(13)</span>
+                    <span class="arch-titulo">SONICAEDRO</span>
+                    <div class="arch-tags"><span class="arch-tag">Creación</span><span class="arch-tag">Investigación</span><span class="arch-tag">Investigación Aplicada</span></div>
+                </div>
+
+                <div class="arch-item" data-mencion="multiple" data-titulo="Zines para no olvidar" data-proyecto="zines-para-no-olvidar"
+                     data-folder="1opbpU7g3Qmy8WPY_dScO0MbCJ-BWOYYl" onclick="abrirProyecto('zines-para-no-olvidar')" style="cursor:pointer">
+                    <div class="arch-img" style="aspect-ratio:3/2"><img src="assets/img/provisorios/zines-para-no-olvidar.jpg" alt="Zines para no olvidar" referrerpolicy="no-referrer"></div>
+                    <span class="arch-num">(14)</span>
+                    <span class="arch-titulo">Zines para no olvidar</span>
+                    <div class="arch-tags"><span class="arch-tag">Publicaciones</span><span class="arch-tag">Creación</span><span class="arch-tag">Edición</span><span class="arch-tag">Proyecto de Título</span></div>
+                </div>
+
+<div class="arch-item" data-mencion="multiple" data-titulo="Sinergia" data-proyecto="sinergia"
+                     data-folder="1G3vRXURJ3ktYGDM6kX0N77Loin1IZiiy" onclick="abrirProyecto('sinergia')" style="cursor:pointer">
+                    <div class="arch-img" style="aspect-ratio:3/4"><img src="assets/img/provisorios/sinergia.jpg" alt="Sinergia" referrerpolicy="no-referrer"></div>
+                    <span class="arch-num">(17)</span>
+                    <span class="arch-titulo">Sinergia</span>
+                    <div class="arch-tags"><span class="arch-tag">Creación</span><span class="arch-tag">Innovación</span></div>
+                </div>
+
+                <div class="arch-item" data-mencion="multiple" data-titulo="Identidad Ewu Ginger Beer" data-proyecto="identidad-ewu-ginger-beer"
+                     data-folder="19-zOdxmu2RdB--50FDph6HYGU1Eqac6x" onclick="abrirProyecto('identidad-ewu-ginger-beer')" style="cursor:pointer">
+                    <div class="arch-img" style="aspect-ratio:4/5"><img src="assets/img/provisorios/identidad-ewu-ginger-beer.jpg" alt="Identidad Ewu Ginger Beer" referrerpolicy="no-referrer"></div>
+                    <span class="arch-num">(18)</span>
+                    <span class="arch-titulo">Identidad Ewu Ginger Beer</span>
+                    <div class="arch-tags"><span class="arch-tag">Creación</span><span class="arch-tag">Mediación</span><span class="arch-tag">Reconocimiento</span></div>
+                </div>
+
+                <div class="arch-item" data-mencion="multiple" data-titulo="Interpretación Audiovisual Teatro Municipal" data-proyecto="interpretacion-audiovisual-teatro-municipal"
+                     data-folder="1o5jdztlEHiOMyLLMd9sLVn8iwqr_vCBl" onclick="abrirProyecto('interpretacion-audiovisual-teatro-municipal')" style="cursor:pointer">
+                    <div class="arch-img" style="aspect-ratio:4/3"><img src="assets/img/provisorios/interpretacion-audiovisual-teatro-municipal.jpg" alt="Interpretación Audiovisual Teatro Municipal" referrerpolicy="no-referrer"></div>
+                    <span class="arch-num">(19)</span>
+                    <span class="arch-titulo">Interpretación Audiovisual Teatro Municipal</span>
+                    <div class="arch-tags"><span class="arch-tag">Creación</span><span class="arch-tag">Innovación</span><span class="arch-tag">Mediación</span></div>
+                </div>
+
+                <div class="arch-item" data-mencion="multiple" data-titulo="Repositorio Digital Extranjería" data-proyecto="repositorio-digital-extranjeria"
+                     data-folder="1mh7fpdrAkQvzyLlSAnQ8oNTG-qJyu0l-" onclick="abrirProyecto('repositorio-digital-extranjeria')" style="cursor:pointer">
+                    <div class="arch-img" style="aspect-ratio:2/3"><img src="assets/img/provisorios/repositorio-digital-extranjeria.jpg" alt="Repositorio Digital Extranjería" referrerpolicy="no-referrer"></div>
+                    <span class="arch-num">(20)</span>
+                    <span class="arch-titulo">Repositorio Digital Extranjería</span>
+                    <div class="arch-tags"><span class="arch-tag">Publicaciones</span><span class="arch-tag">Innovación</span><span class="arch-tag">Investigación</span></div>
+                </div>
+
+                <div class="arch-item" data-mencion="multiple" data-titulo="Revista 081" data-proyecto="revista-081"
+                     data-folder="1g6psBUWkrqlYATlqGw1duWk4PM0qqFNe" onclick="abrirProyecto('revista-081')" style="cursor:pointer">
+                    <div class="arch-img" style="aspect-ratio:3/4"><img src="assets/img/provisorios/revista-081.png" alt="Revista 081" referrerpolicy="no-referrer"></div>
+                    <span class="arch-num">(21)</span>
+                    <span class="arch-titulo">Revista 081</span>
+                    <div class="arch-tags"><span class="arch-tag">Publicaciones</span><span class="arch-tag">Edición</span><span class="arch-tag">Exposición colectiva</span></div>
+                </div>
+
+                <div class="arch-item" data-mencion="multiple" data-titulo="Son Ellas" data-proyecto="son-ellas"
+                     data-folder="1jG0lcfAZ8oBUnbK0viV3TN_uqm4j_SIC" onclick="abrirProyecto('son-ellas')" style="cursor:pointer">
+                    <div class="arch-img" style="aspect-ratio:3/2"><img src="assets/img/provisorios/son-ellas.png" alt="Son Ellas" referrerpolicy="no-referrer"></div>
+                    <span class="arch-num">(22)</span>
+                    <span class="arch-titulo">Son Ellas</span>
+                    <div class="arch-tags"><span class="arch-tag">Creación</span><span class="arch-tag">Proyecto de Título</span></div>
+                </div>
+
+                <div class="arch-item" data-mencion="multiple" data-titulo="Dosimar" data-proyecto="dosimar"
+                     data-folder="1jM-2CmWzB8Kt-G5h6DwYKs8prKapBcIa" onclick="abrirProyecto('dosimar')" style="cursor:pointer">
+                    <div class="arch-img" style="aspect-ratio:4/3"><img src="assets/img/provisorios/dosimar.jpg" alt="Dosimar" referrerpolicy="no-referrer"></div>
+                    <span class="arch-num">(23)</span>
+                    <span class="arch-titulo">Dosimar</span>
+                    <div class="arch-tags"><span class="arch-tag">Creación</span><span class="arch-tag">Innovación</span><span class="arch-tag">Investigación</span><span class="arch-tag">Proyecto de Título</span></div>
+                </div>
+
+                <div class="arch-item" data-mencion="multiple" data-titulo="Luz de campo" data-proyecto="luz-de-campo"
+                     data-folder="1C6sHMkhGjvtqWUddP71eZsil14PN-v8R" onclick="abrirProyecto('luz-de-campo')" style="cursor:pointer">
+                    <div class="arch-img" style="aspect-ratio:4/5"><img src="assets/img/provisorios/luz-de-campo.jpg" alt="Luz de campo" referrerpolicy="no-referrer"></div>
+                    <span class="arch-num">(24)</span>
+                    <span class="arch-titulo">Luz de campo</span>
+                    <div class="arch-tags"><span class="arch-tag">Creación</span><span class="arch-tag">Exposición colectiva</span><span class="arch-tag">Reconocimiento</span><span class="arch-tag">Intercambio Internacional</span></div>
+                </div>
+
+<div class="arch-item" data-mencion="multiple" data-titulo="Herencia de la técnica" data-proyecto="herencia-de-la-tecnica"
+                     data-folder="1u4EXv0k_k-liB3HFEyurnsXEd3B1zrkH" onclick="abrirProyecto('herencia-de-la-tecnica')" style="cursor:pointer">
+                    <div class="arch-img" style="aspect-ratio:3/4"><img src="assets/img/provisorios/herencia-de-la-tecnica.jpg" alt="Herencia de la técnica" referrerpolicy="no-referrer"></div>
+                    <span class="arch-num">(26)</span>
+                    <span class="arch-titulo">Herencia de la técnica</span>
+                    <div class="arch-tags"><span class="arch-tag">Creación</span><span class="arch-tag">Innovación</span><span class="arch-tag">Investigación</span><span class="arch-tag">Proyecto de Título</span></div>
+                </div>
+
+                <div class="arch-item" data-mencion="multiple" data-titulo="Humedal La Poza" data-proyecto="humedal-la-poza"
+                     data-folder="1TtkFExB046Sy7toDBKLfMtElSJRRcr5V" onclick="abrirProyecto('humedal-la-poza')" style="cursor:pointer">
+                    <div class="arch-img" style="aspect-ratio:4/3"><img src="assets/img/provisorios/humedal-la-poza.jpg" alt="Humedal La Poza" referrerpolicy="no-referrer"></div>
+                    <span class="arch-num">(27)</span>
+                    <span class="arch-titulo">Humedal La Poza</span>
+                    <div class="arch-tags"><span class="arch-tag">Publicaciones</span><span class="arch-tag">Creación</span><span class="arch-tag">Investigación</span><span class="arch-tag">Proyecto de Título</span></div>
+                </div>
+
+                <div class="arch-item" data-mencion="multiple" data-titulo="Flor de Ruina" data-proyecto="flor-de-ruina"
+                     data-folder="1UOFVCQYt6W9LUq3CiLdqrqZc6qEUZ6BU" onclick="abrirProyecto('flor-de-ruina')" style="cursor:pointer">
+                    <div class="arch-img" style="aspect-ratio:2/3"><img src="assets/img/provisorios/flor-de-ruina.jpg" alt="Flor de Ruina" referrerpolicy="no-referrer"></div>
+                    <span class="arch-num">(28)</span>
+                    <span class="arch-titulo">Flor de Ruina</span>
+                    <div class="arch-tags"><span class="arch-tag">Creación</span><span class="arch-tag">Innovación</span></div>
+                </div>
+
+<div class="arch-item" data-mencion="multiple" data-titulo="AND-Y" data-proyecto="and-y"
+                     data-folder="1w3A_uuGBcyV4Pb7qYlNp9rsG4_cWiAad" onclick="abrirProyecto('and-y')" style="cursor:pointer">
+                    <div class="arch-img" style="aspect-ratio:4/3"><img src="assets/img/provisorios/and-y.jpg" alt="AND-Y" referrerpolicy="no-referrer"></div>
+                    <span class="arch-num">(30)</span>
+                    <span class="arch-titulo">AND-Y</span>
+                    <div class="arch-tags"><span class="arch-tag">Creación</span><span class="arch-tag">Innovación</span><span class="arch-tag">Reconocimiento</span><span class="arch-tag">Muestra permanente</span></div>
+                </div>
+
+<div class="arch-item" data-mencion="multiple" data-titulo="Silla Titiritero" data-proyecto="silla-titiritero"
+                     data-folder="1ae6g7xJnRacNLyET3Noxp622EOuswWaK" onclick="abrirProyecto('silla-titiritero')" style="cursor:pointer">
+                    <div class="arch-img" style="aspect-ratio:3/4"><img src="assets/img/provisorios/silla-titiritero.jpg" alt="Silla Titiritero" referrerpolicy="no-referrer"></div>
+                    <span class="arch-num">(32)</span>
+                    <span class="arch-titulo">Silla Titiritero</span>
+                    <div class="arch-tags"><span class="arch-tag">Creación</span></div>
+                </div>
+
+            </div>
+
+            <!-- VER MÁS -->
+            <div class="arch-vermás-wrap" id="arch-vermás-wrap">
+                <button class="arch-vermás-btn" id="arch-vermás-btn" onclick="toggleArchivo()">
+                    Ver más proyectos <span id="arch-vermás-icono">↓</span>
+                </button>
+            </div>
+
+        </section>
+        <section id="destacados" class="seccion">
+            <h1>Proyectos Destacados</h1>
+
+            <div class="hscroll-pin" id="hscroll-pin">
+                <div class="hscroll-track" id="hscroll-track">
+
+                    <div class="hscroll-slide">
+                        <img src="assets/img/fauna_opt1.png" alt="Festival 26 Fauna Primavera">
+                        <div class="hscroll-info">
+                            <span class="hscroll-num">(01)</span>
+                            <span class="hscroll-nombre" data-content="proyectos_destacados.0.nombre">Festival 26 Fauna Primavera</span>
+                            <span class="hscroll-desc" data-content="proyectos_destacados.0.desc">Sistema de identidad visual para festival de música independiente. Diseño de afiche, sistema tipográfico y piezas de comunicación para la edición 26 del Festival Fauna Primavera. Manuel Córdoba · Taller Gráfico.</span>
+                        </div>
+                    </div>
+
+                    <div class="hscroll-slide">
+                        <img src="assets/img/meta_opt1.png" alt="METAMORFA">
+                        <div class="hscroll-info">
+                            <span class="hscroll-num">(02)</span>
+                            <span class="hscroll-nombre" data-content="proyectos_destacados.1.nombre">METAMORFA</span>
+                            <span class="hscroll-desc" data-content="proyectos_destacados.1.desc">Instalación expositiva que explora la transformación como proceso de diseño. Intervención espacial desarrollada para el contexto de la FaAAD. Mále Uribe · Vicente Stephens · Taller Espacial.</span>
+                        </div>
+                    </div>
+
+                    <div class="hscroll-slide">
+                        <img src="assets/img/proj_grounding.jpg" alt="Grounding Computation">
+                        <div class="hscroll-info">
+                            <span class="hscroll-num">(03)</span>
+                            <span class="hscroll-nombre" data-content="proyectos_destacados.2.nombre">Grounding Computation</span>
+                            <span class="hscroll-desc" data-content="proyectos_destacados.2.desc">Muestra que indaga en la relación entre diseño computacional y territorio. Proyectos visuales y objetos que articulan código, datos y materialidad en contextos específicos. Taller de Diseño Digital.</span>
+                        </div>
+                    </div>
+
+                    <div class="hscroll-slide">
+                        <img src="assets/img/proj_editorial.jpg" alt="Taller Editorial Ilustrado">
+                        <div class="hscroll-info">
+                            <span class="hscroll-num">(04)</span>
+                            <span class="hscroll-nombre" data-content="proyectos_destacados.3.nombre">Taller Editorial Ilustrado</span>
+                            <span class="hscroll-desc" data-content="proyectos_destacados.3.desc">Serie de piezas editoriales de autor que cruzan ilustración y tipografía experimental. Cada entrega construye una vitrina creativa en torno a un referente del diseño gráfico contemporáneo. Tercer Semestre.</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Dots de progreso -->
+                <div class="hscroll-progress" id="hscroll-progress">
+                    <div class="hscroll-dot activo"></div>
+                    <div class="hscroll-dot"></div>
+                    <div class="hscroll-dot"></div>
+                    <div class="hscroll-dot"></div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-main">
+
+            <!-- Logo -->
+            <div class="footer-col footer-logo-col">
+                <img src="assets/img/faad/faad_lockupsArtboard 5 copy 4_1@2x.png" alt="FaAAD UDP" class="footer-logo">
+            </div>
+
+            <!-- Portal -->
+            <div class="footer-col">
+                <a href="https://portal.udp.cl" class="footer-portal" target="_blank">Portal UDP</a>
+            </div>
+
+            <!-- Contacto -->
+            <div class="footer-col">
+                <p class="footer-col-title">Facultad de Diseño</p>
+                <p class="footer-addr">República 180<br>Santiago, Chile</p>
+                <a href="mailto:comunicaciones.diseno@mail.udp.cl" class="footer-link" style="margin-top:10px;">comunicaciones.diseno@mail.udp.cl</a>
+            </div>
+
+            <!-- Redes -->
+            <div class="footer-col">
+                <p class="footer-col-title">Redes</p>
+                <a href="https://www.instagram.com/diseno_udp/" class="footer-link" target="_blank">Instagram</a>
+                <a href="https://www.tiktok.com/@disenoudp" class="footer-link" target="_blank">TikTok</a>
+                <a href="https://www.youtube.com/channel/UCHd6f5pWRCJdVgXz6VWTOJw" class="footer-link" target="_blank">YouTube</a>
+                <a href="https://www.linkedin.com/company/disenoudp/" class="footer-link" target="_blank">LinkedIn</a>
+            </div>
+
+            <!-- Menciones -->
+            <div class="footer-col">
+                <p class="footer-col-title">Menciones</p>
+                <a href="#archivo" class="footer-link">Diseño Gráfico</a>
+                <a href="#archivo" class="footer-link">Diseño Industrial</a>
+                <a href="#archivo" class="footer-link">Diseño de Interacción</a>
+                <a href="#archivo" class="footer-link">Textil e Indumentaria</a>
+            </div>
+
+            <!-- Newsletter -->
+            <div class="footer-col footer-newsletter">
+                <p class="footer-col-title">Suscríbete a nuestro boletín</p>
+                <form class="footer-form" onsubmit="return false;">
+                    <div class="footer-input-row">
+                        <input type="text" class="footer-input" placeholder="Nombre y apellido*">
+                    </div>
+                    <div class="footer-input-row footer-input-row--email">
+                        <input type="email" class="footer-input" placeholder="E-mail*">
+                        <button type="submit" class="footer-submit">→</button>
+                    </div>
+                    <label class="footer-check">
+                        <input type="checkbox"> He leído y acepto la <a href="#">Política de privacidad</a>*
+                    </label>
+                </form>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <span>Política de privacidad</span>
+            <span>Universidad Diego Portales</span>
+        </div>
+    </footer>
+
+<!-- POPUP PROYECTO -->
+    <div class="pp-overlay" id="pp-overlay" role="dialog" aria-modal="true">
+        <button class="pp-close" id="pp-close" aria-label="Cerrar">✕</button>
+        <div class="pp-scene" id="pp-scene">
+
+            <!-- Columna imagen -->
+            <div class="pp-img-col">
+                <div class="pp-galeria-track" id="pp-galeria-track"></div>
+                <div class="pp-galeria-label" id="pp-galeria-label"></div>
+                <div class="pp-galeria-dots" id="pp-galeria-dots"></div>
+            </div>
+
+            <!-- Columna info -->
+            <div class="pp-info-col">
+                <div class="pp-info-scroll">
+                    <span class="pp-num" id="pp-num"></span>
+                    <div class="pp-tags-row">
+                        <span class="pp-tag pp-tag-mencion" id="pp-tag-mencion"></span>
+                        <span class="pp-tag" id="pp-tag-anio"></span>
+                    </div>
+                    <p class="pp-titulo" id="pp-titulo"></p>
+                    <p class="pp-desc" id="pp-desc"></p>
+                    <div class="pp-meta" id="pp-meta"></div>
+                </div>
+                <div class="pp-nav">
+                    <button class="pp-nav-btn" id="pp-side-prev">
+                        <span>← anterior</span>
+                    </button>
+                    <button class="pp-nav-btn pp-nav-btn-next" id="pp-side-next">
+                        <span>siguiente →</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+    <script src="assets/js/main.js"></script>
+    <script>
+    (function () {
+        const frases = [
+            "Vocación creativa para imaginar lo que todavía no existe",
+            "Compromiso ético para responder por lo que hacemos aparecer en el mundo",
+            "Pensamiento crítico para desconfiar de las respuestas demasiado rápidas",
+            "Autonomía para encontrar una voz propia entre tanto ruido",
+            "Trabajo colectivo porque ninguna idea crece sola",
+            "Identidad propia como herramienta distintiva",
+            "Visión estratégica para mirar más allá de lo inmediato",
+            "Impacto social porque todo diseño se vincula con personas",
+            "Esfera pública como espacio de encuentro, discusión y transformación",
+            "Investigación como curiosidad sistematizada",
+            "Tecnologías emergentes para explorar nuevos lenguajes y posibilidades",
+            "Innovación entendida como cambio con sentido",
+            "Procesos que importan tanto como los resultados",
+            "Productos que cuentan historias además de cumplir funciones",
+            "Sistemas que conectan personas, objetos y contextos",
+            "Prácticas materiales para pensar con las manos",
+            "Prácticas visuales para hacer visible lo invisible",
+            "Prácticas digitales para habitar los territorios contemporáneos",
+            "Interdisciplinariedad como conversación entre miradas distintas",
+            "Liderazgo para convocar, escuchar y movilizar",
+            "Adaptabilidad para cambiar de rumbo sin perder el horizonte"
+        ];
+
+        const el    = document.getElementById('hero-frase');
+        const idxEl = document.getElementById('hero-frase-idx');
+        if (!el) return;
+
+        const TOTAL = frases.length;
+
+        function shuffle(arr) {
+            const a = [...arr];
+            for (let i = a.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [a[i], a[j]] = [a[j], a[i]];
+            }
+            return a;
+        }
+
+        let cola = shuffle(frases);
+        let pos   = 0;
+
+        function setMeta(n) {
+            if (idxEl) idxEl.textContent =
+                String(n).padStart(2, '0') + ' — ' + String(TOTAL).padStart(2, '0');
+        }
+
+        function mostrarFrase() {
+            if (pos >= cola.length) { cola = shuffle(frases); pos = 0; }
+            const texto   = cola[pos];
+            const numero  = pos + 1;
+            pos++;
+
+            el.classList.add('fade-out');
+            setTimeout(() => {
+                el.textContent = texto;
+                setMeta(numero);
+                el.classList.remove('fade-out');
+            }, 620);
+        }
+
+        // Primera frase inmediata
+        el.textContent = cola[pos];
+        setMeta(pos + 1);
+        pos++;
+
+        setInterval(mostrarFrase, 4200);
+    })();
+    </script>
+</body>
+</html>

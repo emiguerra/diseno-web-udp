@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Explora — Diseño FaAAD UDP</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+    <div id="cursor"></div>
+    <div id="cursor-follower"></div>
+
+    <header id="main-header">
+        <div class="header-body">
+        <div class="logo">
+            <a href="index.html"><img src="assets/img/faad/faad_lockupsArtboard 5 copy 4_1@2x.png" alt="FaAAD" style="height:47px;"></a>
+        </div>
+        <nav class="main-nav">
+            <div class="nav-item nav-item-direct">
+                <a href="index.html#archivo">Proyectos</a>
+            </div>
+            <div class="nav-item">
+                <a>Nosotros <span class="nav-arrow">&#8595;</span></a>
+                <div class="dropdown">
+                    <a href="nosotros.html#escuela">Escuela</a>
+                    <a href="nosotros.html#organigrama">Organigrama</a>
+                    <a href="nosotros.html#menciones">Menciones</a>
+                    <a href="nosotros.html#pregrado">Pregrado</a>
+                    <a href="nosotros.html#postgrado">Postgrado</a>
+                    <a href="nosotros.html#convenios">Convenios</a>
+                    <a href="nosotros.html#internacionalizacion">Internacionalización</a>
+                    <a href="nosotros.html#equipo">Equipo docente</a>
+                    <a href="nosotros.html#infraestructura">Infraestructura</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                <a>Noticias <span class="nav-arrow">&#8595;</span></a>
+                <div class="dropdown">
+                    <a href="noticias.html#noticias">Noticias</a>
+                    <a href="noticias.html#agenda">Agenda</a>
+                    <a href="noticias.html#laboral">Laboral</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                <a>Explora <span class="nav-arrow">&#8595;</span></a>
+                <div class="dropdown">
+                    <a href="explora.html#publicaciones">Publicaciones</a>
+                    <a href="explora.html#digital">Digital</a>
+                    <a href="explora.html#prensa">Prensa</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                <a>Postula <span class="nav-arrow">&#8595;</span></a>
+                <div class="dropdown">
+                    <a href="postula.html#oferta">Oferta académica</a>
+                    <a href="postula.html#casos-exito">Red UDP</a>
+                    <a href="postula.html#visita-faaad">Visita FaAAD</a>
+                    <a href="postula.html#vida-estudiantil">Vida estudiantil</a>
+                    <a href="postula.html#presskit">Presskit</a>
+                    <a href="postula.html#infraestructura">Infraestructura</a>
+                    <a href="postula.html#cursos-abiertos">Cursos abiertos</a>
+                </div>
+            </div>
+        </nav>
+        <div class="header-right"></div>
+        </div>
+    </header>
+
+    <main class="wrapper">
+<section id="publicaciones" class="seccion">
+            <span class="subs-section-label">Explora</span>
+            <h1>Publicaciones</h1>
+            <p class="estudia-intro" data-content="publicaciones.intro">Revistas académicas y editoriales de la Escuela de Diseño UDP: documentos vivos de investigación, práctica y pensamiento sobre el diseño.</p>
+
+            <div class="subs-gate" id="gate-publicaciones">
+                <span class="subs-gate-icon">&#128274;</span>
+                <h3>Acceso exclusivo para suscriptores</h3>
+                <p>Las publicaciones y archivos de investigación FaAAD están disponibles para miembros de la comunidad.</p>
+                <div class="subs-gate-actions">
+                    <a class="btn btn-solid" onclick="desbloquearAcceso()">Crear cuenta</a>
+                    <a class="btn" onclick="desbloquearAcceso()">Iniciar sesión</a>
+                </div>
+                <p class="subs-gate-demo" onclick="desbloquearAcceso()">[Demo: simular sesión iniciada]</p>
+            </div>
+
+            <div class="subs-content-locked" id="publicaciones-content">
+            <div class="publicaciones-grid">
+                <div class="pub-card">
+                    <div class="img-placeholder" style="height:360px;"></div>
+                    <div class="pub-body">
+                        <span class="pub-num">(01)</span>
+                        <h2>Revista 180</h2>
+                        <p>Revista de arquitectura, diseño y urbanismo de la Universidad Diego Portales. Publicación periódica de investigación proyectual y crítica disciplinar.</p>
+                        <a class="btn" onclick="alert('Ver Revista 180')">Ver publicación</a>
+                    </div>
+                </div>
+                <div class="pub-card">
+                    <div class="img-placeholder" style="height:360px;"></div>
+                    <div class="pub-body">
+                        <span class="pub-num">(02)</span>
+                        <h2>Revista 0</h2>
+                        <p>Publicación de la Escuela de Diseño que documenta proyectos, procesos y reflexiones del cuerpo académico y estudiantil.</p>
+                        <a class="btn" onclick="alert('Ver Revista 0')">Ver publicación</a>
+                    </div>
+                </div>
+                <div class="pub-card">
+                    <div class="img-placeholder" style="height:360px;"></div>
+                    <div class="pub-body">
+                        <span class="pub-num">(03)</span>
+                        <h2>Revista Trama</h2>
+                        <p>Publicación especializada en textil e indumentaria y cultura material desde una perspectiva crítica y latinoamericana.</p>
+                        <a class="btn" onclick="alert('Ver Revista Trama')">Ver publicación</a>
+                    </div>
+                </div>
+            </div>
+            </div><!-- /publicaciones-content -->
+        </section>
+
+        <section id="digital" class="seccion">
+            <span class="subs-section-label">Explora</span>
+            <h1>Digital</h1>
+            <p class="estudia-intro">Contenidos audiovisuales, vodcasts y charlas de la comunidad FaAAD: conversaciones sobre diseño, cultura y práctica profesional.</p>
+
+            <div class="subs-gate" id="gate-digital">
+                <span class="subs-gate-icon">&#128274;</span>
+                <h3>Acceso exclusivo para suscriptores</h3>
+                <p>El archivo audiovisual y los vodcasts de la FaAAD están disponibles para miembros de la comunidad.</p>
+                <div class="subs-gate-actions">
+                    <a class="btn btn-solid" onclick="desbloquearAcceso()">Crear cuenta</a>
+                    <a class="btn" onclick="desbloquearAcceso()">Iniciar sesión</a>
+                </div>
+                <p class="subs-gate-demo" onclick="desbloquearAcceso()">[Demo: simular sesión iniciada]</p>
+            </div>
+
+            <div class="subs-content-locked" id="digital-content">
+            <div class="digital-tabs">
+                <button class="digital-tab activa" onclick="filtrarDigital('todos', this)">Todos</button>
+                <button class="digital-tab" onclick="filtrarDigital('audiovisual', this)">Audiovisual</button>
+                <button class="digital-tab" onclick="filtrarDigital('vodcast', this)">Vodcast</button>
+                <button class="digital-tab" onclick="filtrarDigital('charla', this)">Charlas</button>
+            </div>
+
+            <div class="digital-grid">
+                <div class="digital-item" data-tipo="audiovisual">
+                    <div class="img-placeholder" style="height:220px; position:relative;">
+                        <span style="position:absolute; bottom:12px; left:12px; background:var(--fg); color:var(--bg); padding:4px 10px; font-size:0.75rem;">▶ 12:34</span>
+                    </div>
+                    <h3>Proceso de diseño: identidad Lab A.R</h3>
+                    <span class="digital-tag">Audiovisual</span>
+                </div>
+                <div class="digital-item" data-tipo="vodcast">
+                    <div class="img-placeholder" style="height:220px; position:relative;">
+                        <span style="position:absolute; bottom:12px; left:12px; background:var(--fg); color:var(--bg); padding:4px 10px; font-size:0.75rem;">🎙 45:12</span>
+                    </div>
+                    <h3>Vodcast: el futuro del diseño industrial en Chile</h3>
+                    <span class="digital-tag">Vodcast</span>
+                </div>
+                <div class="digital-item" data-tipo="charla">
+                    <div class="img-placeholder" style="height:220px; position:relative;">
+                        <span style="position:absolute; bottom:12px; left:12px; background:var(--fg); color:var(--bg); padding:4px 10px; font-size:0.75rem;">▶ 58:07</span>
+                    </div>
+                    <h3>Charla: tipografía y memoria visual latinoamericana</h3>
+                    <span class="digital-tag">Charla</span>
+                </div>
+                <div class="digital-item" data-tipo="vodcast">
+                    <div class="img-placeholder" style="height:220px; position:relative;">
+                        <span style="position:absolute; bottom:12px; left:12px; background:var(--fg); color:var(--bg); padding:4px 10px; font-size:0.75rem;">🎙 32:50</span>
+                    </div>
+                    <h3>Vodcast: textil e indumentaria, cuerpo e identidad en Latinoamérica</h3>
+                    <span class="digital-tag">Vodcast</span>
+                </div>
+                <div class="digital-item" data-tipo="audiovisual">
+                    <div class="img-placeholder" style="height:220px; position:relative;">
+                        <span style="position:absolute; bottom:12px; left:12px; background:var(--fg); color:var(--bg); padding:4px 10px; font-size:0.75rem;">▶ 08:15</span>
+                    </div>
+                    <h3>Documental: LAB 360 y la fabricación experimental</h3>
+                    <span class="digital-tag">Audiovisual</span>
+                </div>
+                <div class="digital-item" data-tipo="charla">
+                    <div class="img-placeholder" style="height:220px; position:relative;">
+                        <span style="position:absolute; bottom:12px; left:12px; background:var(--fg); color:var(--bg); padding:4px 10px; font-size:0.75rem;">▶ 1:02:30</span>
+                    </div>
+                    <h3>Charla: diseño e innovación social</h3>
+                    <span class="digital-tag">Charla</span>
+                </div>
+            </div>
+            </div><!-- /digital-content -->
+        </section>
+
+        <section id="prensa" class="seccion">
+            <span class="subs-section-label">Explora</span>
+            <h1>Prensa</h1>
+            <p class="estudia-intro">Apariciones en medios nacionales e internacionales y publicaciones académicas del cuerpo docente de la Escuela de Diseño UDP.</p>
+
+            <div class="subs-gate" id="gate-prensa">
+                <span class="subs-gate-icon">&#128274;</span>
+                <h3>Acceso exclusivo para suscriptores</h3>
+                <p>Las apariciones en prensa y publicaciones académicas están disponibles para miembros de la comunidad FaAAD.</p>
+                <div class="subs-gate-actions">
+                    <a class="btn btn-solid" onclick="desbloquearAcceso()">Crear cuenta</a>
+                    <a class="btn" onclick="desbloquearAcceso()">Iniciar sesión</a>
+                </div>
+                <p class="subs-gate-demo" onclick="desbloquearAcceso()">[Demo: simular sesión iniciada]</p>
+            </div>
+
+            <div class="subs-content-locked" id="prensa-content">
+            <div class="grid-layout col-2" >
+                <div>
+                    <h2>Apariciones en medios</h2>
+                    <div class="prensa-lista">
+                        <div class="prensa-item"><span class="prensa-medio">El Mercurio</span><p>«FaAAD lidera ranking de escuelas de diseño en Chile»</p><span class="prensa-fecha">Marzo 2026</span></div>
+                        <div class="prensa-item"><span class="prensa-medio">La Tercera</span><p>«Diseño chileno en el mundo: egresados UDP en ferias internacionales»</p><span class="prensa-fecha">Enero 2026</span></div>
+                        <div class="prensa-item"><span class="prensa-medio">Diseño & Arquitectura</span><p>«Tipografía experimental: el Laboratorio OTF en la vanguardia latinoamericana»</p><span class="prensa-fecha">Dic 2025</span></div>
+                        <div class="prensa-item"><span class="prensa-medio">CNN Chile</span><p>«La nueva generación de diseñadores que están cambiando la industria»</p><span class="prensa-fecha">Nov 2025</span></div>
+                    </div>
+                </div>
+                <div>
+                    <h2>Publicaciones académicas</h2>
+                    <div class="prensa-lista">
+                        <div class="prensa-item"><span class="prensa-medio">Indexada</span><p>«Materialidad y diseño: investigación desde el LAMP» — Nombre Académico/a</p><span class="prensa-fecha">2025</span></div>
+                        <div class="prensa-item"><span class="prensa-medio">Indexada</span><p>«Interacción tangible y educación: nuevos paradigmas» — Nombre Académico/a</p><span class="prensa-fecha">2025</span></div>
+                        <div class="prensa-item"><span class="prensa-medio">Congreso</span><p>«Diseño de indumentaria y sostenibilidad textil en Chile» — Nombre Académico/a</p><span class="prensa-fecha">2024</span></div>
+                        <div class="prensa-item"><span class="prensa-medio">Libro</span><p>«Sistemas de identidad visual en contextos latinoamericanos» — Nombre Académico/a</p><span class="prensa-fecha">2024</span></div>
+                    </div>
+                </div>
+            </div>
+            </div><!-- /prensa-content -->
+        </section>
+
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-main">
+
+            <!-- Logo -->
+            <div class="footer-col footer-logo-col">
+                <img src="assets/img/faad/faad_lockupsArtboard 5 copy 4_1@2x.png" alt="FaAAD UDP" class="footer-logo">
+            </div>
+
+            <!-- Portal -->
+            <div class="footer-col">
+                <a href="https://portal.udp.cl" class="footer-portal" target="_blank">Portal UDP</a>
+            </div>
+
+            <!-- Contacto -->
+            <div class="footer-col">
+                <p class="footer-col-title">Facultad de Diseño</p>
+                <p class="footer-addr">República 180<br>Santiago, Chile</p>
+                <a href="mailto:comunicaciones.diseno@mail.udp.cl" class="footer-link" style="margin-top:10px;">comunicaciones.diseno@mail.udp.cl</a>
+            </div>
+
+            <!-- Redes -->
+            <div class="footer-col">
+                <p class="footer-col-title">Redes</p>
+                <a href="https://www.instagram.com/diseno_udp/" class="footer-link" target="_blank">Instagram</a>
+                <a href="https://www.tiktok.com/@disenoudp" class="footer-link" target="_blank">TikTok</a>
+                <a href="https://www.youtube.com/channel/UCHd6f5pWRCJdVgXz6VWTOJw" class="footer-link" target="_blank">YouTube</a>
+                <a href="https://www.linkedin.com/company/disenoudp/" class="footer-link" target="_blank">LinkedIn</a>
+            </div>
+
+            <!-- Menciones -->
+            <div class="footer-col">
+                <p class="footer-col-title">Menciones</p>
+                <a href="index.html#archivo" class="footer-link">Diseño Gráfico</a>
+                <a href="index.html#archivo" class="footer-link">Diseño Industrial</a>
+                <a href="index.html#archivo" class="footer-link">Diseño de Interacción</a>
+                <a href="index.html#archivo" class="footer-link">Textil e Indumentaria</a>
+            </div>
+
+            <!-- Newsletter -->
+            <div class="footer-col footer-newsletter">
+                <p class="footer-col-title">Suscríbete a nuestro boletín</p>
+                <form class="footer-form" onsubmit="return false;">
+                    <div class="footer-input-row">
+                        <input type="text" class="footer-input" placeholder="Nombre y apellido*">
+                    </div>
+                    <div class="footer-input-row footer-input-row--email">
+                        <input type="email" class="footer-input" placeholder="E-mail*">
+                        <button type="submit" class="footer-submit">→</button>
+                    </div>
+                    <label class="footer-check">
+                        <input type="checkbox"> He leído y acepto la <a href="#">Política de privacidad</a>*
+                    </label>
+                </form>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <span>Política de privacidad</span>
+            <span>Universidad Diego Portales</span>
+        </div>
+    </footer>
+
+
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

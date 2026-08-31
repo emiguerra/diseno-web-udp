@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noticias — Diseño FaAAD UDP</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+    <div id="cursor"></div>
+    <div id="cursor-follower"></div>
+
+    <header id="main-header">
+        <div class="header-body">
+        <div class="logo">
+            <a href="index.html"><img src="assets/img/faad/faad_lockupsArtboard 5 copy 4_1@2x.png" alt="FaAAD" style="height:47px;"></a>
+        </div>
+        <nav class="main-nav">
+            <div class="nav-item nav-item-direct">
+                <a href="index.html#archivo">Proyectos</a>
+            </div>
+            <div class="nav-item">
+                <a>Nosotros <span class="nav-arrow">&#8595;</span></a>
+                <div class="dropdown">
+                    <a href="nosotros.html#escuela">Escuela</a>
+                    <a href="nosotros.html#organigrama">Organigrama</a>
+                    <a href="nosotros.html#menciones">Menciones</a>
+                    <a href="nosotros.html#pregrado">Pregrado</a>
+                    <a href="nosotros.html#postgrado">Postgrado</a>
+                    <a href="nosotros.html#convenios">Convenios</a>
+                    <a href="nosotros.html#internacionalizacion">Internacionalización</a>
+                    <a href="nosotros.html#equipo">Equipo docente</a>
+                    <a href="nosotros.html#infraestructura">Infraestructura</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                <a>Noticias <span class="nav-arrow">&#8595;</span></a>
+                <div class="dropdown">
+                    <a href="noticias.html#noticias">Noticias</a>
+                    <a href="noticias.html#agenda">Agenda</a>
+                    <a href="noticias.html#laboral">Laboral</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                <a>Explora <span class="nav-arrow">&#8595;</span></a>
+                <div class="dropdown">
+                    <a href="explora.html#publicaciones">Publicaciones</a>
+                    <a href="explora.html#digital">Digital</a>
+                    <a href="explora.html#prensa">Prensa</a>
+                </div>
+            </div>
+            <div class="nav-item">
+                <a>Postula <span class="nav-arrow">&#8595;</span></a>
+                <div class="dropdown">
+                    <a href="postula.html#oferta">Oferta académica</a>
+                    <a href="postula.html#casos-exito">Red UDP</a>
+                    <a href="postula.html#visita-faaad">Visita FaAAD</a>
+                    <a href="postula.html#vida-estudiantil">Vida estudiantil</a>
+                    <a href="postula.html#presskit">Presskit</a>
+                    <a href="postula.html#infraestructura">Infraestructura</a>
+                    <a href="postula.html#cursos-abiertos">Cursos abiertos</a>
+                </div>
+            </div>
+        </nav>
+        <div class="header-right"></div>
+        </div>
+    </header>
+
+    <main class="wrapper">
+<section id="noticias" class="seccion">
+            <h1>Noticias</h1>
+
+            <div class="agenda-filters" style="margin-top:3.5rem;">
+                <button class="agenda-filter-btn activo" onclick="filtrarNoticias('todos',this)">Todas</button>
+                <button class="agenda-filter-btn" onclick="filtrarNoticias('Escuela',this)">Escuela</button>
+                <button class="agenda-filter-btn" onclick="filtrarNoticias('Investigación',this)">Investigación</button>
+                <button class="agenda-filter-btn" onclick="filtrarNoticias('Vinculación',this)">Vinculación</button>
+                <button class="agenda-filter-btn" onclick="filtrarNoticias('Docencia',this)">Docencia</button>
+                <button class="agenda-filter-btn" onclick="filtrarNoticias('Alumni',this)">Alumni</button>
+                <button class="agenda-filter-btn" onclick="filtrarNoticias('Publicación',this)">Publicación</button>
+            </div>
+
+            <div class="noticias-feed" id="noticias-feed"></div>
+        </section>
+
+        <section id="agenda" class="seccion">
+            <h1>Agenda</h1>
+
+            <div id="agenda-content">
+
+                <div class="agenda-filters" style="margin-top: 3.5rem;">
+                    <button class="agenda-filter-btn activo" onclick="filtrarAgenda('todos', this)">Todos</button>
+                    <button class="agenda-filter-btn" onclick="filtrarAgenda('cultura', this)">Cultura</button>
+                    <button class="agenda-filter-btn" onclick="filtrarAgenda('corporativa', this)">Corporativa</button>
+                    <button class="agenda-filter-btn" onclick="filtrarAgenda('academica', this)">Académica</button>
+                    <button class="agenda-filter-btn" onclick="filtrarAgenda('alumni', this)">Alumni / Docentes</button>
+                    <button class="agenda-filter-btn" onclick="filtrarAgenda('diseno-chile', this)">Diseño en Chile</button>
+                    <button class="agenda-filter-btn" onclick="filtrarAgenda('diseno-faaad', this)">Diseño FaAAD</button>
+                </div>
+
+                <ul class="agenda-list" id="agenda-grid"></ul>
+
+            </div><!-- /agenda-content -->
+        </section>
+
+        <section id="laboral" class="seccion">
+            <span class="subs-section-label">Noticias</span>
+            <h1>Laboral</h1>
+            <p class="estudia-intro">Publica y encuentra oportunidades laborales, prácticas profesionales y proyectos colaborativos dentro de la comunidad FaAAD.</p>
+
+            <div class="subs-gate" id="gate-laboral">
+                <span class="subs-gate-icon">&#128274;</span>
+                <h3>Acceso exclusivo para suscriptores</h3>
+                <p>Las ofertas laborales y oportunidades de la comunidad FaAAD son exclusivas para miembros. Regístrate gratis para ver todas las vacantes.</p>
+                <div class="subs-gate-actions">
+                    <a class="btn btn-solid" onclick="desbloquearAcceso()">Crear cuenta</a>
+                    <a class="btn" onclick="desbloquearAcceso()">Iniciar sesión</a>
+                </div>
+                <p class="subs-gate-demo" onclick="desbloquearAcceso()">[Demo: simular sesión iniciada]</p>
+            </div>
+
+            <div class="subs-content-locked" id="laboral-content">
+            <div class="laboral-cols">
+                <div class="laboral-col">
+                    <h2>Oferta laboral</h2>
+                    <p>Empresas y estudios pueden publicar vacantes dirigidas a estudiantes y egresados FaAAD.</p>
+                    <a class="btn btn-solid" onclick="alert('Publicar oferta laboral')">Publicar oferta</a>
+                    <div class="laboral-lista" style="margin-top:24px;">
+                        <div class="laboral-item"><span class="laboral-tag">Tiempo completo</span><h3>Diseñador/a gráfico/a Sr.</h3><p>Estudio de diseño — Santiago</p></div>
+                        <div class="laboral-item"><span class="laboral-tag">Freelance</span><h3>Diseñador/a de interacción</h3><p>Startup tecnológica — Remoto</p></div>
+                        <div class="laboral-item"><span class="laboral-tag">Part-time</span><h3>Asistente de diseño editorial</h3><p>Editorial independiente — Santiago</p></div>
+                    </div>
+                </div>
+
+                <div class="laboral-col">
+                    <h2>Oportunidades laborales</h2>
+                    <p>Convocatorias, concursos y proyectos abiertos para diseñadores en formación y egresados.</p>
+                    <a class="btn btn-solid" onclick="alert('Ver todas las oportunidades')">Ver todas</a>
+                    <div class="laboral-lista" style="margin-top:24px;">
+                        <div class="laboral-item"><span class="laboral-tag">Concurso</span><h3>Premio diseño chileno 2026</h3><p>Convocatoria abierta hasta junio</p></div>
+                        <div class="laboral-item"><span class="laboral-tag">Residencia</span><h3>Residencia LAB 360</h3><p>Programa de investigación — 3 meses</p></div>
+                    </div>
+                </div>
+
+                <div class="laboral-col">
+                    <h2>Prácticas profesionales</h2>
+                    <p>Ofrece y encuentra prácticas profesionales para estudiantes desde el quinto semestre.</p>
+                    <a class="btn btn-solid" onclick="alert('Publicar práctica')">Publicar práctica</a>
+                    <a class="btn" onclick="alert('Buscar práctica')" style="margin-top:8px;">Buscar práctica</a>
+                    <div class="laboral-lista" style="margin-top:24px;">
+                        <div class="laboral-item"><span class="laboral-tag">Práctica</span><h3>Diseño de comunicación interna</h3><p>ONG — Santiago · 3 meses</p></div>
+                        <div class="laboral-item"><span class="laboral-tag">Práctica</span><h3>UX Research</h3><p>Empresa fintech — Híbrido</p></div>
+                    </div>
+                </div>
+            </div>
+            </div><!-- /laboral-content -->
+        </section>
+
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-main">
+
+            <!-- Logo -->
+            <div class="footer-col footer-logo-col">
+                <img src="assets/img/faad/faad_lockupsArtboard 5 copy 4_1@2x.png" alt="FaAAD UDP" class="footer-logo">
+            </div>
+
+            <!-- Portal -->
+            <div class="footer-col">
+                <a href="https://portal.udp.cl" class="footer-portal" target="_blank">Portal UDP</a>
+            </div>
+
+            <!-- Contacto -->
+            <div class="footer-col">
+                <p class="footer-col-title">Facultad de Diseño</p>
+                <p class="footer-addr">República 180<br>Santiago, Chile</p>
+                <a href="mailto:comunicaciones.diseno@mail.udp.cl" class="footer-link" style="margin-top:10px;">comunicaciones.diseno@mail.udp.cl</a>
+            </div>
+
+            <!-- Redes -->
+            <div class="footer-col">
+                <p class="footer-col-title">Redes</p>
+                <a href="https://www.instagram.com/diseno_udp/" class="footer-link" target="_blank">Instagram</a>
+                <a href="https://www.tiktok.com/@disenoudp" class="footer-link" target="_blank">TikTok</a>
+                <a href="https://www.youtube.com/channel/UCHd6f5pWRCJdVgXz6VWTOJw" class="footer-link" target="_blank">YouTube</a>
+                <a href="https://www.linkedin.com/company/disenoudp/" class="footer-link" target="_blank">LinkedIn</a>
+            </div>
+
+            <!-- Menciones -->
+            <div class="footer-col">
+                <p class="footer-col-title">Menciones</p>
+                <a href="index.html#archivo" class="footer-link">Diseño Gráfico</a>
+                <a href="index.html#archivo" class="footer-link">Diseño Industrial</a>
+                <a href="index.html#archivo" class="footer-link">Diseño de Interacción</a>
+                <a href="index.html#archivo" class="footer-link">Textil e Indumentaria</a>
+            </div>
+
+            <!-- Newsletter -->
+            <div class="footer-col footer-newsletter">
+                <p class="footer-col-title">Suscríbete a nuestro boletín</p>
+                <form class="footer-form" onsubmit="return false;">
+                    <div class="footer-input-row">
+                        <input type="text" class="footer-input" placeholder="Nombre y apellido*">
+                    </div>
+                    <div class="footer-input-row footer-input-row--email">
+                        <input type="email" class="footer-input" placeholder="E-mail*">
+                        <button type="submit" class="footer-submit">→</button>
+                    </div>
+                    <label class="footer-check">
+                        <input type="checkbox"> He leído y acepto la <a href="#">Política de privacidad</a>*
+                    </label>
+                </form>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <span>Política de privacidad</span>
+            <span>Universidad Diego Portales</span>
+        </div>
+    </footer>
+
+    <div class="noticia-overlay" id="noticia-overlay" onclick="_noticiaOverlayClick(event)">
+        <div class="noticia-panel">
+            <div class="noticia-panel-header">
+                <span class="noticia-breadcrumb">
+                    Noticias<span class="bc-sep">/</span><span class="bc-current" id="noticia-bc-current"></span>
+                </span>
+                <button class="noticia-close-btn" onclick="cerrarNoticia()">Cerrar ✕</button>
+            </div>
+            <div class="noticia-panel-body">
+                <aside class="noticia-aside" id="noticia-aside"></aside>
+                <div class="noticia-article" id="noticia-article"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ev-overlay" id="ev-overlay" onclick="_evOverlayClick(event)">
+        <div class="ev-panel">
+            <div class="ev-panel-header">
+                <span class="noticia-breadcrumb">
+                    Agenda<span class="bc-sep">/</span><span class="bc-current" id="ev-bc-current"></span>
+                </span>
+                <button class="noticia-close-btn" onclick="cerrarEvento()">Cerrar ✕</button>
+            </div>
+            <div class="ev-panel-body">
+                <aside class="ev-aside" id="ev-aside"></aside>
+                <div class="ev-article" id="ev-article"></div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
