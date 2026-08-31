@@ -1,15 +1,11 @@
 {
   "_config": {
-    "fuente": "apps-script",
-    "google_sheets_url": "https://script.google.com/macros/s/AKfycbzuTrWZJzyWHLaOs-pCMxQZgv1fcumBNonDmH4X34PG6QPwgggPdhxkyPQ_TvM7tNx3NQ/exec",
-    "sheet_id": "1mL5QaYPKIpGw2zbBDEwuaHTGzdOmPq2XdTTM95kmujY",
-    "nota": "Para conectar Google Sheets: 1) Abrir el sheet, 2) Extensiones → Apps Script → pegar google-sheets-setup/apps-script.js → ejecutar 'setup', 3) Implementar como Web App, 4) pegar la URL en google_sheets_url y cambiar fuente a 'apps-script'."
+    "fuente": "local",
+    "nota": "Contenido servido desde este archivo. La sincronizacion con la planilla vuelve via GitHub Action del lado del servidor (ver documentacion/plan-panel-admin.md)."
   },
-
   "hero": {
     "descripcion": "Vocación creativa para imaginar lo que todavía no existe. Compromiso ético para responder por lo que hacemos aparecer en el mundo. Pensamiento crítico para desconfiar de las respuestas demasiado rápidas. Autonomía para encontrar una voz propia entre tanto ruido. Trabajo colectivo porque ninguna idea crece sola. Identidad propia como herramienta distintiva. Visión estratégica para mirar más allá de lo inmediato. Impacto social porque todo diseño se vincula con personas. Esfera pública como espacio de encuentro, discusión y transformación. Investigación como curiosidad sistematizada. Tecnologías emergentes para explorar nuevos lenguajes y posibilidades. Innovación entendida como cambio con sentido. Procesos que importan tanto como los resultados. Productos que cuentan historias además de cumplir funciones. Sistemas que conectan personas, objetos y contextos. Prácticas materiales para pensar con las manos. Prácticas visuales para hacer visible lo invisible. Prácticas digitales para habitar los territorios contemporáneos. Interdisciplinariedad como conversación entre miradas distintas. Liderazgo para convocar, escuchar y movilizar. Adaptabilidad para cambiar de rumbo sin perder el horizonte."
   },
-
   "escuela": {
     "historia_p1": "La Escuela de Diseño de la Universidad Diego Portales nació con el objetivo de formar diseñadores capaces de articular práctica proyectual, pensamiento crítico y conocimiento técnico. Desde sus orígenes ha construido una cultura de taller donde el trabajo colectivo, la experimentación y el rigor conviven en un mismo espacio.",
     "historia_p2": "A lo largo de los años la escuela ha consolidado cuatro menciones —Gráfico, Industrial, Interacción e Indumentaria— que permiten a cada estudiante profundizar en un área sin perder la mirada transversal del diseño como disciplina.",
@@ -17,7 +13,6 @@
     "cita": "«Diseñar es una forma de pensar el mundo y de proponer formas de habitarlo.»",
     "instalaciones_intro": "La Escuela habita el campus-ciudad entre <strong>República</strong> y <strong>Salvador Sanfuentes</strong>; abajo las instalaciones y más adelante la malla curricular con cada ramo descrito."
   },
-
   "instalaciones": [
     {
       "nombre": "Av. República 180",
@@ -36,11 +31,9 @@
       "desc": "Laboratorio de Materiales y Prototipos: investigación y fabricación que articula disciplinas del diseño con prototipado y experimentación material."
     }
   ],
-
   "infraestructura": {
     "intro": "La Escuela de Diseño UDP ocupa dos sedes en el barrio universitario de Santiago, con más de 11.000 m² dedicados a talleres, laboratorios, auditorios y espacios de trabajo colaborativo."
   },
-
   "proyectos_destacados": [
     {
       "nombre": "Festival 26 Fauna Primavera",
@@ -59,7 +52,6 @@
       "desc": "Serie de piezas editoriales de autor que cruzan ilustración y tipografía experimental. Cada entrega construye una vitrina creativa en torno a un referente del diseño gráfico contemporáneo. Tercer Semestre."
     }
   ],
-
   "menciones": {
     "intro": "El pregrado en Diseño UDP ofrece cuatro menciones que permiten especialización desde el quinto semestre, manteniendo una base común de formación proyectual.",
     "grafico": "",
@@ -67,13 +59,11 @@
     "interaccion": "",
     "textil": ""
   },
-
   "pregrado": {
     "intro": "Licenciatura en Diseño con mención. Diez semestres de formación proyectual, teórica y práctica. Titulación vía proyecto de grado o memoria.",
     "psu_paes": "Postulación a través del proceso regular del DEMRE. Puntaje ponderado según factores de selección vigentes.",
     "via_especial": "Admisión por portafolio, equidad de género, pueblos originarios, deportistas de alto rendimiento y otras vías especiales UDP."
   },
-
   "postgrado": {
     "intro": "Programas de especialización y profundización para diseñadores y profesionales afines que buscan desarrollar investigación aplicada o avanzar en su práctica disciplinar.",
     "programas": [
@@ -100,33 +90,75 @@
       }
     ]
   },
-
   "convenios": {
     "intro": "La FaAAD mantiene acuerdos de colaboración con instituciones nacionales e internacionales para fortalecer la formación, la movilidad estudiantil y el desarrollo de proyectos conjuntos.",
     "items": [
-      { "tipo": "Nacional", "nombre": "Bellas Artes", "desc": "Colaboración en proyectos de arte, diseño y cultura visual contemporánea." },
-      { "tipo": "Nacional", "nombre": "Museo de la Memoria", "desc": "Proyectos de diseño aplicados a la comunicación y preservación de la memoria histórica." },
-      { "tipo": "Nacional", "nombre": "Latino Type", "desc": "Colaboración en investigación y desarrollo tipográfico con enfoque latinoamericano." },
-      { "tipo": "Nacional", "nombre": "Parquemet", "desc": "Proyectos de señalética, diseño ambiental y comunicación en espacios públicos." },
-      { "tipo": "Nacional", "nombre": "Artequin", "desc": "Vínculos de diseño educativo y mediación cultural para públicos infantiles y juveniles." },
-      { "tipo": "Nacional", "nombre": "Ojo por Ojo", "desc": "Cooperación en proyectos editoriales y de cultura visual independiente." },
-      { "tipo": "Nacional", "nombre": "Teatro Municipal", "desc": "Diseño de comunicación, identidad gráfica y piezas para producción cultural." },
-      { "tipo": "Nacional", "nombre": "Museo Taller*", "desc": "Espacio de colaboración en diseño experimental, fabricación y práctica artesanal." },
-      { "tipo": "Nacional", "nombre": "Puro Chile", "desc": "Proyectos de identidad y promoción del diseño y la cultura local." }
+      {
+        "tipo": "Nacional",
+        "nombre": "Bellas Artes",
+        "desc": "Colaboración en proyectos de arte, diseño y cultura visual contemporánea."
+      },
+      {
+        "tipo": "Nacional",
+        "nombre": "Museo de la Memoria",
+        "desc": "Proyectos de diseño aplicados a la comunicación y preservación de la memoria histórica."
+      },
+      {
+        "tipo": "Nacional",
+        "nombre": "Latino Type",
+        "desc": "Colaboración en investigación y desarrollo tipográfico con enfoque latinoamericano."
+      },
+      {
+        "tipo": "Nacional",
+        "nombre": "Parquemet",
+        "desc": "Proyectos de señalética, diseño ambiental y comunicación en espacios públicos."
+      },
+      {
+        "tipo": "Nacional",
+        "nombre": "Artequin",
+        "desc": "Vínculos de diseño educativo y mediación cultural para públicos infantiles y juveniles."
+      },
+      {
+        "tipo": "Nacional",
+        "nombre": "Ojo por Ojo",
+        "desc": "Cooperación en proyectos editoriales y de cultura visual independiente."
+      },
+      {
+        "tipo": "Nacional",
+        "nombre": "Teatro Municipal",
+        "desc": "Diseño de comunicación, identidad gráfica y piezas para producción cultural."
+      },
+      {
+        "tipo": "Nacional",
+        "nombre": "Museo Taller*",
+        "desc": "Espacio de colaboración en diseño experimental, fabricación y práctica artesanal."
+      },
+      {
+        "tipo": "Nacional",
+        "nombre": "Puro Chile",
+        "desc": "Proyectos de identidad y promoción del diseño y la cultura local."
+      }
     ]
   },
-
   "internacionalizacion": {
     "intro": "Programas de movilidad estudiantil y académica que permiten a estudiantes de la FaAAD realizar semestres en universidades extranjeras y recibir estudiantes internacionales.",
     "saliente_desc": "Estudiantes FaAAD pueden postular a universidades socias en Europa, Latinoamérica y Norteamérica a partir del quinto semestre.",
     "entrante_desc": "La FaAAD recibe estudiantes internacionales que participan en talleres de mención, electivos y proyectos de investigación.",
     "regiones": [
-      { "nombre": "Europa", "desc": "+8 universidades socias en España, Países Bajos, Alemania e Italia." },
-      { "nombre": "Latinoamérica", "desc": "Redes con escuelas de diseño en Argentina, Brasil, Colombia y México." },
-      { "nombre": "Norteamérica", "desc": "Vínculos con universidades en Estados Unidos y Canadá para intercambio semestral." }
+      {
+        "nombre": "Europa",
+        "desc": "+8 universidades socias en España, Países Bajos, Alemania e Italia."
+      },
+      {
+        "nombre": "Latinoamérica",
+        "desc": "Redes con escuelas de diseño en Argentina, Brasil, Colombia y México."
+      },
+      {
+        "nombre": "Norteamérica",
+        "desc": "Vínculos con universidades en Estados Unidos y Canadá para intercambio semestral."
+      }
     ]
   },
-
   "docentes": [
     {
       "id": "sergio-majluf",
@@ -138,9 +170,21 @@
       "antiguedad": "1 año",
       "instagram": "@ux_udp",
       "bio": "Diseñador UC (Chile) y Master en Interactive Telecommunications de New York University. Educador por vocación y promotor de la cultura maker por espíritu, trabaja desde las metodologías de diseño e innovación para el desarrollo, gestión y liderazgo de programas educacionales. Ha participado en la creación, dirección y liderazgo de programas de vinculación con el medio, educación continua, pregrado y posgrado en distintas universidades.",
-      "asignaturas": ["Taller de Diseño de Interfaces (UI)", "Taller de Diseño de Experiencias (UX)", "Fundamentos de UX (Diplomado UDP)"],
-      "areas": ["Diseño de Interacción", "Innovación y Emprendimiento", "Evaluación"],
-      "fortalezas": ["Flexibilidad y trabajo en equipo", "Educación", "Prospección tecnológica"]
+      "asignaturas": [
+        "Taller de Diseño de Interfaces (UI)",
+        "Taller de Diseño de Experiencias (UX)",
+        "Fundamentos de UX (Diplomado UDP)"
+      ],
+      "areas": [
+        "Diseño de Interacción",
+        "Innovación y Emprendimiento",
+        "Evaluación"
+      ],
+      "fortalezas": [
+        "Flexibilidad y trabajo en equipo",
+        "Educación",
+        "Prospección tecnológica"
+      ]
     },
     {
       "id": "aaron-montoya",
@@ -153,10 +197,28 @@
       "antiguedad": "1 año",
       "instagram": "@ux_udp",
       "bio": "Ingeniere Eléctrique PUC, magíster en Artes Mediales del Interactive Telecommunications Program (ITP) en New York University, magíster en Artes Mediales y Ciencias de MIT Media Lab, becarie de CONICYT y de Processing Foundation.",
-      "asignaturas": ["Taller de Interfaz de Usuario UI", "Taller de Experiencia de Usuario UX", "Diseño Página Web", "Programación Creativa Multimedia"],
-      "areas": ["Computación aplicada a diseño y artes", "Tecnologías web para diseño y artes mediales", "Ética en inteligencia artificial", "Diseño de instrumentos musicales digitales y análogos"],
-      "fortalezas": ["Formación multidisciplinar", "Habilidades en diseño y escritura de software y hardware"],
-      "galeria": ["assets/img/montoya 1.png", "assets/img/montoya 2.png", "assets/img/montoya 3.png", "assets/img/montoya 4.png"]
+      "asignaturas": [
+        "Taller de Interfaz de Usuario UI",
+        "Taller de Experiencia de Usuario UX",
+        "Diseño Página Web",
+        "Programación Creativa Multimedia"
+      ],
+      "areas": [
+        "Computación aplicada a diseño y artes",
+        "Tecnologías web para diseño y artes mediales",
+        "Ética en inteligencia artificial",
+        "Diseño de instrumentos musicales digitales y análogos"
+      ],
+      "fortalezas": [
+        "Formación multidisciplinar",
+        "Habilidades en diseño y escritura de software y hardware"
+      ],
+      "galeria": [
+        "assets/img/montoya 1.png",
+        "assets/img/montoya 2.png",
+        "assets/img/montoya 3.png",
+        "assets/img/montoya 4.png"
+      ]
     },
     {
       "id": "manuel-cordova",
@@ -168,9 +230,20 @@
       "antiguedad": "20 años",
       "instagram": "@tiyda_udp",
       "bio": "Diseñador Gráfico de la U de Chile, Máster en Branding por la Universitat Pompeu Fabra (Barcelona). Co-fundador de Comunas Unidas, estudio de diseño con base en Santiago activo desde 2004.",
-      "asignaturas": ["Taller de Branding S01", "Taller de Dirección de Arte S02", "Narrativas Visuales e Inteligencia Artificial (DIS)"],
-      "areas": ["Identidad visual", "Comunicación visual para cultura y artes"],
-      "fortalezas": ["Versátil", "Empático", "Riguroso"]
+      "asignaturas": [
+        "Taller de Branding S01",
+        "Taller de Dirección de Arte S02",
+        "Narrativas Visuales e Inteligencia Artificial (DIS)"
+      ],
+      "areas": [
+        "Identidad visual",
+        "Comunicación visual para cultura y artes"
+      ],
+      "fortalezas": [
+        "Versátil",
+        "Empático",
+        "Riguroso"
+      ]
     },
     {
       "id": "ariel-altamirano",
@@ -182,9 +255,19 @@
       "antiguedad": "10 años",
       "instagram": "@tiyda_udp",
       "bio": "Diseñador gráfico dedicado más de 15 años al diseño de discos y trabajo en el ámbito de la música y cultura. Fundador y director del sello de música electrónica Discos Pegaos.",
-      "asignaturas": ["Taller de Exploración y Cultura Visual", "Taller de Branding: Productos y Servicios"],
-      "areas": ["Diseño Gráfico", "Música", "Cultura & Artes", "Audiovisual"],
-      "fortalezas": ["Versatilidad"]
+      "asignaturas": [
+        "Taller de Exploración y Cultura Visual",
+        "Taller de Branding: Productos y Servicios"
+      ],
+      "areas": [
+        "Diseño Gráfico",
+        "Música",
+        "Cultura & Artes",
+        "Audiovisual"
+      ],
+      "fortalezas": [
+        "Versatilidad"
+      ]
     },
     {
       "id": "aribel-gonzalez",
@@ -196,9 +279,18 @@
       "antiguedad": "1 año",
       "instagram": "—",
       "bio": "Diseñadora gráfica egresada de la Pontificia Universidad Católica de Chile, especializada en diseño editorial y diseño de identidad. Desde 2014 es socia y directora de arte de la editorial de fotografía Buen Lugar.",
-      "asignaturas": ["Taller de Museografía y Proyectos Expositivos"],
-      "areas": ["Diseño editorial", "Fotolibros", "Diseño de identidad"],
-      "fortalezas": ["Responsabilidad", "Orden"]
+      "asignaturas": [
+        "Taller de Museografía y Proyectos Expositivos"
+      ],
+      "areas": [
+        "Diseño editorial",
+        "Fotolibros",
+        "Diseño de identidad"
+      ],
+      "fortalezas": [
+        "Responsabilidad",
+        "Orden"
+      ]
     },
     {
       "id": "alvaro-arteaga",
@@ -210,9 +302,22 @@
       "antiguedad": "12 años",
       "instagram": "@taller_editorial_ilustrado",
       "bio": "Diseñador gráfico e ilustrador profesional. Dedicado a la docencia hace 15 años, 12 de ellos en la Escuela de Diseño UDP. Especializado en temas de dibujo, ilustración, fotografía, cine y cultura popular.",
-      "asignaturas": ["Taller Editorial Publicaciones", "Laboratorio de Dibujo e Imagen", "Comunicación Gráfica II", "Fotografía"],
-      "areas": ["Diseño Gráfico", "Dirección de Arte", "Ilustración", "Fotografía"],
-      "fortalezas": ["Rigurosidad", "Motivación"]
+      "asignaturas": [
+        "Taller Editorial Publicaciones",
+        "Laboratorio de Dibujo e Imagen",
+        "Comunicación Gráfica II",
+        "Fotografía"
+      ],
+      "areas": [
+        "Diseño Gráfico",
+        "Dirección de Arte",
+        "Ilustración",
+        "Fotografía"
+      ],
+      "fortalezas": [
+        "Rigurosidad",
+        "Motivación"
+      ]
     },
     {
       "id": "jennifer-king",
@@ -224,7 +329,9 @@
       "antiguedad": "29 años",
       "instagram": "@taller_editorial_ilustrado",
       "bio": "Docente con 29 años de trayectoria en la institución. Especializada en ediciones ilustradas y publicaciones. Además ejerce como docente en el Diplomado de Ilustración de la PUC.",
-      "asignaturas": ["Taller Vertical Ediciones Ilustradas"],
+      "asignaturas": [
+        "Taller Vertical Ediciones Ilustradas"
+      ],
       "areas": [],
       "fortalezas": []
     },
@@ -238,9 +345,16 @@
       "antiguedad": "18 años",
       "instagram": "@reobserva",
       "bio": "Diseñador Industrial UDP y amante de la naturaleza. Cuenta con una maestría en Territorio y Paisaje de la UDP, estudios de Diseño Avanzado de Productos en NAVA y más de 18 años de carrera docente.",
-      "asignaturas": ["Taller Diseño en Áreas Protegidas"],
-      "areas": ["Territorio y paisaje"],
-      "fortalezas": ["Conocimiento interdisciplinar", "Trabajo en equipo"]
+      "asignaturas": [
+        "Taller Diseño en Áreas Protegidas"
+      ],
+      "areas": [
+        "Territorio y paisaje"
+      ],
+      "fortalezas": [
+        "Conocimiento interdisciplinar",
+        "Trabajo en equipo"
+      ]
     },
     {
       "id": "juan-gili",
@@ -252,9 +366,20 @@
       "antiguedad": "12 años",
       "instagram": "@reobserva",
       "bio": "Diseñador Industrial, Magíster en Territorio y Paisaje de la UDP. Ha investigado, conservado y divulgado sitios arqueológicos del Norte Grande de Chile. Premio de Conservación 2017 del Consejo de Monumentos Nacionales.",
-      "asignaturas": ["Taller Diseño para Áreas Silvestres"],
-      "areas": ["Diseño de Equipamiento para Parques y Reservas", "Museografía y Montaje", "Arqueología y Conservación"],
-      "fortalezas": ["Producción", "Resolución de problemas", "Adaptación al cambio", "Buen trato humano"]
+      "asignaturas": [
+        "Taller Diseño para Áreas Silvestres"
+      ],
+      "areas": [
+        "Diseño de Equipamiento para Parques y Reservas",
+        "Museografía y Montaje",
+        "Arqueología y Conservación"
+      ],
+      "fortalezas": [
+        "Producción",
+        "Resolución de problemas",
+        "Adaptación al cambio",
+        "Buen trato humano"
+      ]
     },
     {
       "id": "vicente-stephens",
@@ -266,9 +391,17 @@
       "antiguedad": "2 años",
       "instagram": "@procesos.fabricacion.udp",
       "bio": "Diseñador Industrial UDP especializado en el desarrollo y fabricación de objetos y muebles de madera. Tiene una fábrica en la cual colabora con diferentes arquitectos, artistas y diseñadores para crear sus proyectos.",
-      "asignaturas": ["Taller de Investigación y Desarrollo Material"],
-      "areas": ["Fabricación y diseño industrial"],
-      "fortalezas": ["Desarrollo, construcción y fabricación", "Dibujo técnico y a mano alzada", "Estudio de materiales"]
+      "asignaturas": [
+        "Taller de Investigación y Desarrollo Material"
+      ],
+      "areas": [
+        "Fabricación y diseño industrial"
+      ],
+      "fortalezas": [
+        "Desarrollo, construcción y fabricación",
+        "Dibujo técnico y a mano alzada",
+        "Estudio de materiales"
+      ]
     },
     {
       "id": "margarita-talep",
@@ -280,9 +413,25 @@
       "antiguedad": "5 años",
       "instagram": "@procesos.fabricacion.udp",
       "bio": "Diseñadora Industrial (Rancagua, 1995). Reconocida como Top 50 Thinkers to Rebuild the World por Prospect Magazine (2021) y galardonada como Egresada Destacada UDP 2021.",
-      "asignaturas": ["Taller de Procesos y Fabricación S02", "Taller de Investigación y Desarrollo Material S01", "Visualización y Materia (ARQ)", "Experimentación y Producción Biomaterial (DIS)"],
-      "areas": ["Materiales", "Biomateriales", "Biodiseño"],
-      "fortalezas": ["Responsable", "Observadora", "Mediadora", "Inspiradora", "Empática", "Rigurosa"]
+      "asignaturas": [
+        "Taller de Procesos y Fabricación S02",
+        "Taller de Investigación y Desarrollo Material S01",
+        "Visualización y Materia (ARQ)",
+        "Experimentación y Producción Biomaterial (DIS)"
+      ],
+      "areas": [
+        "Materiales",
+        "Biomateriales",
+        "Biodiseño"
+      ],
+      "fortalezas": [
+        "Responsable",
+        "Observadora",
+        "Mediadora",
+        "Inspiradora",
+        "Empática",
+        "Rigurosa"
+      ]
     },
     {
       "id": "alejandra-ruiz",
@@ -294,9 +443,19 @@
       "antiguedad": "14 años",
       "instagram": "@tallersostenible",
       "bio": "Diseñadora UDP certificada en Fashion Sustainability en Parsons School of Design (NYC). Socia fundadora del estudio boutique CR, especializado en moda sostenible con clientes en Santiago, Buenos Aires y Nueva York.",
-      "asignaturas": ["Taller de Productos Sostenibles", "Taller de Textil e Indumentaria Sostenible"],
-      "areas": ["Textil e indumentaria sostenible", "Estrategia y gestión en la industria del textil e indumentaria"],
-      "fortalezas": ["Sostenibilidad", "Educación", "Innovación"]
+      "asignaturas": [
+        "Taller de Productos Sostenibles",
+        "Taller de Textil e Indumentaria Sostenible"
+      ],
+      "areas": [
+        "Textil e indumentaria sostenible",
+        "Estrategia y gestión en la industria del textil e indumentaria"
+      ],
+      "fortalezas": [
+        "Sostenibilidad",
+        "Educación",
+        "Innovación"
+      ]
     },
     {
       "id": "paulina-romero",
@@ -308,9 +467,20 @@
       "antiguedad": "12 años",
       "instagram": "@taller_indumentariatx",
       "bio": "Diseñadora de la Pontificia Universidad Católica de Chile. Magíster en Artes con mención en Artes Visuales, Universidad de Chile. Diseñadora y Artista Textil con más de 20 años de experiencia en docencia.",
-      "asignaturas": ["Taller Vertical Indumentaria", "Superficies Textiles"],
-      "areas": ["Diseño de instrumentos para mejora de aprendizajes", "Teñidos naturales con hierbas chilenas", "El textil e indumentaria como modelador de sistemas de consumo"],
-      "fortalezas": ["Gran experiencia docente", "Adaptabilidad", "Creatividad para el aprendizaje significativo"]
+      "asignaturas": [
+        "Taller Vertical Indumentaria",
+        "Superficies Textiles"
+      ],
+      "areas": [
+        "Diseño de instrumentos para mejora de aprendizajes",
+        "Teñidos naturales con hierbas chilenas",
+        "El textil e indumentaria como modelador de sistemas de consumo"
+      ],
+      "fortalezas": [
+        "Gran experiencia docente",
+        "Adaptabilidad",
+        "Creatividad para el aprendizaje significativo"
+      ]
     },
     {
       "id": "eugenia-ibarra",
@@ -322,9 +492,19 @@
       "antiguedad": "1 año",
       "instagram": "@taller_indumentariatx",
       "bio": "Diseñadora textil y de vestuario, con formación en marketing y comunicación de moda. Creadora de la marca sostenible Ropa de Género (RDG) desde 2006.",
-      "asignaturas": ["Taller Vertical Indumentaria", "Superficies Textiles"],
-      "areas": ["Investigación textil", "Metodología y certificación Tejido Escapular"],
-      "fortalezas": ["Creatividad e ingenio", "Compromiso social", "Versatilidad y flexibilidad"]
+      "asignaturas": [
+        "Taller Vertical Indumentaria",
+        "Superficies Textiles"
+      ],
+      "areas": [
+        "Investigación textil",
+        "Metodología y certificación Tejido Escapular"
+      ],
+      "fortalezas": [
+        "Creatividad e ingenio",
+        "Compromiso social",
+        "Versatilidad y flexibilidad"
+      ]
     },
     {
       "id": "felipe-sepulveda",
@@ -336,19 +516,32 @@
       "antiguedad": "1 año",
       "instagram": "@tallersostenible",
       "bio": "Diseñador y Licenciado en Artes (carreras paralelas) de la PUC. Con 13 años de trayectoria en destacadas empresas de retail nacional. Creador y jefe del Diplomado en Vitrinismo y Visual Merchandising de la PUC.",
-      "asignaturas": ["Taller Vertical Integrado de Productos Sostenibles", "Taller de Textiles de Punto"],
-      "areas": ["Creación para el textil e indumentaria y sostenibilidad"],
-      "fortalezas": ["Innovación para la sostenibilidad en el textil e indumentaria", "Transferencia de conocimiento", "Compromiso docente", "Trabajo en equipo"]
+      "asignaturas": [
+        "Taller Vertical Integrado de Productos Sostenibles",
+        "Taller de Textiles de Punto"
+      ],
+      "areas": [
+        "Creación para el textil e indumentaria y sostenibilidad"
+      ],
+      "fortalezas": [
+        "Innovación para la sostenibilidad en el textil e indumentaria",
+        "Transferencia de conocimiento",
+        "Compromiso docente",
+        "Trabajo en equipo"
+      ]
     }
   ],
-
   "laboratorios": [
     {
       "id": "otf",
       "handle": "OTF",
       "nombre": "Laboratorio OTF",
       "sub": "Oficina Tipográfica",
-      "tags": ["Tipografía", "Editorial", "Análogo"],
+      "tags": [
+        "Tipografía",
+        "Editorial",
+        "Análogo"
+      ],
       "instagram": "@laboratorio.otf",
       "url": "https://www.instagram.com/laboratorio.otf/"
     },
@@ -357,7 +550,11 @@
       "handle": "LAB 360",
       "nombre": "LAB 360",
       "sub": "Exploración gráfica UDP",
-      "tags": ["Risografía", "Ilustración", "Gráfica"],
+      "tags": [
+        "Risografía",
+        "Ilustración",
+        "Gráfica"
+      ],
       "instagram": "@lab360.udp",
       "url": "https://www.instagram.com/lab360.udp/"
     },
@@ -366,7 +563,11 @@
       "handle": "LID",
       "nombre": "LID",
       "sub": "Interacción Digital UDP",
-      "tags": ["UX / UI", "VR / AR", "Digital"],
+      "tags": [
+        "UX / UI",
+        "VR / AR",
+        "Digital"
+      ],
       "instagram": "@lid.udp",
       "url": "https://www.instagram.com/lid.udp/",
       "video": "assets/video/LID_720.mp4"
@@ -376,7 +577,10 @@
       "handle": "Editorial",
       "nombre": "Centro Editorial",
       "sub": "Diseño UDP",
-      "tags": ["Publicaciones", "Investigación"],
+      "tags": [
+        "Publicaciones",
+        "Investigación"
+      ],
       "instagram": "@centroeditorial",
       "url": "https://www.instagram.com/centroeditorialdisenoudp/",
       "video": "assets/video/Centro_Editorial_720.mp4"
@@ -386,7 +590,11 @@
       "handle": "Moda",
       "nombre": "Lab Moda",
       "sub": "Diseño de Indumentaria",
-      "tags": ["Indumentaria", "Sostenibilidad", "Textiles"],
+      "tags": [
+        "Indumentaria",
+        "Sostenibilidad",
+        "Textiles"
+      ],
       "video": "assets/video/Lab_Moda_720.mp4"
     },
     {
@@ -394,7 +602,13 @@
       "handle": "Pañol",
       "nombre": "Pañol Digital",
       "sub": "Préstamo de equipos y fabricación digital",
-      "tags": ["Herramientas", "Equipamiento", "CNC", "Láser", "3D"],
+      "tags": [
+        "Herramientas",
+        "Equipamiento",
+        "CNC",
+        "Láser",
+        "3D"
+      ],
       "video": "assets/video/LABFAB_720.mp4"
     },
     {
@@ -402,10 +616,12 @@
       "handle": "Bio",
       "nombre": "Biomateriales",
       "sub": "Investigación de materiales",
-      "tags": ["Biodiseño", "Sustentable"]
+      "tags": [
+        "Biodiseño",
+        "Sustentable"
+      ]
     }
   ],
-
   "casos_exito": {
     "intro": "Historias reales de estudiantes, alumni y docentes que han transformado su formación en impacto profesional y cultural.",
     "items": [
@@ -431,13 +647,11 @@
       }
     ]
   },
-
   "visita_faaad": {
     "intro": "Conoce en persona la Escuela de Diseño UDP. Recorremos contigo las sedes, los laboratorios y los talleres para que veas de cerca cómo es estudiar diseño aquí.",
     "presencial_desc": "Todos los meses organizamos jornadas de puertas abiertas para futuros estudiantes y sus familias. Recorre las instalaciones, conoce docentes y estudiantes en actividad.",
     "virtual_desc": "Si no puedes venir en persona, organizamos sesiones online con docentes y estudiantes para resolver todas tus dudas sobre la carrera y el proceso de postulación."
   },
-
   "vida_estudiantil": {
     "intro": "Ser parte de la FaAAD es más que cursar ramos. Es integrarse a una comunidad creativa activa, con proyectos, talleres, viajes y redes que se construyen durante toda la carrera.",
     "comunidad_titulo": "Comunidad y cultura",
@@ -447,7 +661,6 @@
     "talleres_titulo": "Talleres y electivos",
     "talleres_desc": "Oferta de talleres transversales, electivos y workshops con invitados nacionales e internacionales."
   },
-
   "cursos_abiertos": {
     "intro": "La Escuela de Diseño UDP ofrece cursos de extensión y formación continua abiertos a profesionales, egresados y público general, sin necesidad de matrícula regular.",
     "cursos": [
@@ -475,7 +688,6 @@
       }
     ]
   },
-
   "publicaciones": {
     "intro": "Revistas académicas y editoriales de la Escuela de Diseño UDP: documentos vivos de investigación, práctica y pensamiento sobre el diseño.",
     "items": [
