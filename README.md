@@ -4,9 +4,12 @@ Sitio **estático** (HTML + CSS + JavaScript, sin servidor ni base de datos)
 de la Escuela de Diseño de la Universidad Diego Portales.
 
 - **Publicación:** GitHub Pages (sirve estos archivos tal cual).
-- **Contenido editorial:** editable desde una planilla Google Sheets, sin
-  tocar código.
-- **Repositorio destino:** organización GitHub `disenoUDP`.
+- **Contenido editorial:** modelo híbrido — un **panel de administración**
+  (`/admin`) para imágenes, archivos y textos de página, y **Google
+  Sheets** para las listas (proyectos, agenda, docentes, cursos). Una
+  GitHub Action sincroniza todo. Ver `documentacion/plan-panel-admin.md`.
+- **Repositorio:** hoy `emiguerra/diseno-web-udp` (personal); se
+  transfiere a la organización GitHub `disenoUDP`.
 
 > Este proyecto nació como *wireframe* (prototipo navegable) y se está
 > pasando a producción manteniendo el modelo estático por ser el más
@@ -104,12 +107,18 @@ y fusionar a `main` con *Pull Request* revisado.
 
 ## 4. Editar contenido y código
 
+Regla: **tabla → planilla; archivo o texto de página → panel `/admin`.**
+
 | Qué cambia | Quién | Cómo |
 |---|---|---|
-| Textos, agenda, portafolio | Comunicaciones | Editar la **planilla Google Sheets**. El sitio la refleja. |
+| Listas: proyectos, agenda, docentes, cursos | Comunicaciones | Editar la **planilla Google Sheets** (se abre desde el panel `/admin`). Una GitHub Action la convierte en JSON y republica. |
+| Imágenes, archivos, textos de página | Comunicaciones | **Panel `/admin`** (formularios). El panel hace el *commit*. |
 | Diseño / estructura | Equipo web | Editar los `.html`, `assets/css/styles.css` o `assets/js/main.js` → *commit*. |
-| Imágenes | Equipo web | Optimizar (**< 300 KB**) y dejarlas en la subcarpeta de `assets/img/` que corresponda → *commit*. |
 | Videos | Comunicaciones | Ver sección 6. |
+
+> El panel `/admin` aún no está implementado. Mientras tanto: listas en
+> Google Sheets (lectura en vivo), imágenes y archivos subidos
+> directamente al repo. Ver `documentacion/plan-panel-admin.md`.
 
 Paso a paso para no-programadores: **`documentacion/guia-edicion.md`**.
 
@@ -117,10 +126,14 @@ Paso a paso para no-programadores: **`documentacion/guia-edicion.md`**.
 
 ## 5. Datos y fuentes externas
 
-Cada bloque dinámico intenta leer una fuente externa **en vivo** y, si
-falla, usa el archivo JSON local del repo como respaldo:
+**Objetivo:** una GitHub Action regenera los `.json` desde las planillas
+y el RSS de UDP en cada publicación; el navegador del visitante no
+contacta servicios externos.
 
-| Bloque | Fuente en vivo | Respaldo local |
+**Estado actual (transitorio),** hasta implementar la Action: cada
+bloque lee una fuente externa en vivo y, si falla, usa el JSON local:
+
+| Bloque | Fuente en vivo (transitoria) | Respaldo / destino local |
 |---|---|---|
 | Textos | Google Apps Script (Google Sheet) | `contenido.json` |
 | Portafolio | Google Sheets API v4 (hoja "Proyectos") | `portafolio-data.json` |
@@ -159,15 +172,19 @@ manuales.
 
 ## 8. Pendientes para dejar la arquitectura operativa
 
-1. Un *owner* de `disenoUDP` crea el repositorio y da acceso de escritura
-   al equipo (los miembros no pueden crear repos en la organización).
-2. Subir esta carpeta y activar GitHub Pages (**Settings → Pages**, servir
-   desde la raíz de `main`).
-3. Mover los videos a Vimeo / YouTube (sección 6).
-4. Restringir la API key de Google Sheets (por dominio y a solo lectura).
-5. Retirar el hosting provisorio de Netlify.
-6. (Opcional) GitHub Actions para congelar el contenido de Sheets en los
-   JSON y validar enlaces antes de publicar.
+1. Completar la subida del sitio al repo `emiguerra/diseno-web-udp` (hoy
+   faltan `assets/`, `cursos/` y `documentacion/`).
+2. Activar GitHub Pages (**Settings → Pages**, servir desde la raíz de
+   `main`).
+3. Transferir el repositorio a la organización `disenoUDP` y dar acceso
+   de escritura al equipo.
+4. Implementar el panel `/admin` + la GitHub Action de sincronización
+   (ver `documentacion/plan-panel-admin.md`).
+5. Mover los videos a Vimeo / YouTube (sección 6).
+6. Restringir la API key de Google Sheets (por dominio y a solo lectura)
+   mientras exista la lectura en vivo.
+7. Alojar las librerías JS en `assets/vendor/` con hash SRI.
+8. Retirar el hosting provisorio de Netlify.
 
 ---
 
@@ -177,4 +194,6 @@ manuales.
   para IT / UDP (integración, procesos, tecnologías, despliegues,
   dependencias).
 - **`documentacion/arquitectura.md`** — resumen de arquitectura.
+- **`documentacion/plan-panel-admin.md`** — plan del panel de
+  administración + planillas + GitHub Action.
 - **`documentacion/guia-edicion.md`** — guía de edición y publicación.

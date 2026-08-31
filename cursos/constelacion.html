@@ -1,0 +1,2552 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Constelación UDP — v3</title>
+<style>
+  @font-face {
+    font-family: 'NectoMono';
+    src: url('../assets/fonts/NectoMono-Regular.otf') format('opentype');
+    font-weight: 400; font-style: normal;
+  }
+  @font-face {
+    font-family: 'WorkSans';
+    src: url('../assets/fonts/WorkSans-Regular.ttf') format('truetype');
+    font-weight: 400; font-style: normal;
+  }
+  @font-face {
+    font-family: 'WorkSans';
+    src: url('../assets/fonts/WorkSans-Regular.ttf') format('truetype');
+    font-weight: 600; font-style: normal;
+  }
+
+  /* Tipografía de la lista de proyectos (escalada al polígono 330×960) */
+  .proj-section-title {
+    font-family: 'WorkSans', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    fill: rgba(255,255,255,0.55);
+    letter-spacing: .22em;
+    text-transform: uppercase;
+  }
+  .proj-num {
+    font-family: 'WorkSans', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    fill: rgba(255,255,255,0.45);
+    letter-spacing: .08em;
+  }
+  .proj-name {
+    font-family: 'WorkSans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    fill: #ffffff;
+    letter-spacing: .005em;
+  }
+  .proj-info {
+    font-family: 'WorkSans', sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    fill: rgba(255,255,255,0.7);
+    letter-spacing: .02em;
+  }
+  .proj-section {
+    font-family: 'NectoMono', 'Courier New', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    fill: rgba(255,255,255,0.88);
+    letter-spacing: .22em;
+    text-transform: uppercase;
+  }
+  .proj-section-count {
+    font-family: 'NectoMono', 'Courier New', monospace;
+    font-size: 7.5px;
+    font-weight: 400;
+    fill: rgba(255,255,255,0.5);
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+  .proj-divider {
+    stroke: #ffffff;
+    stroke-opacity: 0.35;
+    stroke-width: 0.5;
+  }
+  /* Estado activo · click sobre un proyecto enciende su convenio asociado
+     y atenúa los demás proyectos y convenios */
+  .proj-trigger { cursor: pointer; transition: opacity .25s, fill-opacity .25s; }
+  .cnv-item    { transition: opacity .25s, fill-opacity .25s; }
+  .proj-trigger.proj-dim,
+  .cnv-item.cnv-dim {
+    opacity: 0.18;
+  }
+  .proj-trigger.proj-active {
+    fill: #ffffff;
+    fill-opacity: 1;
+  }
+  .cnv-item.cnv-active {
+    fill: #ffffff;
+    fill-opacity: 1;
+    filter: drop-shadow(0 0 4px rgba(255,255,255,0.55));
+  }
+
+  /* Tipografía de la lista de cursos (polígono derecho) */
+  .crs-header {
+    font-family: 'WorkSans', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    fill: #ffffff;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    text-anchor: middle;
+  }
+  .crs-subheader {
+    font-family: 'WorkSans', sans-serif;
+    font-size: 8px;
+    font-weight: 400;
+    fill: rgba(255,255,255,0.55);
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    text-anchor: middle;
+  }
+  .crs-code {
+    font-family: 'WorkSans', sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    fill: #ffffff;
+    letter-spacing: .04em;
+  }
+  .crs-name {
+    font-family: 'WorkSans', sans-serif;
+    font-size: 9px;
+    font-weight: 400;
+    fill: rgba(255,255,255,0.78);
+    letter-spacing: .01em;
+  }
+  .crs-section {
+    font-family: 'NectoMono', 'Courier New', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    fill: rgba(255,255,255,0.88);
+    letter-spacing: .22em;
+    text-transform: uppercase;
+  }
+  .crs-section-count {
+    font-family: 'NectoMono', 'Courier New', monospace;
+    font-size: 7.5px;
+    font-weight: 400;
+    fill: rgba(255,255,255,0.5);
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+  .crs-divider {
+    stroke: #ffffff;
+    stroke-opacity: 0.35;
+    stroke-width: 0.5;
+  }
+
+  /* Tipografía de las 4 menciones (header superior) */
+  .men-title {
+    font-family: 'NectoMono', 'Courier New', monospace;
+    font-size: 8px;
+    font-weight: 700;
+    fill: #ffffff;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+  }
+  .men-body {
+    font-family: 'WorkSans', sans-serif;
+    font-size: 6px;
+    font-weight: 400;
+    fill: rgba(255,255,255,0.82);
+    letter-spacing: .015em;
+  }
+  .men-divider {
+    stroke: #ffffff;
+    stroke-opacity: 0.30;
+    stroke-width: 0.5;
+  }
+
+  /* Tipografía de la leyenda (cuadrante superior derecho) */
+  .lgnd-title {
+    font-family: 'NectoMono', 'Courier New', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    fill: #ffffff;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    text-anchor: middle;
+  }
+  .lgnd-label {
+    font-family: 'WorkSans', sans-serif;
+    font-size: 9px;
+    font-weight: 400;
+    fill: rgba(255,255,255,0.85);
+    letter-spacing: .015em;
+  }
+  .lgnd-divider {
+    stroke: #ffffff;
+    stroke-opacity: 0.35;
+    stroke-width: 0.5;
+  }
+
+  /* Tipografía del header de convenios (8 columnas × 2 filas) */
+  .cnvh-acro {
+    font-family: 'NectoMono', 'Courier New', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    fill: #ffffff;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    text-anchor: middle;
+  }
+  .cnvh-name {
+    font-family: 'WorkSans', sans-serif;
+    font-size: 6px;
+    font-weight: 400;
+    fill: rgba(255,255,255,0.65);
+    letter-spacing: .04em;
+    text-anchor: middle;
+  }
+
+  /* Tipografía del bloque horizontal de menciones (420,870 → 1560,1020) */
+  /* Versión HTML (foreignObject) para texto justificado real */
+  .menv-col {
+    width: 100%;
+    height: 100%;
+    padding: 14px 14px 12px 14px;
+    box-sizing: border-box;
+    font-family: 'WorkSans', sans-serif;
+  }
+  /* Título de mención · cápsula con borde punteado igual a los cuadros
+     delimitadores (stroke #fff opacity 0.4 · width 1 · dasharray 3 3) */
+  .menv-col-title {
+    display: inline-block;
+    background: #000000;
+    border: 1px dashed rgba(255,255,255,0.4);
+    border-radius: 8px;
+    padding: 9px 14px;
+    font-family: 'NectoMono', 'Courier New', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+  .menv-col-body {
+    font-family: 'WorkSans', sans-serif;
+    font-size: 10px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.85);
+    line-height: 1.45;
+    letter-spacing: 0.015em;
+    text-align: justify;
+    text-justify: inter-word;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+  }
+  /* SVG fallbacks (mantenidos por si se necesitan) */
+  .menv-title {
+    font-family: 'WorkSans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    fill: #ffffff;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .menv-tag {
+    font-family: 'NectoMono', 'Courier New', monospace;
+    font-size: 6.5px;
+    font-weight: 400;
+    fill: rgba(255,255,255,0.55);
+    letter-spacing: .18em;
+    text-transform: uppercase;
+  }
+  .menv-body {
+    font-family: 'WorkSans', sans-serif;
+    font-size: 7.5px;
+    font-weight: 400;
+    fill: rgba(255,255,255,0.78);
+    letter-spacing: .015em;
+  }
+  .menv-divider {
+    stroke: #ffffff;
+    stroke-opacity: 0.35;
+    stroke-width: 0.5;
+  }
+
+  /* Tipografía de la lista de convenios (polígono inferior) */
+  .cnv-banner-title {
+    font-family: 'NectoMono', 'Courier New', monospace;
+    font-size: 18px;
+    font-weight: 700;
+    fill: #ffffff;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+  }
+  .cnv-banner-sub {
+    font-family: 'NectoMono', 'Courier New', monospace;
+    font-size: 8px;
+    font-weight: 400;
+    fill: rgba(255,255,255,0.55);
+    letter-spacing: .20em;
+    text-transform: uppercase;
+  }
+  .cnv-acro {
+    font-family: 'WorkSans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    fill: #ffffff;
+    letter-spacing: .03em;
+  }
+  .cnv-name {
+    font-family: 'WorkSans', sans-serif;
+    font-size: 6px;
+    font-weight: 400;
+    fill: rgba(255,255,255,0.7);
+    letter-spacing: .015em;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 100%; height: 100%; background: #000; overflow: hidden; }
+  svg { width: 100%; height: 100%; display: block; }
+
+  /* Tooltip de coordenadas */
+  #coord-tip {
+    position: fixed;
+    pointer-events: none;
+    z-index: 50;
+    background: #000;
+    color: #fff;
+    border: 1px solid #fff;
+    padding: 4px 8px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    letter-spacing: .04em;
+    transform: translate(14px, -28px);
+    opacity: 0;
+    transition: opacity .12s ease;
+  }
+  #coord-tip.visible { opacity: 1; }
+
+  /* Highlight de la + bajo el cursor */
+  #coord-marker {
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .12s ease;
+  }
+  #coord-marker.visible { opacity: 1; }
+
+  /* Cursor visible sólo en modo demo · crosshair blanco fino (mismo look
+     que el cursor "crosshair" del sistema). Eventos sintéticos no mueven
+     el cursor real del SO, por eso dibujamos uno propio para el GIF.
+     Sin transition: la posición se interpola por JS frame-by-frame para
+     que el movimiento se vea fluido como un mouse real. */
+  #demo-cursor {
+    position: fixed;
+    width: 16px;
+    height: 16px;
+    pointer-events: none;
+    z-index: 10000;
+    transform: translate(-50%, -50%);
+    display: none;
+  }
+  #demo-cursor::before,
+  #demo-cursor::after {
+    content: '';
+    position: absolute;
+    background: #ffffff;
+  }
+  #demo-cursor::before {           /* línea horizontal */
+    left: 0; right: 0;
+    top: 50%;
+    height: 1px;
+    margin-top: -0.5px;
+  }
+  #demo-cursor::after {            /* línea vertical */
+    top: 0; bottom: 0;
+    left: 50%;
+    width: 1px;
+    margin-left: -0.5px;
+  }
+  #demo-cursor.visible { display: block; }
+
+  /* Flotación de los nodos · órbita circular de 5 px alrededor de su eje
+     central, ocho posiciones para movimiento suave. Cada nodo entra en
+     distinta fase (animation-delay vía JS por área) y los puntos docentes
+     comparten el timing de su área para flotar con el nodo correspondiente
+     y no quedar ocultos detrás cuando se desplaza. */
+  @keyframes node-float {
+    0%    { transform: translate(5px, 0); }
+    12.5% { transform: translate(3.54px, -3.54px); }
+    25%   { transform: translate(0, -5px); }
+    37.5% { transform: translate(-3.54px, -3.54px); }
+    50%   { transform: translate(-5px, 0); }
+    62.5% { transform: translate(-3.54px, 3.54px); }
+    75%   { transform: translate(0, 5px); }
+    87.5% { transform: translate(3.54px, 3.54px); }
+    100%  { transform: translate(5px, 0); }
+  }
+  .float-node {
+    animation: node-float 8s linear infinite;
+    transform-box: fill-box;
+  }
+
+  /* Cápsulas (pills) — estilo n-filled (blanco con texto negro) */
+  .n-filled rect { fill: #ffffff; stroke: none; }
+  /* Cápsulas estilo n-open (sólo stroke blanco) — usadas en menciones */
+  .n-open rect { fill: #000000; stroke: #ffffff; stroke-width: 1.4; }
+  .caps-name {
+    font-family: 'NectoMono', 'Courier New', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .10em;
+    fill: #000000;
+    text-anchor: middle;
+    dominant-baseline: central;
+    text-transform: uppercase;
+    pointer-events: none;
+  }
+  .n-open .caps-name { fill: #ffffff; }
+
+  /* Aristas CL → menciones (hierárquicas) */
+  .edge-mention {
+    fill: none;
+    stroke: #ffffff;
+    stroke-width: 0.9;
+    stroke-opacity: 0.65;
+    pointer-events: none;
+  }
+
+  /* Camino activo · al hacer click sobre una mención se "encienden"
+     todos los elementos con el mismo data-mention (nodo + aristas + labs).
+     Triggers: nodos del diagrama y títulos del bloque inferior. */
+  .mention-trigger { cursor: pointer; }
+  .mention-trigger rect { transition: stroke-width .18s, stroke-opacity .18s; }
+  div.menv-col-title.mention-trigger {
+    transition: border-color .18s, color .18s;
+  }
+  div.menv-col-title.mention-trigger:hover {
+    border-color: rgba(255,255,255,0.85);
+  }
+  div.menv-col-title.mention-trigger.path-active {
+    background: #ffffff;
+    color: #000000;
+    border-color: #ffffff;
+    border-style: solid;
+  }
+  /* Flujo de electricidad por las aristas activas · marching ants
+     que avanza desde CL hacia los laboratorios. */
+  @keyframes electric-flow {
+    from { stroke-dashoffset: 0; }
+    to   { stroke-dashoffset: -22; }
+  }
+  /* Pulso suave del glow en los nodos del camino activo */
+  @keyframes electric-pulse {
+    0%, 100% { filter: drop-shadow(0 0 3px rgba(255,255,255,0.45)); }
+    50%      { filter: drop-shadow(0 0 7px rgba(255,255,255,0.85)); }
+  }
+  .edge-mention.path-active,
+  .edge-lab.path-active {
+    stroke-opacity: 1;
+    stroke-width: 1.7;
+    stroke-dasharray: 7 4;
+    animation: electric-flow 0.7s linear infinite;
+    filter: drop-shadow(0 0 3px rgba(255,255,255,0.65));
+  }
+  .n-open.path-active rect {
+    stroke-opacity: 1;
+    stroke-width: 2;
+    animation: electric-pulse 1.4s ease-in-out infinite;
+  }
+  .n-open.path-active .caps-name,
+  .n-open.path-active .caps-lab {
+    fill: #ffffff;
+  }
+  /* La mención SELECCIONADA (trigger del path) se rellena de blanco con
+     texto negro para indicar inequívocamente que es la elegida.
+     Aplica al nodo del diagrama (rect) y al título HTML del bloque. */
+  .mention-trigger.path-active rect {
+    fill: #ffffff;
+  }
+  .mention-trigger.path-active .caps-name {
+    fill: #000000;
+  }
+
+  /* Aristas mención → laboratorios (más finas) */
+  .edge-lab {
+    fill: none;
+    stroke: #ffffff;
+    stroke-width: 0.7;
+    stroke-opacity: 0.5;
+    pointer-events: none;
+  }
+  /* Texto pequeño dentro de pills de laboratorio (sólo siglas) */
+  .caps-lab {
+    font-family: 'NectoMono', 'Courier New', monospace;
+    font-size: 7px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    fill: #ffffff;
+    text-anchor: middle;
+    dominant-baseline: central;
+    text-transform: uppercase;
+    pointer-events: none;
+  }
+
+  /* Docentes · puntos titilantes distribuidos por área de mención */
+  .docente-point {
+    fill: #ffffff;
+    fill-opacity: 0.7;
+    cursor: pointer;
+    animation: docente-twinkle 3s ease-in-out infinite;
+  }
+  .docente-point.is-active {
+    fill: #ffffff;
+    animation: none;
+    fill-opacity: 1;
+  }
+  @keyframes docente-twinkle {
+    0%, 100% { fill-opacity: 0.20; }
+    50%      { fill-opacity: 0.95; }
+  }
+
+  /* Viñeta de docente · HTML dentro de foreignObject · alto responsivo al contenido */
+  .dc-card {
+    background: #000;
+    border: 1px solid #ffffff;
+    padding: 14px 14px 12px 14px;
+    box-sizing: border-box;
+    width: 240px;
+    font-family: 'WorkSans', sans-serif;
+    color: rgba(255,255,255,0.85);
+  }
+  .dc-name {
+    font-family: 'NectoMono', 'Courier New', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    line-height: 1.2;
+  }
+  .dc-cargo {
+    font-family: 'NectoMono', 'Courier New', monospace;
+    font-size: 6.5px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.55);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    line-height: 1.3;
+    margin-top: 4px;
+  }
+  .dc-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.3);
+    margin: 10px 0 8px;
+  }
+  .dc-section { margin-bottom: 8px; }
+  .dc-section:last-child { margin-bottom: 0; }
+  .dc-label {
+    font-family: 'NectoMono', 'Courier New', monospace;
+    font-size: 6px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+  }
+  .dc-value {
+    font-family: 'WorkSans', sans-serif;
+    font-size: 8px;
+    color: rgba(255,255,255,0.85);
+    letter-spacing: 0.015em;
+    line-height: 1.4;
+  }
+
+  /* Mini-card al hover sobre un nodo · viñeta blanca con texto negro
+     (invertida respecto a la docente para distinguirla visualmente) */
+  .ni-card {
+    background: #ffffff;
+    border: 1px solid #000000;
+    padding: 12px 14px 11px 14px;
+    box-sizing: border-box;
+    width: 220px;
+    font-family: 'WorkSans', sans-serif;
+    color: #000000;
+  }
+  .ni-title {
+    font-family: 'NectoMono', 'Courier New', monospace;
+    font-size: 10px;
+    font-weight: 700;
+    color: #000000;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    line-height: 1.2;
+  }
+  .ni-divider {
+    height: 1px;
+    background: rgba(0,0,0,0.35);
+    margin: 9px 0 7px;
+  }
+  .ni-section { margin-bottom: 6px; }
+  .ni-section:last-child { margin-bottom: 0; }
+  .ni-label {
+    font-family: 'NectoMono', 'Courier New', monospace;
+    font-size: 6px;
+    font-weight: 700;
+    color: rgba(0,0,0,0.55);
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    margin-bottom: 2px;
+  }
+  .ni-value {
+    font-family: 'WorkSans', sans-serif;
+    font-size: 9px;
+    color: #000000;
+    letter-spacing: 0.015em;
+    line-height: 1.35;
+  }
+
+</style>
+</head>
+<body>
+<svg viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Punto intermedio entre + adyacentes (paso 30 px).
+         Cada tile aporta 2 puntos (centro del borde superior y del
+         borde izquierdo); las celdas vecinas completan los demás. -->
+    <pattern id="grid-half" width="60" height="60" patternUnits="userSpaceOnUse">
+      <g fill="#ffffff" fill-opacity="0.25">
+        <circle cx="30" cy="0" r="1"/>
+        <circle cx="0" cy="30" r="1"/>
+      </g>
+    </pattern>
+    <!-- Grilla fina: + en cada (60n, 60m) px (la más pequeña) -->
+    <pattern id="grid-fine" width="60" height="60" patternUnits="userSpaceOnUse">
+      <g stroke="#ffffff" stroke-opacity="0.20" stroke-width="0.8" stroke-linecap="square">
+        <!-- + en (0,0) -->
+        <line x1="-3" y1="0" x2="3" y2="0"/>
+        <line x1="0"  y1="-3" x2="0" y2="3"/>
+        <!-- + en (60,0) -->
+        <line x1="57" y1="0" x2="63" y2="0"/>
+        <line x1="60" y1="-3" x2="60" y2="3"/>
+        <!-- + en (0,60) -->
+        <line x1="-3" y1="60" x2="3" y2="60"/>
+        <line x1="0"  y1="57" x2="0" y2="63"/>
+        <!-- + en (60,60) -->
+        <line x1="57" y1="60" x2="63" y2="60"/>
+        <line x1="60" y1="57" x2="60" y2="63"/>
+      </g>
+    </pattern>
+    <!-- Grilla intermedia: + en cada (120n, 120m) px -->
+    <pattern id="grid-mid" width="120" height="120" patternUnits="userSpaceOnUse">
+      <g stroke="#ffffff" stroke-opacity="0.20" stroke-width="1.1" stroke-linecap="square">
+        <!-- + en (0,0) -->
+        <line x1="-5" y1="0" x2="5" y2="0"/>
+        <line x1="0"  y1="-5" x2="0" y2="5"/>
+        <!-- + en (120,0) -->
+        <line x1="115" y1="0" x2="125" y2="0"/>
+        <line x1="120" y1="-5" x2="120" y2="5"/>
+        <!-- + en (0,120) -->
+        <line x1="-5" y1="120" x2="5" y2="120"/>
+        <line x1="0"  y1="115" x2="0" y2="125"/>
+        <!-- + en (120,120) -->
+        <line x1="115" y1="120" x2="125" y2="120"/>
+        <line x1="120" y1="115" x2="120" y2="125"/>
+      </g>
+    </pattern>
+    <!-- Grilla mayor: + más grande en cada intersección (240 × 240 px) -->
+    <pattern id="grid-major" width="240" height="240" patternUnits="userSpaceOnUse">
+      <g stroke="#ffffff" stroke-opacity="0.20" stroke-width="1.4" stroke-linecap="square">
+        <!-- + en (0,0) -->
+        <line x1="-7" y1="0" x2="7" y2="0"/>
+        <line x1="0"  y1="-7" x2="0" y2="7"/>
+        <!-- + en (240,0) -->
+        <line x1="233" y1="0" x2="247" y2="0"/>
+        <line x1="240" y1="-7" x2="240" y2="7"/>
+        <!-- + en (0,240) -->
+        <line x1="-7" y1="240" x2="7" y2="240"/>
+        <line x1="0"  y1="233" x2="0" y2="247"/>
+        <!-- + en (240,240) -->
+        <line x1="233" y1="240" x2="247" y2="240"/>
+        <line x1="240" y1="233" x2="240" y2="247"/>
+      </g>
+    </pattern>
+
+    <!-- Máscara para ocultar la grilla en zonas con figuras/info.
+         Blanco = grilla visible · Negro = grilla oculta.
+         Cada rect negro tiene 8 px de padding extra para que los brazos
+         de las + (hasta 7 px) no asomen por los bordes. -->
+    <mask id="grid-mask" maskUnits="userSpaceOnUse" x="0" y="0" width="1920" height="1080">
+      <rect x="0" y="0" width="1920" height="1080" fill="#fff"/>
+      <g fill="#000">
+        <!-- Polígonos de info (4) -->
+        <rect x="412"  y="52"   width="976"  height="106"/>  <!-- Top convenios -->
+        <rect x="22"   y="52"   width="376"  height="976"/>  <!-- Left projects -->
+        <rect x="1582" y="292"  width="316"  height="736"/>  <!-- Right courses (rect cerrado 1590-1890, 300-1020) -->
+        <rect x="1732" y="52"   width="166"  height="226"/>  <!-- Leyenda (1740-1890, 60-270) -->
+        <rect x="412"  y="862"  width="1156" height="190"/>  <!-- Bottom menciones -->
+
+        <!-- Cápsulas n-filled (DIR · CI · CL · CP · MC · AA · TE · VCM) -->
+        <rect x="1055" y="607"  width="236" height="112"/>   <!-- DIR -->
+        <rect x="644"  y="581"  width="146" height="44"/>    <!-- CI -->
+        <rect x="918"  y="527"  width="146" height="44"/>    <!-- CL -->
+        <rect x="1190" y="475"  width="146" height="44"/>    <!-- CP -->
+        <rect x="467"  y="518"  width="146" height="44"/>    <!-- MC -->
+        <rect x="612"  y="758"  width="190" height="44"/>    <!-- AA -->
+        <rect x="1382" y="655"  width="116" height="44"/>    <!-- TE -->
+        <rect x="1237" y="396"  width="166" height="48"/>    <!-- CE (n-open · 150×32) -->
+        <rect x="1452" y="158"  width="216" height="44"/>    <!-- VCM -->
+
+        <!-- 4 menciones (n-open) -->
+        <rect x="517"  y="296"  width="166" height="48"/>    <!-- GRÁFICO -->
+        <rect x="717"  y="268"  width="166" height="48"/>    <!-- INDUSTRIAL -->
+        <rect x="917"  y="240"  width="166" height="48"/>    <!-- TEXTIL -->
+        <rect x="1117" y="212"  width="166" height="48"/>    <!-- INTERACCIÓN -->
+
+        <!-- 6 laboratorios (n-open) -->
+        <rect x="507"  y="233"  width="66"  height="34"/>    <!-- LAB360 -->
+        <rect x="627"  y="233"  width="66"  height="34"/>    <!-- OTF -->
+        <rect x="707"  y="205"  width="66"  height="34"/>    <!-- LAMP -->
+        <rect x="827"  y="205"  width="66"  height="34"/>    <!-- PD -->
+        <rect x="967"  y="209"  width="66"  height="34"/>    <!-- LT -->
+        <rect x="1167" y="183"  width="66"  height="34"/>    <!-- LID -->
+
+        <!-- 5 satélites VCM (COM · ADM · LINC · INT · EXT) -->
+        <rect x="1430" y="83"   width="66"  height="34"/>    <!-- COM -->
+        <rect x="1624" y="83"   width="66"  height="34"/>    <!-- ADM -->
+        <rect x="1414" y="223"  width="66"  height="34"/>    <!-- LINC -->
+        <rect x="1640" y="223"  width="66"  height="34"/>    <!-- INT -->
+        <rect x="1500" y="280"  width="66"  height="34"/>    <!-- EXT -->
+      </g>
+    </mask>
+  </defs>
+
+  <!-- Fondo -->
+  <rect x="0" y="0" width="1920" height="1080" fill="#000"/>
+
+  <!-- 4 capas estáticas a baja opacidad: punto base (30) + fina (60) + intermedia (120) + mayor (240).
+       Enmascaradas para ocultarse en zonas con nodos/info. -->
+  <g mask="url(#grid-mask)">
+    <rect x="0" y="0" width="1920" height="1080" fill="url(#grid-half)"/>
+    <rect x="0" y="0" width="1920" height="1080" fill="url(#grid-fine)"/>
+    <rect x="0" y="0" width="1920" height="1080" fill="url(#grid-mid)"/>
+    <rect x="0" y="0" width="1920" height="1080" fill="url(#grid-major)"/>
+  </g>
+
+  <!-- Área reservada para texto · rectángulo cerrado (sin muesca):
+       (30,60) → (390,60) → (390,1020) → (30,1020) -->
+  <polygon points="30,60 390,60 390,1020 30,1020"
+           fill="#000"/>
+
+  <!-- Polígono de texto derecho · rectángulo cerrado:
+       (1590,300) → (1890,300) → (1890,1020) → (1590,1020) -->
+  <polygon points="1590,300 1890,300 1890,1020 1590,1020"
+           fill="#000"/>
+
+  <!-- ════════════════════════════════════════════
+       Leyenda · cuadrante (1740, 60)–(1890, 270)
+       Orden: Nodos → Vínculos → Docente → Grilla → Zona
+       ════════════════════════════════════════════ -->
+  <polygon points="1740,60 1890,60 1890,270 1740,270" fill="#000"/>
+  <polygon points="1740,60 1890,60 1890,270 1740,270"
+           fill="none"
+           stroke="#ffffff"
+           stroke-opacity="0.4"
+           stroke-width="1"
+           stroke-dasharray="3 3"
+           stroke-linecap="square"
+           pointer-events="none"/>
+
+  <!-- Header LEYENDA y divider · padding superior 14 px -->
+  <text class="lgnd-title" x="1815" y="88">LEYENDA</text>
+  <line class="lgnd-divider" x1="1758" y1="100" x2="1872" y2="100"/>
+
+  <!-- 5 filas · espaciado 32 px · iconos centrados en x=1769, texto en x=1791
+       · padding lateral: 16 px izq · 14 px der min · labels acortados para
+       no tocar el borde derecho -->
+  <!-- Row 1 · Coordinación (cápsula filled) -->
+  <rect x="1756" y="114" width="26" height="12" rx="2" ry="2" fill="#ffffff"/>
+  <text class="lgnd-label" x="1791" y="124">Coordinación</text>
+
+  <!-- Row 2 · Mención · Lab (cápsula stroke) -->
+  <rect x="1756" y="146" width="26" height="12" rx="2" ry="2"
+        fill="none" stroke="#ffffff" stroke-width="1"/>
+  <text class="lgnd-label" x="1791" y="156">Mención · Lab</text>
+
+  <!-- Row 3 · Vínculo principal (línea gruesa) -->
+  <line x1="1756" y1="184" x2="1782" y2="184"
+        stroke="#ffffff" stroke-opacity="0.65" stroke-width="1"/>
+  <text class="lgnd-label" x="1791" y="188">Vínculo principal</text>
+
+  <!-- Row 4 · Vínculo lab (línea fina) -->
+  <line x1="1756" y1="216" x2="1782" y2="216"
+        stroke="#ffffff" stroke-opacity="0.5" stroke-width="0.8"/>
+  <text class="lgnd-label" x="1791" y="220">Vínculo lab</text>
+
+  <!-- Row 5 · Docente (punto) -->
+  <circle cx="1769" cy="248" r="4" fill="#ffffff" fill-opacity="0.85"/>
+  <text class="lgnd-label" x="1791" y="252">Docente · hover</text>
+
+  <!-- ════════════════════════════════════════════
+       Bloque horizontal de menciones (420,870 → 1560,1020)
+       1140 × 150 · 4 columnas de 285 px lado a lado
+       Sin subtítulo · título NectoMono 10 · body WorkSans 6 line-height 10
+       ════════════════════════════════════════════ -->
+  <polygon points="420,870 1560,870 1560,1020 420,1020"
+           fill="#000"/>
+
+  <!-- 3 dividers verticales entre las 4 columnas -->
+  <line class="menv-divider" x1="697.5"  y1="880" x2="697.5"  y2="1044"/>
+  <line class="menv-divider" x1="991"    y1="880" x2="991"    y2="1044"/>
+  <line class="menv-divider" x1="1284.5" y1="880" x2="1284.5" y2="1044"/>
+
+  <!-- Col 1 · GRÁFICO · texto inicia en x=418 (fO_x=404 + padding 14) · y=886 (fO_y=872 + padding 14) -->
+  <foreignObject x="404" y="872" width="293.5" height="180" style="overflow: visible;">
+    <div xmlns="http://www.w3.org/1999/xhtml" class="menv-col">
+      <div class="menv-col-title mention-trigger" data-mention="grafico">Diseño Gráfico</div>
+      <div class="menv-col-body">Prepara profesionales capaces de identificar y resolver problemáticas visuales mediante soluciones innovadoras y creativas. A través de la dirección de arte y la comunicación visual, los estudiantes adquieren competencias en expresión gráfica, tipografía, composición fotográfica y audiovisual, combinando técnicas tradicionales con medios de producción digital avanzados.</div>
+    </div>
+  </foreignObject>
+
+  <!-- Col 2 · INDUSTRIAL -->
+  <foreignObject x="697.5" y="872" width="293.5" height="180" style="overflow: visible;">
+    <div xmlns="http://www.w3.org/1999/xhtml" class="menv-col">
+      <div class="menv-col-title mention-trigger" data-mention="industrial">Diseño Industrial</div>
+      <div class="menv-col-body">Forma profesionales que abordan y resuelven problemáticas relacionadas con objetos, materiales y espacios, con un enfoque integral y reflexivo. Los estudiantes desarrollan habilidades en experimentación material e incorporan principios de sostenibilidad y diseño circular, junto al manejo de herramientas de fabricación avanzada.</div>
+    </div>
+  </foreignObject>
+
+  <!-- Col 3 · TEXTIL -->
+  <foreignObject x="991" y="872" width="293.5" height="180" style="overflow: visible;">
+    <div xmlns="http://www.w3.org/1999/xhtml" class="menv-col">
+      <div class="menv-col-title mention-trigger" data-mention="textil">Textil e Indumentaria</div>
+      <div class="menv-col-body">Forma profesionales creativos y críticos que abordan el textil y la indumentaria con una perspectiva innovadora y especulativa. Los estudiantes desarrollan conocimientos teóricos, técnicos y de gestión, integrando conceptos de sostenibilidad y economía circular, y experimentando en los límites de lo textil desde un enfoque interdisciplinario.</div>
+    </div>
+  </foreignObject>
+
+  <!-- Col 4 · INTERACCIÓN · texto termina en x=1564 (fO_x+width=1578 - padding 14) -->
+  <foreignObject x="1284.5" y="872" width="293.5" height="180" style="overflow: visible;">
+    <div xmlns="http://www.w3.org/1999/xhtml" class="menv-col">
+      <div class="menv-col-title mention-trigger" data-mention="interaccion">Interacción Digital</div>
+      <div class="menv-col-body">Forma profesionales que comprenden y desarrollan las múltiples interacciones con el entorno digital en la vida cotidiana. Abarca el diseño de interfaces físicas y digitales, experiencia de usuario, visualización de datos, realidad aumentada y virtual, hasta la creación de productos, espacios y sistemas interactivos centrados en el usuario.</div>
+    </div>
+  </foreignObject>
+
+
+  <!-- ════════════════════════════════════════════
+       Lista de cursos · 49 cursos agrupados por categoría
+       confinados al rectángulo (1590,300) → (1890,1020).
+       Títulos de categoría en NectoMono, sin amarillo.
+       ════════════════════════════════════════════ -->
+
+  <!-- Listado de cursos agrupado por categoría · code @ x=1610, name @ x=1670
+       Line-height 12 · Cada sección: divider + header + 12 px + cursos. -->
+
+  <!-- ── CICLO INICIAL · DIS09XX (10 cursos) ── -->
+  <line class="crs-divider" x1="1610" y1="312" x2="1870" y2="312"/>
+  <text class="crs-section" x="1610" y="318">Ciclo Inicial</text>
+  <text class="crs-section-count" x="1870" y="318" text-anchor="end">10 cursos</text>
+  <text class="crs-code" x="1610" y="332">DIS09111</text><text class="crs-name" x="1670" y="332">Taller I: Exploración Creativa</text>
+  <text class="crs-code" x="1610" y="345">DIS09112</text><text class="crs-name" x="1670" y="345">Visualidad y Cultura</text>
+  <text class="crs-code" x="1610" y="358">DIS09113</text><text class="crs-name" x="1670" y="358">Comunicación Visual</text>
+  <text class="crs-code" x="1610" y="371">DIS09114</text><text class="crs-name" x="1670" y="371">Dibujo y Observación</text>
+  <text class="crs-code" x="1610" y="384">DIS09115</text><text class="crs-name" x="1670" y="384">Experimentación Material</text>
+  <text class="crs-code" x="1610" y="397">DIS09211</text><text class="crs-name" x="1670" y="397">Taller III: Problema y Concepto</text>
+  <text class="crs-code" x="1610" y="410">DIS09212</text><text class="crs-name" x="1670" y="410">Análisis Crítico del Diseño</text>
+  <text class="crs-code" x="1610" y="423">DIS09213</text><text class="crs-name" x="1670" y="423">Tipografía y Diagramación</text>
+  <text class="crs-code" x="1610" y="436">DIS09214</text><text class="crs-name" x="1670" y="436">Pensamiento Computacional</text>
+  <text class="crs-code" x="1610" y="449">DIS09215</text><text class="crs-name" x="1670" y="449">Fabricación Digital</text>
+
+  <!-- ── CURSOS DE GESTIÓN · DIS80XX (3 cursos) ── -->
+  <line class="crs-divider" x1="1610" y1="458" x2="1870" y2="458"/>
+  <text class="crs-section" x="1610" y="464">Cursos de Gestión</text>
+  <text class="crs-section-count" x="1870" y="464" text-anchor="end">3 cursos</text>
+  <text class="crs-code" x="1610" y="478">DIS8010</text><text class="crs-name" x="1670" y="478">Estrategia Corporativa</text>
+  <text class="crs-code" x="1610" y="491">DIS8012</text><text class="crs-name" x="1670" y="491">Administración Financiera</text>
+  <text class="crs-code" x="1610" y="504">DIS8014</text><text class="crs-name" x="1670" y="504">Práctica Profesional</text>
+
+  <!-- ── TALLERES VERTICALES · DIS86XX + FAD1018 (12 cursos) ── -->
+  <line class="crs-divider" x1="1610" y1="513" x2="1870" y2="513"/>
+  <text class="crs-section" x="1610" y="519">Talleres Verticales</text>
+  <text class="crs-section-count" x="1870" y="519" text-anchor="end">12 cursos</text>
+  <text class="crs-code" x="1610" y="533">DIS8620</text><text class="crs-name" x="1670" y="533">Taller Local: Diseño de Objetos</text>
+  <text class="crs-code" x="1610" y="546">DIS8622</text><text class="crs-name" x="1670" y="546">Taller Editorial Publicaciones</text>
+  <text class="crs-code" x="1610" y="559">DIS8626</text><text class="crs-name" x="1670" y="559">Taller Productos Sostenibles</text>
+  <text class="crs-code" x="1610" y="572">DIS8628</text><text class="crs-name" x="1670" y="572">Taller Objetos y Espacios Museo.</text>
+  <text class="crs-code" x="1610" y="585">DIS8630</text><text class="crs-name" x="1670" y="585">Taller de Indumentaria</text>
+  <text class="crs-code" x="1610" y="598">DIS8634</text><text class="crs-name" x="1670" y="598">Taller Branding · Productos</text>
+  <text class="crs-code" x="1610" y="611">DIS8640</text><text class="crs-name" x="1670" y="611">Taller Invitado 1</text>
+  <text class="crs-code" x="1610" y="624">DIS8643</text><text class="crs-name" x="1670" y="624">Taller Investigación Material</text>
+  <text class="crs-code" x="1610" y="637">DIS8644</text><text class="crs-name" x="1670" y="637">Taller Máq. Electrónicas</text>
+  <text class="crs-code" x="1610" y="650">DIS8651</text><text class="crs-name" x="1670" y="650">Taller Interdis. · Aplicado</text>
+  <text class="crs-code" x="1610" y="663">DIS8652</text><text class="crs-name" x="1670" y="663">Taller Vis. Exp. de Datos</text>
+  <text class="crs-code" x="1610" y="676">FAD1018</text><text class="crs-name" x="1670" y="676">Taller Internacional Europa</text>
+
+  <!-- ── PROFUNDIZACIÓN · DIS90XX + FAD9100 + PRI0001 (15 cursos) ── -->
+  <line class="crs-divider" x1="1610" y1="685" x2="1870" y2="685"/>
+  <text class="crs-section" x="1610" y="691">Profundización</text>
+  <text class="crs-section-count" x="1870" y="691" text-anchor="end">15 cursos</text>
+  <text class="crs-code" x="1610" y="705">DIS9025</text><text class="crs-name" x="1670" y="705">Diseño Escénico</text>
+  <text class="crs-code" x="1610" y="718">DIS9032</text><text class="crs-name" x="1670" y="718">Intro. a la Ciencia Biomaterial</text>
+  <text class="crs-code" x="1610" y="731">DIS9033</text><text class="crs-name" x="1670" y="731">Narrativas Visuales e IA</text>
+  <text class="crs-code" x="1610" y="744">DIS9037</text><text class="crs-name" x="1670" y="744">Animación Digital Experimental</text>
+  <text class="crs-code" x="1610" y="757">DIS9039</text><text class="crs-name" x="1670" y="757">Fabricación Digital Avanzada</text>
+  <text class="crs-code" x="1610" y="770">DIS9040</text><text class="crs-name" x="1670" y="770">Color · Aplicación en Diseño</text>
+  <text class="crs-code" x="1610" y="783">DIS9044</text><text class="crs-name" x="1670" y="783">Publicación Editorial · Libro Artista</text>
+  <text class="crs-code" x="1610" y="796">DIS9052</text><text class="crs-name" x="1670" y="796">Diseño de Información</text>
+  <text class="crs-code" x="1610" y="809">DIS9075</text><text class="crs-name" x="1670" y="809">Experimentación · Industria Nac.</text>
+  <text class="crs-code" x="1610" y="822">DIS9078</text><text class="crs-name" x="1670" y="822">Patrones · Transformación y Exp.</text>
+  <text class="crs-code" x="1610" y="835">DIS9079</text><text class="crs-name" x="1670" y="835">Interacciones Inalámbricas</text>
+  <text class="crs-code" x="1610" y="848">DIS9080</text><text class="crs-name" x="1670" y="848">Cerámica Experimental</text>
+  <text class="crs-code" x="1610" y="861">DIS9081</text><text class="crs-name" x="1670" y="861">Diseño Textil de Punto</text>
+  <text class="crs-code" x="1610" y="874">FAD9100</text><text class="crs-name" x="1670" y="874">Práctica Electiva</text>
+  <text class="crs-code" x="1610" y="887">PRI0001</text><text class="crs-name" x="1670" y="887">Práctica Electiva · LID</text>
+
+  <!-- ── ESPECIALIZACIÓN · DIS89XX (9 cursos) ── -->
+  <line class="crs-divider" x1="1610" y1="896" x2="1870" y2="896"/>
+  <text class="crs-section" x="1610" y="902">Especialización</text>
+  <text class="crs-section-count" x="1870" y="902" text-anchor="end">9 cursos</text>
+  <text class="crs-code" x="1610" y="916">DIS8900</text><text class="crs-name" x="1670" y="916">Visualización de Datos</text>
+  <text class="crs-code" x="1610" y="929">DIS8910</text><text class="crs-name" x="1670" y="929">Escenarios Futuros · Innovación</text>
+  <text class="crs-code" x="1610" y="942">DIS8925</text><text class="crs-name" x="1670" y="942">Formulación de Proyectos</text>
+  <text class="crs-code" x="1610" y="955">DIS8940</text><text class="crs-name" x="1670" y="955">Pedagogías y Diseño</text>
+  <text class="crs-code" x="1610" y="968">DIS8946</text><text class="crs-name" x="1670" y="968">Textil como Sistema Discursivo</text>
+  <text class="crs-code" x="1610" y="981">DIS8947</text><text class="crs-name" x="1670" y="981">Narrativas · Sist. Editoriales</text>
+  <text class="crs-code" x="1610" y="994">DIS8948</text><text class="crs-name" x="1670" y="994">Interacciones Digitales</text>
+  <text class="crs-code" x="1610" y="1007">DIS8949</text><text class="crs-name" x="1670" y="1007">Intro. al Diseño de Servicios</text>
+  <text class="crs-code" x="1610" y="1020">DIS8970</text><text class="crs-name" x="1670" y="1020">Diseño y Neurociencia Humana</text>
+
+  <!-- Polígono de texto superior (header): barra horizontal.
+       Vértices: (420,60) → (1380,60) → (1380,150) → (420,150). -->
+  <polygon points="420,60 1380,60 1380,150 420,150"
+           fill="#000"/>
+  <polygon points="420,60 1380,60 1380,150 420,150"
+           fill="none"
+           stroke="#ffffff"
+           stroke-opacity="0.4"
+           stroke-width="1"
+           stroke-dasharray="3 3"
+           stroke-linecap="square"
+           pointer-events="none"/>
+
+  <!-- ════════════════════════════════════════════
+       Header de convenios · 8 columnas × 2 filas (16 convenios)
+       Polígono 960 × 90 · columna 120 px · fila 45 px
+       Acrónimo NectoMono 10px · institución WorkSans 6px
+       ════════════════════════════════════════════ -->
+
+  <!-- 7 dividers verticales entre las 8 columnas -->
+  <line class="men-divider" x1="540"  y1="68" x2="540"  y2="142"/>
+  <line class="men-divider" x1="660"  y1="68" x2="660"  y2="142"/>
+  <line class="men-divider" x1="780"  y1="68" x2="780"  y2="142"/>
+  <line class="men-divider" x1="900"  y1="68" x2="900"  y2="142"/>
+  <line class="men-divider" x1="1020" y1="68" x2="1020" y2="142"/>
+  <line class="men-divider" x1="1140" y1="68" x2="1140" y2="142"/>
+  <line class="men-divider" x1="1260" y1="68" x2="1260" y2="142"/>
+
+  <!-- Divider horizontal entre fila superior e inferior -->
+  <line class="men-divider" x1="428" y1="105" x2="1372" y2="105"/>
+
+  <!-- Fila superior · convenios 1–8 (acro y=80 · name y=92) -->
+  <text class="cnvh-acro" x="480"  y="80">MSSA</text>
+  <text class="cnvh-name" x="480"  y="92">Museo Solidaridad S. Allende</text>
+
+  <text class="cnvh-acro" x="600"  y="80">CEINA</text>
+  <text class="cnvh-name" x="600"  y="92">Centro Cultural CEINA</text>
+
+  <text class="cnvh-acro" x="720"  y="80">MNBA</text>
+  <text class="cnvh-name" x="720"  y="92">Museo Nacional de Bellas Artes</text>
+
+  <text class="cnvh-acro" x="840"  y="80">BN</text>
+  <text class="cnvh-name" x="840"  y="92">Biblioteca Nacional de Chile</text>
+
+  <text class="cnvh-acro" x="960"  y="80">TM</text>
+  <text class="cnvh-name" x="960"  y="92">Teatro Municipal de Santiago</text>
+
+  <text class="cnvh-acro" x="1080" y="80">MIM</text>
+  <text class="cnvh-name" x="1080" y="92">Museo Interactivo Mirador</text>
+
+  <text class="cnvh-acro" x="1200" y="80">MAVI</text>
+  <text class="cnvh-name" x="1200" y="92">Museo de Artes Visuales</text>
+
+  <text class="cnvh-acro" x="1320" y="80">ATQN</text>
+  <text class="cnvh-name" x="1320" y="92">Museo Artequin</text>
+
+  <!-- Fila inferior · convenios 9–16 (acro y=125 · name y=137) -->
+  <text class="cnvh-acro" x="480"  y="125">EFE</text>
+  <text class="cnvh-name" x="480"  y="137">Ferrocarriles del Estado</text>
+
+  <text class="cnvh-acro" x="600"  y="125">MMDDHH</text>
+  <text class="cnvh-name" x="600"  y="137">Museo de la Memoria y los DDHH</text>
+
+  <text class="cnvh-acro" x="720"  y="125">MEGM</text>
+  <text class="cnvh-name" x="720"  y="137">Museo Ed. Gabriela Mistral</text>
+
+  <text class="cnvh-acro" x="840"  y="125">TECHO</text>
+  <text class="cnvh-name" x="840"  y="137">Fundación TECHO Chile</text>
+
+  <text class="cnvh-acro" x="960"  y="125">RECOLETA</text>
+  <text class="cnvh-name" x="960"  y="137">I. Municipalidad de Recoleta</text>
+
+  <text class="cnvh-acro" x="1080" y="125">MOBIL</text>
+  <text class="cnvh-name" x="1080" y="137">MOBIL Arquitectos</text>
+
+  <text class="cnvh-acro" x="1200" y="125">AOA</text>
+  <text class="cnvh-name" x="1200" y="137">Asoc. Oficinas de Arquitectos</text>
+
+  <text class="cnvh-acro" x="1320" y="125">CROX</text>
+  <text class="cnvh-name" x="1320" y="137">Galería Isabel Croxatto</text>
+
+
+
+  <!-- ════════════════════════════════════════════
+       Lista de proyectos (polígono 360×960 rectangular) con secciones
+       18 entradas en 3 categorías: Editorial · Exhibición · Taller
+       Slot 2-líneas: 55 px · slot 1-línea: 38 px · dy=16
+       Buffer 12 px arriba y ~10 px abajo para no tocar bordes
+       ════════════════════════════════════════════ -->
+
+  <!-- ── EDITORIAL · PUBLICACIÓN (3 proyectos) ── -->
+  <line class="proj-divider" x1="50" y1="72" x2="370" y2="72"/>
+  <text class="proj-section" x="50" y="80">Editorial · Publicación</text>
+  <text class="proj-section-count" x="370" y="80" text-anchor="end">3 proyectos</text>
+
+  <!-- 01 -->
+  <text class="proj-num" x="50" y="94">01</text>
+  <text class="proj-name" x="50" y="110">
+    <tspan x="50" dy="0">HDGCH · Historia del Diseño</tspan>
+    <tspan x="50" dy="16">Gráfico en Chile</tspan>
+  </text>
+  <text class="proj-info" x="50" y="138">Publicación · Evento — 2025</text>
+
+  <!-- 02 -->
+  <text class="proj-num" x="50" y="149">02</text>
+  <text class="proj-name" x="50" y="165">
+    <tspan x="50" dy="0">Revista 180 N°56 –</tspan>
+    <tspan x="50" dy="16">Lanzamiento edición bilingüe</tspan>
+  </text>
+  <text class="proj-info" x="50" y="193">Publicación académica — 2026</text>
+
+  <!-- 03 -->
+  <text class="proj-num" x="50" y="204">03</text>
+  <text class="proj-name" x="50" y="220">Revista zer081</text>
+  <text class="proj-info" x="50" y="232">Publicación · Editorial — 2025</text>
+
+  <!-- ── EXHIBICIÓN · MUESTRA (5 proyectos) ── -->
+  <line class="proj-divider" x1="50" y1="238" x2="370" y2="238"/>
+  <text class="proj-section" x="50" y="246">Exhibición · Muestra</text>
+  <text class="proj-section-count" x="370" y="246" text-anchor="end">5 proyectos</text>
+
+  <!-- 04 -->
+  <text class="proj-num" x="50" y="260">04</text>
+  <text class="proj-name" x="50" y="276">Museo Futuro – Congreso Futuro</text>
+  <text class="proj-info" x="50" y="288">Diseño Interacción · Exhibición — 2026</text>
+
+  <!-- 05 -->
+  <text class="proj-num" x="50" y="298">05</text>
+  <text class="proj-name" x="50" y="314">
+    <tspan x="50" dy="0">Muestra Final Talleres de</tspan>
+    <tspan x="50" dy="16">Indumentaria y Textil</tspan>
+  </text>
+  <text class="proj-info" x="50" y="342">Diseño Textil · Muestra — 2025</text>
+
+  <!-- 06 -->
+  <text class="proj-num" x="50" y="353">06</text>
+  <text class="proj-name" x="50" y="369">
+    <tspan x="50" dy="0">Discusiones Contemporáneas del Diseño –</tspan>
+    <tspan x="50" dy="16">Centro Cultural Montecarmelo</tspan>
+  </text>
+  <text class="proj-info" x="50" y="397">Exhibición · 30 aniversario — 2025</text>
+
+  <!-- 07 -->
+  <text class="proj-num" x="50" y="408">07</text>
+  <text class="proj-name" x="50" y="424">
+    <tspan x="50" dy="0">Multiplicar las Voces – Museo</tspan>
+    <tspan x="50" dy="16">Educación Gabriela Mistral</tspan>
+  </text>
+  <text class="proj-info" x="50" y="452">Diseño · Exhibición pública — 2025</text>
+
+  <!-- 08 -->
+  <text class="proj-num" x="50" y="463">08</text>
+  <text class="proj-name" x="50" y="479">Derechos en Juego</text>
+  <text class="proj-info" x="50" y="491">Diseño · Intervención pública — 2025</text>
+
+  <!-- ── TALLER · WORKSHOP · ENCARGO (10 proyectos) ── -->
+  <line class="proj-divider" x1="50" y1="497" x2="370" y2="497"/>
+  <text class="proj-section" x="50" y="505">Taller · Workshop · Encargo</text>
+  <text class="proj-section-count" x="370" y="505" text-anchor="end">10 proyectos</text>
+
+  <!-- 09 -->
+  <text class="proj-num" x="50" y="519">09</text>
+  <text class="proj-name" x="50" y="535">
+    <tspan x="50" dy="0">Laboratorio FaAAD – Santiago</tspan>
+    <tspan x="50" dy="16">como red escultórica</tspan>
+  </text>
+  <text class="proj-info" x="50" y="563">Taller · Investigación urbana — 2025</text>
+
+  <!-- 10 -->
+  <text class="proj-num" x="50" y="574">10</text>
+  <text class="proj-name" x="50" y="590">
+    <tspan x="50" dy="0">Sala de Literatura Infantil</tspan>
+    <tspan x="50" dy="16">Margarita Mieres</tspan>
+  </text>
+  <text class="proj-info" x="50" y="618">Diseño Gráfico · Encargo institucional — 2025</text>
+
+  <!-- 11 -->
+  <text class="proj-num" x="50" y="629">11</text>
+  <text class="proj-name" x="50" y="645">
+    <tspan x="50" dy="0">Taller Internacional FAAD –</tspan>
+    <tspan x="50" dy="16">Máquinas de Archivar (Madrid)</tspan>
+  </text>
+  <text class="proj-info" x="50" y="673">Taller Internacional — 2025</text>
+
+  <!-- 12 -->
+  <text class="proj-num" x="50" y="684">12</text>
+  <text class="proj-name" x="50" y="700">Workshop Comic Sans Magazine</text>
+  <text class="proj-info" x="50" y="712">Workshop · Diseño Gráfico — 2025</text>
+
+  <!-- 13 -->
+  <text class="proj-num" x="50" y="722">13</text>
+  <text class="proj-name" x="50" y="738">
+    <tspan x="50" dy="0">Taller Máquinas Electrónicas –</tspan>
+    <tspan x="50" dy="16">Sintetizadores Modulares</tspan>
+  </text>
+  <text class="proj-info" x="50" y="766">Taller técnico · Interacción — 2025-2026</text>
+
+  <!-- 14 -->
+  <text class="proj-num" x="50" y="777">14</text>
+  <text class="proj-name" x="50" y="793">
+    <tspan x="50" dy="0">Examen Taller Colectivo · Aves</tspan>
+    <tspan x="50" dy="16">de la Región Metropolitana</tspan>
+  </text>
+  <text class="proj-info" x="50" y="821">Diseño Industrial · Encargo — 2025</text>
+
+  <!-- 15 -->
+  <text class="proj-num" x="50" y="832">15</text>
+  <text class="proj-name" x="50" y="848">Processing Community Day 2026</text>
+  <text class="proj-info" x="50" y="860">Convocatoria · Evento — 2026</text>
+
+  <!-- 16 -->
+  <text class="proj-num" x="50" y="870">16</text>
+  <text class="proj-name" x="50" y="886">
+    <tspan x="50" dy="0">Taller de Branding ·</tspan>
+    <tspan x="50" dy="16">Museo de los Museos</tspan>
+  </text>
+  <text class="proj-info" x="50" y="914">Taller · Vínculo institucional — 2025</text>
+
+  <!-- 17 -->
+  <text class="proj-num" x="50" y="925">17</text>
+  <text class="proj-name" x="50" y="941">
+    <tspan x="50" dy="0">Máquinas Percutoras ·</tspan>
+    <tspan x="50" dy="16">Splitting Absence (GAM)</tspan>
+  </text>
+  <text class="proj-info" x="50" y="969">Diseño · Performance — 2025</text>
+
+  <!-- 18 -->
+  <text class="proj-num" x="50" y="980">18</text>
+  <text class="proj-name" x="50" y="996">Primera Entrega Taller Bancas</text>
+  <text class="proj-info" x="50" y="1008">Taller · Diseño Industrial — 2025</text>
+
+  <!-- Sección punteada (rectángulo):
+       (420,180) → (1560,180) → (1560,840) → (420,840) -->
+  <polygon points="420,180 1560,180 1560,840 420,840"
+           fill="none"
+           stroke="#ffffff"
+           stroke-opacity="0.4"
+           stroke-width="1"
+           stroke-dasharray="3 3"
+           stroke-linecap="square"
+           pointer-events="none"/>
+
+  <!-- Recuadro punteado que encierra DIR + CI + CL + CP + TE -->
+  <polygon points="540,420 1440,420 1440,780 540,780"
+           fill="none"
+           stroke="#ffffff"
+           stroke-opacity="0.4"
+           stroke-width="1"
+           stroke-dasharray="3 3"
+           stroke-linecap="square"
+           pointer-events="none"/>
+
+  <!-- Polígono punteado escalonado · CI / CL / CP / TE (escalado linearmente) -->
+  <polygon points="704,600 704,549 987,546 1113,549 1113,497 1440,497 1440,677 704,677"
+           fill="none"
+           stroke="#ffffff"
+           stroke-opacity="0.4"
+           stroke-width="1"
+           stroke-dasharray="3 3"
+           stroke-linecap="square"
+           pointer-events="none"/>
+
+
+  <!-- Indicador de dimensiones (esquinas) -->
+  <g font-family="'Courier New', monospace" font-size="11" fill="#ffffff" fill-opacity="1">
+    <text x="14" y="20">0,0</text>
+    <text x="1856" y="20" text-anchor="end">1920,0</text>
+    <text x="14" y="1070">0,1080</text>
+    <text x="1856" y="1070" text-anchor="end">1920,1080</text>
+  </g>
+
+  <!-- ════════════════════════════════════════════
+       Nodo dirección — centrado en (1173, 663)
+       3 filas: DIRECCIÓN · SECRETARÍA ACADÉMICA · SECRETARÍA ESTUDIANTIL
+       ════════════════════════════════════════════ -->
+  <g id="node-dir">
+    <!-- Frame exterior · borde punteado igual a los cuadros delimitadores -->
+    <rect x="1063" y="615" width="220" height="96" rx="10" ry="10"
+          fill="#000" stroke="#ffffff" stroke-opacity="0.4"
+          stroke-width="1" stroke-dasharray="3 3" stroke-linecap="square"/>
+
+    <!-- Fila 1: DIRECCIÓN (fondo blanco, texto negro) -->
+    <rect x="1066" y="618" width="214" height="29" rx="8" ry="8"
+          fill="#ffffff"/>
+    <text x="1173" y="632.5"
+          font-family="'NectoMono', 'Courier New', monospace"
+          font-size="13" font-weight="700"
+          fill="#000"
+          letter-spacing="2"
+          text-anchor="middle"
+          dominant-baseline="central">DIRECCIÓN</text>
+
+    <!-- Fila 2: SECRETARÍA ACADÉMICA -->
+    <text x="1173" y="663"
+          font-family="'NectoMono', 'Courier New', monospace"
+          font-size="9.5" font-weight="400"
+          fill="#ffffff"
+          letter-spacing="1.5"
+          text-anchor="middle"
+          dominant-baseline="central">SECRETARÍA ACADÉMICA</text>
+
+    <!-- Divider entre SA y SE -->
+    <line x1="1063" y1="679" x2="1283" y2="679"
+          stroke="#ffffff" stroke-opacity="0.4" stroke-width="0.6"/>
+
+    <!-- Fila 3: SECRETARÍA ESTUDIANTIL -->
+    <text x="1173" y="695"
+          font-family="'NectoMono', 'Courier New', monospace"
+          font-size="9.5" font-weight="400"
+          fill="#ffffff"
+          letter-spacing="1.5"
+          text-anchor="middle"
+          dominant-baseline="central">SECRETARÍA ESTUDIANTIL</text>
+  </g>
+
+  <!-- ════════════════════════════════════════════
+       Aristas CL → 4 menciones
+       Endpoints calculados como rect-exit en la dirección
+       centro→centro: nacen exactamente del borde de cada pill
+       (no del centro), evitando el "atravesar" la cápsula.
+       ════════════════════════════════════════════ -->
+  <!-- Routing ortogonal CL (991, 535) → menciones · trunk a y=390 entre (600,390) y (1200,390) (r=12) -->
+  <path class="edge-mention" data-mention="grafico"     d="M 991 535 L 991 402 Q 991 390 979 390 L 612 390 Q 600 390 600 378 L 600 336"/>
+  <path class="edge-mention" data-mention="industrial"  d="M 991 535 L 991 402 Q 991 390 979 390 L 812 390 Q 800 390 800 378 L 800 308"/>
+  <!-- TEXTIL casi vertical (CL_x=991 ≈ TEXTIL_x=1000): ruta directa con corner pequeño r=4 -->
+  <path class="edge-mention" data-mention="textil"      d="M 991 535 L 991 284 Q 991 280 995 280 L 1000 280"/>
+  <path class="edge-mention" data-mention="interaccion" d="M 991 535 L 991 402 Q 991 390 1003 390 L 1188 390 Q 1200 390 1200 378 L 1200 252"/>
+
+  <!-- ════════════════════════════════════════════
+       4 menciones — sólo stroke blanco (n-open)
+       Centros: (600,320) · (800,292) · (1000,264) · (1200,236)
+       Δy=28 (mantiene ascenso) · GRÁFICO bottom=336 → 24 px de
+       holgura al recuadro de ciclos · INTERACCIÓN top=220 →
+       40 px al bounding box exterior.
+       ════════════════════════════════════════════ -->
+  <g class="n-open mention-trigger" data-mention="grafico">
+    <rect x="525" y="304" width="150" height="32" rx="8" ry="8"/>
+    <text class="caps-name" x="600" y="320">GRÁFICO</text>
+  </g>
+  <g class="n-open mention-trigger" data-mention="industrial">
+    <rect x="725" y="276" width="150" height="32" rx="8" ry="8"/>
+    <text class="caps-name" x="800" y="292">INDUSTRIAL</text>
+  </g>
+  <g class="n-open mention-trigger" data-mention="textil">
+    <rect x="925" y="248" width="150" height="32" rx="8" ry="8"/>
+    <text class="caps-name" x="1000" y="264">TEXTIL</text>
+  </g>
+  <g class="n-open mention-trigger" data-mention="interaccion">
+    <rect x="1125" y="220" width="150" height="32" rx="8" ry="8"/>
+    <text class="caps-name" x="1200" y="236">INTERACCIÓN</text>
+  </g>
+
+  <!-- ════════════════════════════════════════════
+       Aristas mención → laboratorios
+       Layout simétrico: cuando hay 2 labs, se ubican como
+       par mirror (uno a la izq, otro a la der, mismo ángulo).
+       Cuando hay 1 lab, sube vertical (alineación PD).
+       Offset standard: (±60, -70) → ángulo ≈ 40.6° del eje Y.
+       ════════════════════════════════════════════ -->
+  <!-- GR (600,320) → LAB360 ⬉ izq · OTF ⬈ der -->
+  <!-- GR (600, 304_top) → LAB360 (540, 259) y OTF (660, 259) — L-shape con r=8 -->
+  <path class="edge-lab" data-mention="grafico"     d="M 600 304 L 600 267 Q 600 259 592 259 L 540 259"/>
+  <path class="edge-lab" data-mention="grafico"     d="M 600 304 L 600 267 Q 600 259 608 259 L 660 259"/>
+  <!-- IN (800,292) → LAMP ⬉ izq · PD ⬈ der -->
+  <!-- IN (800, 276_top) → LAMP (740, 231) y PD (860, 231) — L-shape con r=8 -->
+  <path class="edge-lab" data-mention="industrial"  d="M 800 276 L 800 239 Q 800 231 792 231 L 740 231"/>
+  <path class="edge-lab" data-mention="industrial"  d="M 800 276 L 800 239 Q 800 231 808 231 L 860 231"/>
+  <!-- TX (1000,264) → LT ⬆ vertical -->
+  <path class="edge-lab" data-mention="textil"      d="M 1000 248 L 1000 235"/>
+  <!-- DI (1200,236) → LID ⬆ vertical -->
+  <path class="edge-lab" data-mention="interaccion" d="M 1200 220 L 1200 209"/>
+
+  <!-- ════════════════════════════════════════════
+       Laboratorios — pills 50×18, distribución simétrica
+       sobre cada mención.
+       ════════════════════════════════════════════ -->
+  <!-- GR — LAB360 (izq) y OTF (der) -->
+  <g class="n-open" data-mention="grafico">
+    <rect x="515" y="241" width="50" height="18" rx="4" ry="4"/>
+    <text class="caps-lab" x="540" y="250">LAB360</text>
+  </g>
+  <g class="n-open" data-mention="grafico">
+    <rect x="635" y="241" width="50" height="18" rx="4" ry="4"/>
+    <text class="caps-lab" x="660" y="250">OTF</text>
+  </g>
+
+  <!-- IN — LAMP (izq) y PD (der) -->
+  <g class="n-open" data-mention="industrial">
+    <rect x="715" y="213" width="50" height="18" rx="4" ry="4"/>
+    <text class="caps-lab" x="740" y="222">LAMP</text>
+  </g>
+  <g class="n-open" data-mention="industrial">
+    <rect x="835" y="213" width="50" height="18" rx="4" ry="4"/>
+    <text class="caps-lab" x="860" y="222">PD</text>
+  </g>
+
+  <!-- TX — LT (vertical sobre TEXTIL) -->
+  <g class="n-open" data-mention="textil">
+    <rect x="975" y="217" width="50" height="18" rx="4" ry="4"/>
+    <text class="caps-lab" x="1000" y="226">LT</text>
+  </g>
+
+  <!-- DI — LID (vertical sobre INTERACCIÓN) -->
+  <g class="n-open" data-mention="interaccion">
+    <rect x="1175" y="191" width="50" height="18" rx="4" ry="4"/>
+    <text class="caps-lab" x="1200" y="200">LID</text>
+  </g>
+
+  <!-- ════════════════════════════════════════════
+       Cápsulas Ciclo Inicial / Licenciatura / Profesional
+       ════════════════════════════════════════════ -->
+  <!-- CI · Ciclo Inicial · centro (717, 603) -->
+  <g class="n-filled">
+    <rect x="652" y="589" width="130" height="28" rx="8" ry="8"/>
+    <text class="caps-name" x="717" y="603">CICLO INICIAL</text>
+  </g>
+
+  <!-- CL · Ciclo Licenciatura · centro (991, 549) -->
+  <g class="n-filled">
+    <rect x="926" y="535" width="130" height="28" rx="8" ry="8"/>
+    <text class="caps-name" x="991" y="549">CICLO LICENCIATURA</text>
+  </g>
+
+  <!-- CP · Ciclo Profesional · centro (1263, 497) -->
+  <g class="n-filled">
+    <rect x="1198" y="483" width="130" height="28" rx="8" ry="8"/>
+    <text class="caps-name" x="1263" y="497">CICLO PROFESIONAL</text>
+  </g>
+
+  <!-- ════════════════════════════════════════════
+       Nodos de soporte (n-filled — blanco)
+       ════════════════════════════════════════════ -->
+  <!-- MC · Mejora Continua · centro (540, 540) -->
+  <g class="n-filled">
+    <rect x="475" y="526" width="130" height="28" rx="8" ry="8"/>
+    <text class="caps-name" x="540" y="540">MEJORA CONTINUA</text>
+  </g>
+
+  <!-- TE · Teoría · centro (1440, 677) -->
+  <g class="n-filled">
+    <rect x="1390" y="663" width="100" height="28" rx="8" ry="8"/>
+    <text class="caps-name" x="1440" y="677">TEORÍA</text>
+  </g>
+
+  <!-- CE · Centro Editorial · centro (1320, 420) · estilo mención (n-open) -->
+  <g class="n-open">
+    <rect x="1245" y="404" width="150" height="32" rx="8" ry="8"/>
+    <text class="caps-name" x="1320" y="420">CENTRO EDITORIAL</text>
+  </g>
+
+  <!-- AA · Apoyo al Aprendizaje · centro (707, 780) -->
+  <g class="n-filled">
+    <rect x="620" y="766" width="174" height="28" rx="8" ry="8"/>
+    <text class="caps-name" x="707" y="780">APOYO AL APRENDIZAJE</text>
+  </g>
+
+  <!-- VCM · Vinculación con el Medio · centro (1560, 180) -->
+  <g class="n-filled">
+    <rect x="1460" y="166" width="200" height="28" rx="8" ry="8"/>
+    <text class="caps-name" x="1560" y="180">VINCULACIÓN CON EL MEDIO</text>
+  </g>
+
+  <!-- ════════════════════════════════════════════
+       Departamentos en órbita elíptica alrededor de VCM
+       Eje a=130 (horizontal) · b=120 (vertical) — ajustado
+       para acortar líneas y mantener clearance al rect superior.
+       Ángulos: 30° · 102° · 174° · 246° · 318° (offset 30°).
+       Ningún pill toca los bordes del recuadro grande.
+       ════════════════════════════════════════════ -->
+  <!-- Aristas VCM → satélites (rect-exit en bordes) -->
+  <!-- VCM (1560, 166/194 = top/bottom) → satélites · L-shape con r=8 (mismo patrón que el resto) -->
+  <path class="edge-lab" d="M 1560 166 L 1560 117 Q 1560 109 1552 109 L 1463 109"/> <!-- → COM  -->
+  <path class="edge-lab" d="M 1560 166 L 1560 117 Q 1560 109 1568 109 L 1657 109"/> <!-- → ADM  -->
+  <path class="edge-lab" d="M 1560 194 L 1560 223 Q 1560 231 1568 231 L 1673 231"/> <!-- → INT  -->
+  <path class="edge-lab" d="M 1560 194 L 1560 280 Q 1560 288 1552 288 L 1533 288"/> <!-- → EXT  -->
+  <path class="edge-lab" d="M 1560 194 L 1560 223 Q 1560 231 1552 231 L 1447 231"/> <!-- → LINC -->
+
+
+  <!-- COM (mirror de ADM) -->
+  <g class="n-open">
+    <rect x="1438" y="91" width="50" height="18" rx="4" ry="4"/>
+    <text class="caps-lab" x="1463" y="100">COM</text>
+  </g>
+  <!-- ADM (318° · arriba-der) -->
+  <g class="n-open">
+    <rect x="1632" y="91" width="50" height="18" rx="4" ry="4"/>
+    <text class="caps-lab" x="1657" y="100">ADM</text>
+  </g>
+  <!-- LINC (150° · mirror de INT) -->
+  <g class="n-open">
+    <rect x="1422" y="231" width="50" height="18" rx="4" ry="4"/>
+    <text class="caps-lab" x="1447" y="240">LINC</text>
+  </g>
+  <!-- INT (30° · abajo-der) -->
+  <g class="n-open">
+    <rect x="1648" y="231" width="50" height="18" rx="4" ry="4"/>
+    <text class="caps-lab" x="1673" y="240">INT</text>
+  </g>
+  <!-- EXT (102° · abajo) -->
+  <g class="n-open">
+    <rect x="1508" y="288" width="50" height="18" rx="4" ry="4"/>
+    <text class="caps-lab" x="1533" y="297">EXT</text>
+  </g>
+
+  <!-- Highlight de la + activa (hover) -->
+  <g id="coord-marker" stroke="#ffffff" stroke-width="1.6" stroke-linecap="square">
+    <line id="coord-marker-h" x1="-8" y1="0" x2="8" y2="0"/>
+    <line id="coord-marker-v" x1="0" y1="-8" x2="0" y2="8"/>
+  </g>
+
+  <!-- Overlay transparente que captura el cursor sobre todo el lienzo -->
+  <rect id="hover-area" x="0" y="0" width="1920" height="1080"
+        fill="transparent" style="cursor: crosshair;"/>
+
+  <!-- ════════════════════════════════════════════
+       Viñeta de docente (oculta por defecto · 240 × 210)
+       Sin placeholder de foto · texto a ancho completo.
+       ════════════════════════════════════════════ -->
+  <!-- Viñeta de docente · alto responsivo al contenido (medido por offsetHeight) -->
+  <foreignObject id="docente-card" x="0" y="0" width="240" height="400" style="display:none; overflow: visible;">
+    <div xmlns="http://www.w3.org/1999/xhtml" id="dc-card" class="dc-card">
+      <div class="dc-name" id="dc-name"></div>
+      <div class="dc-cargo" id="dc-cargo"></div>
+      <div class="dc-divider"></div>
+      <div class="dc-section" id="dc-pregrado-section">
+        <div class="dc-label">Pregrado</div>
+        <div class="dc-value" id="dc-pregrado"></div>
+      </div>
+      <div class="dc-section" id="dc-postgrados-section">
+        <div class="dc-label">Postgrados</div>
+        <div class="dc-value" id="dc-postgrados"></div>
+      </div>
+      <div class="dc-section" id="dc-skills-section">
+        <div class="dc-label">Áreas</div>
+        <div class="dc-value" id="dc-skills"></div>
+      </div>
+    </div>
+  </foreignObject>
+
+  <!-- Mini-card de nodo · alto responsivo (medido por offsetHeight) -->
+  <foreignObject id="node-info-card" x="0" y="0" width="220" height="200" style="display:none; overflow: visible;">
+    <div xmlns="http://www.w3.org/1999/xhtml" id="ni-card" class="ni-card">
+      <div class="ni-title" id="ni-title"></div>
+      <div class="ni-divider"></div>
+      <div class="ni-section" id="ni-coord-section">
+        <div class="ni-label">Coordina</div>
+        <div class="ni-value" id="ni-coord"></div>
+      </div>
+      <div class="ni-section" id="ni-role-section">
+        <div class="ni-label">Cargo</div>
+        <div class="ni-value" id="ni-role"></div>
+      </div>
+    </div>
+  </foreignObject>
+</svg>
+
+<!-- Tooltip de coordenadas -->
+<div id="coord-tip"></div>
+
+<!-- Cursor visible sólo en modo demo (eventos sintéticos no mueven el cursor del SO) -->
+<div id="demo-cursor"></div>
+
+
+<script>
+(function () {
+  'use strict';
+
+  var svg       = document.querySelector('svg');
+  var hoverArea = document.getElementById('hover-area');
+  var marker    = document.getElementById('coord-marker');
+  var markerH   = document.getElementById('coord-marker-h');
+  var markerV   = document.getElementById('coord-marker-v');
+  var tip       = document.getElementById('coord-tip');
+
+  /* Tolerancia en unidades del viewBox para detectar marcadores.
+     STEP=30 cubre tanto las + (en múltiplos de 60) como los puntos
+     intermedios (en múltiplos de 30 con uno de los ejes en 60n). */
+  var SNAP_TOL = 10;
+  var STEP     = 30;
+
+  /* Convierte coords de pantalla → coords del viewBox del SVG. */
+  var pt = svg.createSVGPoint();
+  function toSvgCoords(clientX, clientY) {
+    pt.x = clientX;
+    pt.y = clientY;
+    var ctm = svg.getScreenCTM();
+    if (!ctm) return null;
+    return pt.matrixTransform(ctm.inverse());
+  }
+
+  hoverArea.addEventListener('mousemove', function (e) {
+    var p = toSvgCoords(e.clientX, e.clientY);
+    if (!p) return;
+
+    /* Coordenadas crudas (clamp al rango del lienzo) */
+    var rx = Math.max(0, Math.min(1920, Math.round(p.x)));
+    var ry = Math.max(0, Math.min(1080, Math.round(p.y)));
+
+    /* Marcador más cercano (snap a múltiplos de 30) */
+    var nx = Math.round(p.x / STEP) * STEP;
+    var ny = Math.round(p.y / STEP) * STEP;
+    var dx = p.x - nx;
+    var dy = p.y - ny;
+    var inRange = nx >= 0 && nx <= 1920 && ny >= 0 && ny <= 1080;
+    /* Determina si el punto (nx,ny) tiene un marcador real:
+         + en (60n, 60m) — ambas coords múltiplos de 60
+         · en (30+60n, 60m) o (60n, 30+60m) — un eje "media celda"
+         (30+60n, 30+60m) NO tiene marcador (centros de celda) */
+    var nxMod = ((nx % 60) + 60) % 60;
+    var nyMod = ((ny % 60) + 60) % 60;
+    var hasMarker = !(nxMod === 30 && nyMod === 30);
+    var onPlus = (
+      hasMarker && inRange &&
+      Math.sqrt(dx * dx + dy * dy) <= SNAP_TOL
+    );
+
+    /* Tooltip siempre visible siguiendo al cursor.
+       Si estamos sobre un marcador (cruz o punto), snap a su coord;
+       si no, muestra la coord exacta del cursor. */
+    if (onPlus) {
+      marker.setAttribute('transform', 'translate(' + nx + ' ' + ny + ')');
+      marker.classList.add('visible');
+      tip.textContent = '(' + nx + ', ' + ny + ')';
+    } else {
+      marker.classList.remove('visible');
+      tip.textContent = '(' + rx + ', ' + ry + ')';
+    }
+    tip.style.left = e.clientX + 'px';
+    tip.style.top  = e.clientY + 'px';
+    tip.classList.add('visible');
+  });
+
+  hoverArea.addEventListener('mouseleave', function () {
+    tip.classList.remove('visible');
+    marker.classList.remove('visible');
+  });
+
+}());
+</script>
+
+<script>
+/* ════════════════════════════════════════════
+   Docentes · puntos por mención/área + viñeta on-hover
+   Cada punto representa un/a docente. Hover abre un card SVG
+   con su información (cargo, pregrado, postgrados, áreas, cursos).
+   ════════════════════════════════════════════ */
+(function () {
+  'use strict';
+
+  // ==== Datos del staff (27 docentes con info completa del PDF) ====
+  var staff = [
+    // Dirección
+    { name: "Alejandra Celedón",       cargo: "Decana FaAAD",                 area: "dir",         pregrado: "Arquitecta (PUC)",                                                  postgrados: "Máster en Arquitectura · Doctora Architectural Association · Magíster Bartlett", skills: ["Curaduría", "Investigación", "Teoría"] },
+    { name: "Pedro Silva Mardones",    cargo: "Director",                     area: "dir",         pregrado: "Diseñador Industrial (UDP)",                                       postgrados: "Magíster en Territorio y Paisaje",                                                skills: ["Gestión", "Patrimonio", "Cultura"] },
+    { name: "Claudio Fredes",          cargo: "Secretario Académico",         area: "dir",         pregrado: "Arquitecto (FSM)",                                                  postgrados: "Diplomado en Diseño Tecnología · Magíster Ciencias del Diseño",                  skills: ["Gestión Académica", "Tecnología", "Interdisciplina"] },
+    { name: "Laura González",          cargo: "Secretaria de Estudios",       area: "dir",         pregrado: "Arquitecta (PUC)",                                                  postgrados: "Magíster en Arquitectura (Católica)",                                             skills: ["Ciudad", "Género", "Territorio"] },
+    { name: "Patricia Reyes",          cargo: "Secretaria Dirección",         area: "dir",         pregrado: "Administración de Empresas",                                       postgrados: "",                                                                                skills: ["Soporte", "Coordinación", "Gestión"] },
+    { name: "Sandra Orellana",         cargo: "Secretaria de Estudios",       area: "dir",         pregrado: "—",                                                                postgrados: "",                                                                                skills: ["Acompañamiento", "Apoyo", "Coordinación"] },
+
+    // Plan común
+    { name: "Joaquín Zerené",          cargo: "Teoría e Investigación",       area: "grafico",     pregrado: "Artista (UCh)",                                                     postgrados: "Magíster Diseño Comunicacional (UBA) · Candidato a Doctor (UBA)",                skills: ["Creatividad", "Narrativa", "Teoría"] },
+    { name: "Jorge Morales",           cargo: "Ciclo Inicial",                area: "ci",          pregrado: "Arquitecto (PUC)",                                                  postgrados: "Doctor Proyecto Arquitectónico (Pol. de Cataluña)",                              skills: ["Evaluación", "Metodología", "Investigación"] },
+    { name: "Dominique Tetzner",       cargo: "Segundo Ciclo",                area: "cl",          pregrado: "Diseñadora Gráfica (PUC)",                                          postgrados: "Master Visual Communication (Bauhaus Weimar)",                                    skills: ["Diseño de Información", "Diseño de Servicios", "Gestión Académica"] },
+    { name: "Joaquín Bejares",         cargo: "Titulación y LINC",            area: "cp", secondaryArea: "linc",          pregrado: "Diseñador Industrial (UDP)",                                       postgrados: "Master Live Design (Londres) · Master Arquitectura (Londres)",                   skills: ["Gestión Cultural", "Oficios", "Identidad Visual"] },
+
+    // Especialización
+    { name: "Guisela Mendoza",         cargo: "Diseño Gráfico",               area: "grafico",     pregrado: "Diseñadora Gráfica (Duoc)",                                         postgrados: "Candidata a Magíster",                                                            skills: ["Tipografía", "Investigación", "Diseño Editorial"] },
+    { name: "Sebastián Rodríguez",     cargo: "Diseño Industrial",            area: "industrial",  pregrado: "Diseñador Industrial (UCh)",                                        postgrados: "",                                                                                skills: ["Biomateriales / Biofabricación", "Diseño Industrial", "Fabricación Digital"] },
+    { name: "Paulina Romero",          cargo: "Textil e Indumentaria",        area: "textil",      pregrado: "Diseñadora (PUC)",                                                  postgrados: "",                                                                                skills: ["Producción Textil", "Gestión de Proyectos", "Innovación Social"] },
+    { name: "Joaquín González",        cargo: "Interacción Digital",          area: "interaccion", pregrado: "Arquitecto (UCh)",                                                  postgrados: "",                                                                                skills: ["Gestión de Proyectos", "Tecnología", "Innovación"] },
+    { name: "Paulina Pavez",           cargo: "Lab Manager Textil",           area: "textil",      pregrado: "Diseño de Vestuario",                                              postgrados: "",                                                                                skills: ["Confección", "Experimentación Textil", "Indumentaria"] },
+    { name: "Felipe Sepúlveda",        cargo: "Internacionalización",         area: "textil", secondaryArea: "int",      pregrado: "Diseñador Industrial y Artista (PUC)",                             postgrados: "Magíster Diseño e Innovación Sostenible (UDD)",                                  skills: ["Arte Textil (Tejido Contemporáneo)", "Instalación Efímera", "Gestión de proyectos"] },
+
+    // Coordinaciones
+    { name: "Ma. de la Paz Faúndez",   cargo: "Vinculación con el Medio",     area: "cp", secondaryArea: "vcm",          pregrado: "Arquitecta (PUC)",                                                  postgrados: "Magíster en Arquitectura (Católica)",                                             skills: ["Innovación Social", "Gestión Cultural", "Teoría"] },
+    { name: "Aarón Montoya",           cargo: "Lab Interacción Digital",      area: "interaccion", pregrado: "Ingeniero Electrónico (PUC)",                                       postgrados: "Master Media Arts (MIT) · Master Interactive Telecommunication (NYU)",           skills: ["Interacción Digital", "Artes Mediales", "Código Abierto"] },
+    { name: "Simón Gallardo",          cargo: "Posicionamiento Estratégico",  area: "industrial", secondaryArea: "com",  pregrado: "Diseñador Industrial (UDP)",                                       postgrados: "Magíster en Territorio y Paisaje (UDP)",                                          skills: ["Producción Audiovisual", "Paisaje", "Diseño Industrial"] },
+    { name: "Helga Peralta",           cargo: "Apoyo al Aprendizaje",         area: "aa",          pregrado: "Lic. Educación (U. La Serena) · Profesora en Filosofía",          postgrados: "Magíster en Filosofía (U. Chile) · Candidata a Doctor",                          skills: ["Apoyo Psicoeducativo", "Acompañamiento Estudiantil", "Teoría"] },
+    { name: "Antonieta López",         cargo: "Centro Editorial",             area: "grafico",     pregrado: "Diseñadora Gráfica (UDP)",                                          postgrados: "Magíster Territorio y Paisaje (UDP) · Diplomado Tipografía (U. Chile)",          skills: ["Diseño Editorial", "Gestión Editorial", "Edición Académica"] },
+    { name: "Angelo García",           cargo: "Lab 360 y Admisión",           area: "grafico", secondaryArea: "adm",     pregrado: "Diseñador Gráfico Publicitario (U. Antofagasta)",                  postgrados: "",                                                                                skills: ["Producción Gráfica", "Dibujo / Sketch", "Ilustración"] },
+
+    // Jornadas docentes
+    { name: "Álvaro Arteaga",          cargo: "Docente · ½ jornada",          area: "grafico",     pregrado: "Diseñador Gráfico (UVM)",                                           postgrados: "",                                                                                skills: ["Ilustración Digital", "Dirección de Arte", "IA Audiovisual"] },
+    { name: "Jenny Abud",              cargo: "Docente · ½ jornada",          area: "grafico",     pregrado: "Diseñadora Gráfica (UCh)",                                          postgrados: "Magíster en Edición (UDP)",                                                       skills: ["Producción Editorial", "Gestión Cultural", "Diseño de Información"] },
+    { name: "Manuel Córdoba",          cargo: "Docente · ½ jornada",          area: "grafico",     pregrado: "Diseñador Gráfico (UCh)",                                           postgrados: "Magíster Estrategia de Marca (Pompeu Fabra)",                                    skills: ["Branding", "Ilustración", "Audiovisual"] },
+    { name: "Héctor Novoa",            cargo: "Docente · ½ jornada",          area: "industrial",  pregrado: "Diseñador (Católica Valparaíso) · Arquitecto (Católica)",          postgrados: "Magíster en Arquitectura · Candidato a Doctor",                                  skills: ["Innovación", "Investigación Aplicada", "Interdisciplina"] },
+    { name: "Sara Freire",             cargo: "Docente · ¼ jornada",          area: "grafico",     pregrado: "Diseñadora Gráfica (UDP)",                                          postgrados: "Magíster en Diseño Comunicacional (UBA)",                                         skills: ["Investigación", "Teoría", "Pensamiento Crítico"] }
+  ];
+
+  // ==== Docentes part-time / jornadas (extraídos del listado de cursos · sin info de planta) ====
+  // Asignación por afinidad de mención: cursos como Tipografía → gráfico, Comunicación
+  // Visual → gráfico, Experimentación Material → industrial, Pensamiento Computacional →
+  // interacción, Fabricación Digital → industrial, etc. Los Talleres I/III (transversales)
+  // se distribuyen en las 4 menciones para reflejar la diversidad del cuerpo docente.
+  var partTime = [
+    // ── Taller I (DIS09111) · transversal · distribuido en 4 menciones ──
+    { name: "Ma. Trinidad Justiniano", area: "grafico",     courses: ["DIS09111"] },
+    { name: "Almendra Baus",           area: "grafico",     courses: ["DIS09111"] },
+    { name: "Daniela Rivera",          area: "industrial",  courses: ["DIS09111"] },
+    { name: "Paula Corrales",          area: "industrial",  courses: ["DIS09111"] },
+    { name: "Bernardita Marambio",     area: "textil",      courses: ["DIS09111"] },
+    { name: "Bárbara Gutiérrez",       area: "textil",      courses: ["DIS09111", "DIS8014"] },
+    { name: "Javiera Figueroa",        area: "interaccion", courses: ["DIS09111"] },
+    { name: "Belén Rebolledo",         area: "textil",      courses: ["DIS09111"] },
+    { name: "Kathryn Gillmore",        area: "interaccion", courses: ["DIS09111"] },
+
+    // ── Visualidad y Cultura (DIS09112) · teóricos distribuidos por mención ──
+    { name: "Claudio Guerrero",        area: "grafico", courses: ["DIS09112"] },
+    { name: "Leslie Núñez",            area: "textil",  courses: ["DIS09112"] },
+
+    // ── Comunicación Visual (DIS09113) → grafico ──
+    { name: "Patricio Albornoz",       area: "grafico", courses: ["DIS09113"] },
+    { name: "Elenita Fuenzalida",      area: "grafico", courses: ["DIS09113"] },
+    { name: "Andrea Ovalle",           area: "grafico", courses: ["DIS09113"] },
+    { name: "Javier Carrasco",         area: "grafico", courses: ["DIS09113"] },
+    { name: "Daniela Román",           area: "grafico", courses: ["DIS09113"] },
+    { name: "Javiera Lorca",           area: "grafico", courses: ["DIS09113"] },
+
+    // ── Dibujo y Observación (DIS09114) → grafico ──
+    { name: "Patricio Araya",          area: "grafico", courses: ["DIS09114"] },
+
+    // ── Experimentación Material (DIS09115) → industrial ──
+    { name: "Marianne Strobl",         area: "industrial", courses: ["DIS09115"] },
+    { name: "Hernán Cárcamo",          area: "industrial", courses: ["DIS09115"] },
+    { name: "Felipe Cardemil",         area: "industrial", courses: ["DIS09115", "DIS09211"] },
+    { name: "Eduardo Valenzuela",      area: "industrial", courses: ["DIS09115", "DIS09215"] },
+    { name: "Diego Contreras",         area: "industrial", courses: ["DIS09115"] },
+    { name: "Felipe Fuenzalida",       area: "industrial", courses: ["DIS09115", "DIS8VIAT2_2"] },
+
+    // ── Taller III (DIS09211) · transversal · distribuido en 4 menciones ──
+    { name: "Camilo Zúñiga",           area: "grafico",     courses: ["DIS09211"] },
+    { name: "Nicolás Sagredo",         area: "industrial",  courses: ["DIS09211"] },
+    { name: "Natalia Hurtado",         area: "textil",      courses: ["DIS09211"] },
+    { name: "Felipe Sanzana",          area: "industrial",  courses: ["DIS09211"] },
+    { name: "Anto Necochea",           area: "grafico",     courses: ["DIS09211"] },
+    { name: "Carolina Kusanovich",     area: "industrial",  courses: ["DIS09211", "DIS9075"] },
+    { name: "Juan Manuel Gili",        area: "interaccion", courses: ["DIS09211"] },
+    { name: "Sebastián Romero V.",     area: "industrial",  courses: ["DIS09211", "DIS09215"] },
+    { name: "Karla Villarroel",        area: "textil",      courses: ["DIS09211"] },
+    { name: "Beatriz Yáñez",           area: "grafico",     courses: ["DIS09211"] },
+    { name: "Carolina Pino",           area: "interaccion", courses: ["DIS09211"] },
+
+    // ── Análisis Crítico del Diseño (DIS09212) · teóricos distribuidos por mención ──
+    { name: "Dusan Cotoras",           area: "industrial",  courses: ["DIS09212"] },
+    { name: "David Maulén",            area: "interaccion", courses: ["DIS09212"] },
+
+    // ── Tipografía y Diagramación (DIS09213) → grafico ──
+    { name: "Gonzalo Osorio",          area: "grafico", courses: ["DIS09213"] },
+    { name: "Juan Bruce",              area: "grafico", courses: ["DIS09213"] },
+    { name: "Katrin Klapp",            area: "grafico", courses: ["DIS09213"] },
+    { name: "Yvonne Trigueros",        area: "grafico", courses: ["DIS09213"] },
+
+    // ── Pensamiento Computacional (DIS09214) → interaccion ──
+    { name: "Christian Oyarzun",       area: "interaccion", courses: ["DIS09214"] },
+    { name: "Poli Mujica",             area: "interaccion", courses: ["DIS09214"] },
+    { name: "Sofía Suazo",             area: "interaccion", courses: ["DIS09214"] },
+    { name: "Matías Serrano",          area: "interaccion", courses: ["DIS09214", "DIS8644"] },
+
+    // ── Fabricación Digital (DIS09215) → industrial ──
+    { name: "Gonzalo Muñoz Guerrero",  area: "industrial", courses: ["DIS09215"] },
+    { name: "Roberto Vackflores",      area: "industrial", courses: ["DIS09215"] },
+    { name: "Bayron Inostroza",        area: "industrial", courses: ["DIS09215"] },
+    { name: "Emilio Troncoso",         area: "industrial", courses: ["DIS09215"] },
+    { name: "Luca Dalbosco",           area: "industrial", courses: ["DIS09215"] },
+
+    // ── Cursos de gestión (DIS80XX) → cp (administrativos transversales) ──
+    { name: "Carlos Muñoz",            area: "cp", courses: ["DIS8010"] },
+    { name: "Andrés Fernández",        area: "cp", courses: ["DIS8010"] },
+    { name: "Paulina Muena",           area: "cp", courses: ["DIS8010"] },
+    { name: "Carina Sfeir",            area: "cp", courses: ["DIS8012"] },
+    { name: "Macarena Torres",         area: "cp", courses: ["DIS8012"] },
+
+    // ── Talleres verticales · industrial ──
+    { name: "Rodrigo Bravo",           area: "industrial", courses: ["DIS8620"] },
+    { name: "Diego Gajardo",           area: "industrial", courses: ["DIS8620"] },
+    { name: "Alejandra Ruiz",          area: "industrial", courses: ["DIS8626"] },
+    { name: "Aribel González",         area: "industrial", courses: ["DIS8628", "DIS8947"] },
+    { name: "Margarita Talep",         area: "industrial", courses: ["DIS8643", "DIS9032"] },
+    { name: "Vicente Stephens",        area: "industrial", courses: ["DIS8643"] },
+
+    // ── Talleres verticales · grafico ──
+    { name: "Renata Carreño",          area: "grafico", courses: ["DIS8622", "DIS8VIAT1_2"] },
+    { name: "Jennifer King",           area: "grafico", courses: ["DIS8622"] },
+    { name: "Ariel Altamirano",        area: "grafico", courses: ["DIS8634"] },
+    { name: "Sebastián Barrante",      area: "grafico", courses: ["DIS8640", "DIS9044"] },
+
+    // ── Talleres verticales · textil ──
+    { name: "Ma. Eugenia Ibarra",      area: "textil", courses: ["DIS8630"] },
+
+    // ── Talleres verticales · interaccion ──
+    { name: "Sergio Mora",             area: "interaccion", courses: ["DIS8652"] },
+
+    // ── Talleres invitados / interdisciplinares · distribuidos por afinidad ──
+    { name: "Sebastián Arancibia",     area: "grafico",    courses: ["DIS8640"] },
+    { name: "Roberto Herrera",         area: "industrial", courses: ["DIS8651"] },
+
+    // ── Profundización (DIS90XX) por mención ──
+    { name: "Loreto Martínez",         area: "interaccion", courses: ["DIS9025"] },
+    { name: "Valentina Vega",          area: "interaccion", courses: ["DIS9037"] },
+    { name: "Alexander Bustamante",    area: "industrial",  courses: ["DIS9039"] },
+    { name: "Benjamín Muller",         area: "grafico",     courses: ["DIS9040"] },
+    { name: "Juan Pablo Bravo",        area: "grafico",     courses: ["DIS9052"] },
+    { name: "Nicole Farfán",           area: "textil",      courses: ["DIS9078"] },
+    { name: "Rodrigo Córdova",         area: "industrial",  courses: ["DIS9080"] },
+    { name: "Claudio Carvajal",        area: "grafico",     courses: ["PRI0001"] },
+
+    // ── Especialización (DIS89XX) por mención ──
+    { name: "Florencia Adriasola",     area: "interaccion", courses: ["DIS8910"] },
+    { name: "Víctor Rocha",            area: "grafico",     courses: ["DIS8940"] },
+    { name: "Jimena Villaseca",        area: "textil",      courses: ["DIS8946"] },
+    { name: "Guillermo Montecinos",    area: "interaccion", courses: ["DIS8948"] },
+    { name: "Francisco Parada",        area: "interaccion", courses: ["DIS8970"] },
+
+    // ── Titulación (DIS8VIAT) · profesores guía → distribuidos en menciones ──
+    { name: "Elisa Errázuriz",         area: "grafico",     courses: ["DIS8VIAT1_2"] },
+    { name: "Cristian González",       area: "industrial",  courses: ["DIS8VIAT1_2"] },
+    { name: "Valentina Pizarro",       area: "textil",      courses: ["DIS8VIAT1_2"] },
+    { name: "Antonieta Aguayo",        area: "interaccion", courses: ["DIS8VIAT1_2"] },
+    { name: "Guadalupe Gajardo",       area: "grafico",     courses: ["DIS8VIAT1_2"] },
+    { name: "Sergio Majluf",           area: "industrial",  courses: ["DIS8VIAT1_2"] },
+    { name: "Filipa Briones",          area: "textil",      courses: ["DIS8VIAT2_2"] },
+    { name: "Marycarmen Muñoz",        area: "interaccion", courses: ["DIS8VIAT2_2"] }
+  ];
+
+  // Construye lista final: staff con info completa + part-time con info parcial.
+  // Para los part-time se sintetiza un cargo descriptivo a partir de los cursos.
+  var docentes = staff.concat(partTime.map(function (d) {
+    return {
+      name: d.name,
+      cargo: "Docente · " + d.courses.length + " " + (d.courses.length === 1 ? "curso" : "cursos"),
+      area: d.area,
+      pregrado: "—",
+      postgrados: "Cursos: " + d.courses.join(" · "),
+      skills: []
+    };
+  }));
+
+  // ==== Áreas con centro y semieje (elipse de dispersión) ====
+  // Las menciones concentran ahora la masa del cuerpo docente. Los nodos de ciclo
+  // (CI / CL) solo tienen al coordinador específico (Morales / Tetzner). CP retiene
+  // a Bejares + Faúndez + profesores de Gestión/Adm Financiera (no diseño).
+  var regions = {
+    grafico:     { cx: 600,  cy: 320, rx: 105, ry: 75 },
+    industrial:  { cx: 800,  cy: 292, rx: 100, ry: 75 },
+    textil:      { cx: 1000, cy: 264, rx: 85,  ry: 60 },
+    interaccion: { cx: 1200, cy: 236, rx: 95,  ry: 70 },
+    ci:          { cx: 717,  cy: 603, rx: 50,  ry: 30 },
+    cl:          { cx: 991,  cy: 549, rx: 50,  ry: 30 },
+    cp:          { cx: 1263, cy: 497, rx: 90,  ry: 50 },
+    dir:         { cx: 1173, cy: 663, rx: 130, ry: 60 },
+    aa:          { cx: 707,  cy: 780, rx: 130, ry: 28 },
+    mc:          { cx: 540,  cy: 540, rx: 95,  ry: 50 },
+    te:          { cx: 1440, cy: 677, rx: 60,  ry: 40 }
+  };
+
+  // Bounds reales de TODOS los nodos · n-filled + n-open (menciones, labs,
+  // satélites, CE). El padding dinámico (radio del punto + 1 px) se aplica
+  // dentro de isInsideFilled, garantizando que ningún punto quede por detrás
+  // o tocando el borde de un nodo.
+  var filledBounds = [
+    // n-filled
+    { x1: 1063, y1: 615, x2: 1283, y2: 711 },  // DIR
+    { x1: 652,  y1: 589, x2: 782,  y2: 617 },  // CI
+    { x1: 926,  y1: 535, x2: 1056, y2: 563 },  // CL
+    { x1: 1198, y1: 483, x2: 1328, y2: 511 },  // CP
+    { x1: 475,  y1: 526, x2: 605,  y2: 554 },  // MC
+    { x1: 620,  y1: 766, x2: 794,  y2: 794 },  // AA
+    { x1: 1390, y1: 663, x2: 1490, y2: 691 },  // TE
+    { x1: 1460, y1: 166, x2: 1660, y2: 194 },  // VCM
+    // n-open menciones
+    { x1: 525,  y1: 304, x2: 675,  y2: 336 },  // GRÁFICO
+    { x1: 725,  y1: 276, x2: 875,  y2: 308 },  // INDUSTRIAL
+    { x1: 925,  y1: 248, x2: 1075, y2: 280 },  // TEXTIL
+    { x1: 1125, y1: 220, x2: 1275, y2: 252 },  // INTERACCIÓN
+    // n-open Centro Editorial
+    { x1: 1245, y1: 404, x2: 1395, y2: 436 },  // CE
+    // n-open laboratorios
+    { x1: 515,  y1: 241, x2: 565,  y2: 259 },  // LAB360
+    { x1: 635,  y1: 241, x2: 685,  y2: 259 },  // OTF
+    { x1: 715,  y1: 213, x2: 765,  y2: 231 },  // LAMP
+    { x1: 835,  y1: 213, x2: 885,  y2: 231 },  // PD
+    { x1: 975,  y1: 217, x2: 1025, y2: 235 },  // LT
+    { x1: 1175, y1: 191, x2: 1225, y2: 209 },  // LID
+    // n-open satélites VCM
+    { x1: 1438, y1: 91,  x2: 1488, y2: 109 },  // COM
+    { x1: 1632, y1: 91,  x2: 1682, y2: 109 },  // ADM
+    { x1: 1422, y1: 231, x2: 1472, y2: 249 },  // LINC
+    { x1: 1648, y1: 231, x2: 1698, y2: 249 },  // INT
+    { x1: 1508, y1: 288, x2: 1558, y2: 306 }   // EXT
+  ];
+
+  // Padding = radio del punto (5.2) + 1 px de aire al borde
+  var DOT_R = 5.2;
+  var DOT_PAD = DOT_R + 1;
+
+  function isInsideFilled(x, y) {
+    for (var i = 0; i < filledBounds.length; i++) {
+      var c = filledBounds[i];
+      if (x >= c.x1 - DOT_PAD && x <= c.x2 + DOT_PAD &&
+          y >= c.y1 - DOT_PAD && y <= c.y2 + DOT_PAD) return true;
+    }
+    return false;
+  }
+
+  // PRNG con semilla fija
+  var seed = 137;
+  function rand() {
+    seed = (seed * 9301 + 49297) % 233280;
+    return seed / 233280;
+  }
+
+  function generatePos(region) {
+    for (var i = 0; i < 200; i++) {
+      var angle = rand() * 2 * Math.PI;
+      var rad = Math.sqrt(rand());
+      var x = region.cx + rad * region.rx * Math.cos(angle);
+      var y = region.cy + rad * region.ry * Math.sin(angle);
+      if (!isInsideFilled(x, y)) return { x: x, y: y };
+    }
+    // Fallback: borde de la elipse · seguir intentando hasta encontrar uno libre
+    for (var j = 0; j < 60; j++) {
+      var a = rand() * 2 * Math.PI;
+      var fx = region.cx + region.rx * Math.cos(a);
+      var fy = region.cy + region.ry * Math.sin(a);
+      if (!isInsideFilled(fx, fy)) return { x: fx, y: fy };
+    }
+    return { x: region.cx + region.rx, y: region.cy };
+  }
+
+  // Posiciones fijas de los puntos secundarios · docentes con rol coordinador
+  // en VCM y satélites (mismo docente aparece 2 veces, conectado por línea).
+  // Coords elegidas fuera de los bounds (con buffer 6.2) para no superponer.
+  var secondaryPositions = {
+    vcm:  { x: 1560, y: 145 },  // sobre nodo VCM
+    linc: { x: 1447, y: 270 },  // bajo satélite LINC
+    int:  { x: 1673, y: 270 },  // bajo satélite INT
+    com:  { x: 1463, y: 130 },  // bajo satélite COM
+    adm:  { x: 1657, y: 130 },  // bajo satélite ADM
+    ext:  { x: 1533, y: 325 }   // bajo satélite EXT
+  };
+
+  // Hash determinista por clave de área: cada nodo y sus puntos asociados
+  // comparten exactamente el mismo phase/duration → flotan en sincronía.
+  function areaTiming(key) {
+    var h = 0;
+    for (var i = 0; i < key.length; i++) h = (h * 31 + key.charCodeAt(i)) >>> 0;
+    return {
+      delay:    '-' + (((h % 800) / 100).toFixed(2)) + 's',
+      duration: ((7 + (h % 240) / 100).toFixed(2)) + 's'
+    };
+  }
+  function applyFloat(el, area) {
+    el.classList.add('float-node');
+    var t = areaTiming(area);
+    el.style.animationDelay    = t.delay;
+    el.style.animationDuration = t.duration;
+  }
+
+  // ==== Generación de puntos ====
+  var SVG_NS = 'http://www.w3.org/2000/svg';
+  var svg = document.querySelector('svg');
+  var docentesGroup = document.createElementNS(SVG_NS, 'g');
+  docentesGroup.setAttribute('id', 'docentes');
+
+  function makeDot(x, y, idx, isSecondary, area) {
+    // Wrapper g · recibe la animación de flotación sincronizada con el nodo
+    // del área. El círculo conserva su animación de twinkle por separado.
+    var wrap = document.createElementNS(SVG_NS, 'g');
+    if (area) applyFloat(wrap, area);
+
+    var dot = document.createElementNS(SVG_NS, 'circle');
+    dot.setAttribute('cx', x.toFixed(1));
+    dot.setAttribute('cy', y.toFixed(1));
+    dot.setAttribute('r', '5.2');
+    dot.setAttribute('class', 'docente-point');
+    dot.setAttribute('data-idx', idx);
+    if (isSecondary) dot.setAttribute('data-secondary', '1');
+    dot.style.animationDelay = (rand() * 4).toFixed(2) + 's';
+    dot.style.animationDuration = (2.2 + rand() * 2.6).toFixed(2) + 's';
+
+    wrap.appendChild(dot);
+    docentesGroup.appendChild(wrap);
+    return dot;
+  }
+
+  docentes.forEach(function (doc, idx) {
+    var region = regions[doc.area];
+    if (!region) return;
+    var pos = generatePos(region);
+    doc._x = pos.x;
+    doc._y = pos.y;
+    makeDot(pos.x, pos.y, idx, false, doc.area);
+
+    // Punto secundario · sólo si el docente es encargado de VCM o satélite
+    if (doc.secondaryArea && secondaryPositions[doc.secondaryArea]) {
+      var sec = secondaryPositions[doc.secondaryArea];
+      doc._x2 = sec.x;
+      doc._y2 = sec.y;
+      makeDot(sec.x, sec.y, idx, true, doc.secondaryArea);
+    }
+  });
+
+  var nodeDir = document.getElementById('node-dir');
+  if (nodeDir && nodeDir.parentNode) {
+    nodeDir.parentNode.insertBefore(docentesGroup, nodeDir);
+  } else {
+    svg.appendChild(docentesGroup);
+  }
+
+  // ==== Card open/close ====
+  var card = document.getElementById('docente-card');
+  var activeDot = null;
+
+  function setText(id, text) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = text || '';
+  }
+
+  function wrapText(text, maxChars) {
+    if (!text) return [];
+    var words = String(text).split(/\s+/);
+    var lines = [];
+    var line = '';
+    for (var i = 0; i < words.length; i++) {
+      var w = words[i];
+      var test = line ? line + ' ' + w : w;
+      if (test.length <= maxChars) line = test;
+      else { if (line) lines.push(line); line = w; }
+    }
+    if (line) lines.push(line);
+    return lines;
+  }
+
+  function truncate(text, maxChars) {
+    if (!text) return '';
+    return text.length <= maxChars ? text : text.slice(0, maxChars - 1) + '…';
+  }
+
+  function setSection(sectionId, valueId, value) {
+    var section = document.getElementById(sectionId);
+    var valueEl = document.getElementById(valueId);
+    if (value && String(value).trim()) {
+      valueEl.textContent = value;
+      section.style.display = '';
+    } else {
+      valueEl.textContent = '';
+      section.style.display = 'none';
+    }
+  }
+
+  function openCard(idx, dot) {
+    var doc = docentes[idx];
+    if (!doc) return;
+
+    if (activeDot) activeDot.classList.remove('is-active');
+    activeDot = dot;
+    dot.classList.add('is-active');
+
+    // Poblar campos · sin truncar (el alto crece con el contenido)
+    document.getElementById('dc-name').textContent = doc.name || '';
+    var cargoEl = document.getElementById('dc-cargo');
+    if (doc.cargo) {
+      cargoEl.textContent = doc.cargo;
+      cargoEl.style.display = '';
+    } else {
+      cargoEl.style.display = 'none';
+    }
+
+    var pregradoVal = (doc.pregrado && doc.pregrado !== '—') ? doc.pregrado : '';
+    setSection('dc-pregrado-section', 'dc-pregrado', pregradoVal);
+    setSection('dc-postgrados-section', 'dc-postgrados', doc.postgrados || '');
+    setSection('dc-skills-section', 'dc-skills', (doc.skills || []).join(' · '));
+
+    // Medir altura real del contenido HTML
+    var W = 240;
+    card.setAttribute('width', W);
+    card.setAttribute('height', 600);          // altura temporal grande para permitir layout
+    card.setAttribute('x', '-9999');           // off-screen mientras se mide
+    card.setAttribute('y', '-9999');
+    card.style.display = 'block';
+
+    var inner = document.getElementById('dc-card');
+    var H = Math.ceil(inner.offsetHeight);     // alto real del contenido en CSS px == unidades SVG
+
+    // Posicionar card cerca del punto hovereado (puede ser primario o secundario)
+    var dotX = parseFloat(dot.getAttribute('cx'));
+    var dotY = parseFloat(dot.getAttribute('cy'));
+    var cx = dotX + 14;
+    var cy = dotY - H / 2;
+    if (cx + W > 1920) cx = dotX - W - 14;
+    if (cx < 10) cx = 10;
+    if (cy < 10) cy = 10;
+    if (cy + H > 1070) cy = 1070 - H;
+
+    card.setAttribute('x', cx.toFixed(1));
+    card.setAttribute('y', cy.toFixed(1));
+    card.setAttribute('height', H);
+  }
+
+  function closeCard() {
+    card.style.display = 'none';
+    if (activeDot) activeDot.classList.remove('is-active');
+    activeDot = null;
+  }
+
+  // Helper: encuentra punto docente bajo el cursor
+  function findDotAt(clientX, clientY) {
+    var els = document.elementsFromPoint(clientX, clientY);
+    for (var i = 0; i < els.length; i++) {
+      if (els[i].classList && els[i].classList.contains('docente-point')) {
+        return els[i];
+      }
+    }
+    return null;
+  }
+
+  // ==== Mini-card al hover sobre un nodo (título + coordinador) ====
+  var nodeAreaMap = {
+    'GRÁFICO': 'grafico', 'INDUSTRIAL': 'industrial', 'TEXTIL': 'textil',
+    'INTERACCIÓN': 'interaccion',
+    'CICLO INICIAL': 'ci', 'CICLO LICENCIATURA': 'cl', 'CICLO PROFESIONAL': 'cp',
+    'MEJORA CONTINUA': 'mc', 'TEORÍA': 'te', 'CENTRO EDITORIAL': 'ce',
+    'APOYO AL APRENDIZAJE': 'aa', 'VINCULACIÓN CON EL MEDIO': 'vcm',
+    'LAB360': 'lab360', 'OTF': 'otf', 'LAMP': 'lamp', 'PD': 'pd',
+    'LT': 'lt', 'LID': 'lid',
+    'COM': 'com', 'ADM': 'adm', 'LINC': 'linc', 'INT': 'int', 'EXT': 'ext'
+  };
+  var nodeInfo = {
+    dir:         { title: 'Dirección',                 coord: 'Pedro Silva Mardones',  role: 'Director' },
+    ci:          { title: 'Ciclo Inicial',             coord: 'Jorge Morales',         role: 'Coordinador Ciclo Inicial' },
+    cl:          { title: 'Ciclo Licenciatura',        coord: 'Dominique Tetzner',     role: 'Coordinadora Segundo Ciclo' },
+    cp:          { title: 'Ciclo Profesional',         coord: 'Joaquín Bejares',       role: 'Coordinador Titulación y LINC' },
+    mc:          { title: 'Mejora Continua',           coord: 'Dominique Tetzner',     role: 'Coordinadora Mejora Continua' },
+    aa:          { title: 'Apoyo al Aprendizaje',      coord: 'Helga Peralta',         role: 'Coordinadora Apoyo al Aprendizaje' },
+    te:          { title: 'Teoría',                    coord: 'Joaquín Zerené',        role: 'Teoría e Investigación' },
+    ce:          { title: 'Centro Editorial',          coord: 'Antonieta López',       role: 'Coordinadora Centro Editorial' },
+    vcm:         { title: 'Vinculación con el Medio',  coord: 'Ma. de la Paz Faúndez', role: 'Coordinadora VCM' },
+    grafico:     { title: 'Diseño Gráfico',            coord: 'Guisela Mendoza',       role: 'Coordinadora Mención Gráfico' },
+    industrial:  { title: 'Diseño Industrial',         coord: 'Sebastián Rodríguez',   role: 'Coordinador Mención Industrial' },
+    textil:      { title: 'Textil e Indumentaria',     coord: 'Paulina Romero',        role: 'Coordinadora Mención Textil' },
+    interaccion: { title: 'Interacción Digital',       coord: 'Joaquín González',      role: 'Coordinador Mención Interacción' },
+    lab360:      { title: 'LAB 360',                   coord: 'Angelo García',         role: 'Lab 360 y Admisión' },
+    otf:         { title: 'OTF',                       coord: 'Por asignar',           role: '' },
+    lamp:        { title: 'LAMP',                      coord: 'Por asignar',           role: '' },
+    pd:          { title: 'PD',                        coord: 'Por asignar',           role: '' },
+    lt:          { title: 'Lab Textil',                coord: 'Paulina Pavez',         role: 'Lab Manager Textil' },
+    lid:         { title: 'Lab Interacción Digital',   coord: 'Aarón Montoya',         role: 'Lab Interacción Digital' },
+    com:         { title: 'Comunicaciones',            coord: 'Simón Gallardo',        role: 'Posicionamiento Estratégico' },
+    adm:         { title: 'Admisión',                  coord: 'Angelo García',         role: 'Lab 360 y Admisión' },
+    linc:        { title: 'LINC',                      coord: 'Joaquín Bejares',       role: 'Titulación y LINC' },
+    int:         { title: 'Internacionalización',      coord: 'Felipe Sepúlveda',      role: 'Internacionalización' },
+    ext:         { title: 'Extensión',                 coord: 'Por asignar',           role: '' }
+  };
+
+  function getNodeKey(g) {
+    if (g.id === 'node-dir') return 'dir';
+    var t = g.querySelector('text');
+    if (!t) return null;
+    return nodeAreaMap[t.textContent.trim()] || null;
+  }
+
+  function findNodeAt(x, y) {
+    var els = document.elementsFromPoint(x, y);
+    for (var i = 0; i < els.length; i++) {
+      var c = els[i].closest && els[i].closest('g.n-filled, g.n-open, #node-dir');
+      if (c) return c;
+    }
+    return null;
+  }
+
+  var nodeInfoCard = document.getElementById('node-info-card');
+  var activeNodeKey = null;
+
+  function setNiSection(secId, valId, val) {
+    var sec = document.getElementById(secId);
+    var v   = document.getElementById(valId);
+    if (val && String(val).trim()) {
+      v.textContent = val;
+      sec.style.display = '';
+    } else {
+      v.textContent = '';
+      sec.style.display = 'none';
+    }
+  }
+
+  function openNodeInfo(key, g) {
+    var info = nodeInfo[key];
+    if (!info) return;
+    if (activeNodeKey === key) return;
+    activeNodeKey = key;
+
+    document.getElementById('ni-title').textContent = info.title || '';
+    setNiSection('ni-coord-section', 'ni-coord', info.coord);
+    setNiSection('ni-role-section',  'ni-role',  info.role);
+
+    // Tamaño temporal grande off-screen para que el browser haga layout
+    nodeInfoCard.setAttribute('x', '-9999');
+    nodeInfoCard.setAttribute('y', '-9999');
+    nodeInfoCard.setAttribute('width', 220);
+    nodeInfoCard.setAttribute('height', 400);
+    nodeInfoCard.style.display = 'block';
+
+    var inner = document.getElementById('ni-card');
+    var H = Math.ceil(inner.offsetHeight);
+    var W = 220;
+
+    // Posicionar al lado del nodo (a la derecha, salvo que se salga)
+    var rect = g.querySelector('rect');
+    if (!rect) { closeNodeInfo(); return; }
+    var rx = parseFloat(rect.getAttribute('x'));
+    var ry = parseFloat(rect.getAttribute('y'));
+    var rw = parseFloat(rect.getAttribute('width'));
+    var rh = parseFloat(rect.getAttribute('height'));
+    var ccx = rx + rw / 2;
+    var ccy = ry + rh / 2;
+
+    var cx = rx + rw + 14;
+    var cy = ccy - H / 2;
+    if (cx + W > 1920) cx = rx - W - 14;
+    if (cx < 10) cx = 10;
+    if (cy < 10) cy = 10;
+    if (cy + H > 1070) cy = 1070 - H;
+
+    nodeInfoCard.setAttribute('x', cx.toFixed(1));
+    nodeInfoCard.setAttribute('y', cy.toFixed(1));
+    nodeInfoCard.setAttribute('height', H);
+  }
+
+  function closeNodeInfo() {
+    nodeInfoCard.style.display = 'none';
+    activeNodeKey = null;
+  }
+
+  // Hover unificado · puntos docentes (prioridad) → nodos → nada.
+  // En cada caso oculta tooltip/marcador y cierra cards no relevantes.
+  var hoverArea = document.getElementById('hover-area');
+  var coordTip    = document.getElementById('coord-tip');
+  var coordMarker = document.getElementById('coord-marker');
+  hoverArea.addEventListener('mousemove', function (e) {
+    var dot = findDotAt(e.clientX, e.clientY);
+    if (dot) {
+      if (dot !== activeDot) {
+        var idx = +dot.getAttribute('data-idx');
+        openCard(idx, dot);
+      }
+      if (activeNodeKey) closeNodeInfo();
+      coordTip.classList.remove('visible');
+      coordMarker.classList.remove('visible');
+      hoverArea.style.cursor = 'pointer';
+      return;
+    }
+    var node = findNodeAt(e.clientX, e.clientY);
+    if (node) {
+      var key = getNodeKey(node);
+      if (key) {
+        openNodeInfo(key, node);
+        if (activeDot) closeCard();
+        coordTip.classList.remove('visible');
+        coordMarker.classList.remove('visible');
+        hoverArea.style.cursor = 'pointer';
+        return;
+      }
+    }
+    // Nada interactivo bajo el cursor
+    if (activeDot)     closeCard();
+    if (activeNodeKey) closeNodeInfo();
+    hoverArea.style.cursor = 'crosshair';
+  });
+
+  // ==== Flotación de nodos · cada nodo flota con el timing de su área
+  // (reusa nodeAreaMap definido arriba para hover-info). ====
+  document.querySelectorAll('g.n-filled, g.n-open, #node-dir').forEach(function (g) {
+    var area = getNodeKey(g);
+    if (area) applyFloat(g, area);
+  });
+
+  // ==== Click en mención · enciende su camino completo ====
+  // El #hover-area está sobre todo el lienzo y atrapa el evento click antes
+  // que el target real, por eso usamos elementsFromPoint para encontrar el
+  // .mention-trigger debajo del cursor (mismo truco que con los puntos
+  // docentes). Triggers válidos:
+  //   · 4 nodos de mención en el diagrama (g.mention-trigger)
+  //   · 4 títulos del bloque de menciones inferior (div.mention-trigger)
+  var activeMention = null;
+  var idleTimer     = null;
+  var IDLE_MS       = 10000;  // 10 s sin clicks → vuelve al estado 00
+  function cancelIdleTimer() {
+    if (idleTimer) { clearTimeout(idleTimer); idleTimer = null; }
+  }
+  function startIdleTimer() {
+    cancelIdleTimer();
+    idleTimer = setTimeout(function () {
+      clearActivePath();
+    }, IDLE_MS);
+  }
+  function clearActivePath() {
+    document.querySelectorAll('.path-active').forEach(function (el) {
+      el.classList.remove('path-active');
+    });
+    activeMention = null;
+    cancelIdleTimer();
+  }
+  function activatePath(key) {
+    document.querySelectorAll('[data-mention="' + key + '"]').forEach(function (el) {
+      el.classList.add('path-active');
+    });
+    activeMention = key;
+    startIdleTimer();
+  }
+  function findMentionTriggerAt(clientX, clientY) {
+    var els = document.elementsFromPoint(clientX, clientY);
+    for (var i = 0; i < els.length; i++) {
+      var t = els[i].closest && els[i].closest('.mention-trigger');
+      if (t) return t;
+    }
+    return null;
+  }
+  // ==== Tag proyectos y convenios para el sistema click → highlight ====
+  // Cada proj-num + sus proj-name/proj-info siguientes reciben data-proj.
+  // Cada cnvh-acro + su cnvh-name siguiente reciben data-cnv.
+  document.querySelectorAll('.proj-num').forEach(function (numEl) {
+    var num = numEl.textContent.trim();
+    numEl.setAttribute('data-proj', num);
+    numEl.classList.add('proj-trigger');
+    var sib = numEl.nextElementSibling;
+    while (sib) {
+      if (sib.classList && (sib.classList.contains('proj-num') ||
+                            sib.classList.contains('proj-section') ||
+                            sib.classList.contains('proj-divider'))) break;
+      if (sib.classList && (sib.classList.contains('proj-name') ||
+                            sib.classList.contains('proj-info'))) {
+        sib.setAttribute('data-proj', num);
+        sib.classList.add('proj-trigger');
+      }
+      sib = sib.nextElementSibling;
+    }
+  });
+  document.querySelectorAll('.cnvh-acro').forEach(function (acroEl) {
+    var key = acroEl.textContent.trim();
+    acroEl.setAttribute('data-cnv', key);
+    acroEl.classList.add('cnv-item');
+    var name = acroEl.nextElementSibling;
+    if (name && name.classList && name.classList.contains('cnvh-name')) {
+      name.setAttribute('data-cnv', key);
+      name.classList.add('cnv-item');
+    }
+  });
+
+  // Mapping proyecto → convenios asociados (acros) · ajustar según contexto
+  var projectConvenios = {
+    '01': ['BN'],                     // HDGCH · Historia del Diseño Gráfico
+    '02': [],                         // Revista 180 (académica)
+    '03': [],                         // Revista zer081
+    '04': ['MIM'],                    // Museo Futuro – Congreso Futuro
+    '05': [],                         // Muestra Talleres Indumentaria/Textil
+    '06': [],                         // Montecarmelo (sin convenio)
+    '07': ['MEGM'],                   // Multiplicar las Voces – MEGM
+    '08': ['MMDDHH'],                 // Derechos en Juego
+    '09': ['AOA'],                    // Laboratorio FaAAD Santiago
+    '10': ['BN'],                     // Sala Literatura Infantil
+    '11': ['AOA'],                    // Taller Internacional Madrid
+    '12': [],                         // Workshop Comic Sans
+    '13': [],                         // Máquinas Electrónicas
+    '14': [],                         // Aves RM
+    '15': [],                         // Processing Community Day
+    '16': ['MNBA','MAVI','ATQN'],     // Museo de los Museos
+    '17': ['MEGM'],                   // Máquinas Percutoras (GAM)
+    '18': ['MOBIL']                   // Bancas
+  };
+
+  var activeProj = null;
+  var projIdleTimer = null;
+  function cancelProjIdle() { if (projIdleTimer) { clearTimeout(projIdleTimer); projIdleTimer = null; } }
+  function startProjIdle() {
+    cancelProjIdle();
+    projIdleTimer = setTimeout(function () { clearProjActivation(); }, IDLE_MS);
+  }
+  function clearProjActivation() {
+    document.querySelectorAll('.proj-active, .proj-dim, .cnv-active, .cnv-dim').forEach(function (el) {
+      el.classList.remove('proj-active', 'proj-dim', 'cnv-active', 'cnv-dim');
+    });
+    activeProj = null;
+    cancelProjIdle();
+  }
+  function activateProject(pid) {
+    clearProjActivation();
+    activeProj = pid;
+    var matches = projectConvenios[pid] || [];
+
+    document.querySelectorAll('.proj-trigger').forEach(function (el) {
+      if (el.getAttribute('data-proj') === pid) el.classList.add('proj-active');
+      else                                       el.classList.add('proj-dim');
+    });
+    // Si el proyecto tiene convenios asociados → highlight + dim del resto
+    // Si no tiene → convenios quedan en estado normal (sin filtrado)
+    if (matches.length) {
+      document.querySelectorAll('.cnv-item').forEach(function (el) {
+        if (matches.indexOf(el.getAttribute('data-cnv')) >= 0) el.classList.add('cnv-active');
+        else                                                    el.classList.add('cnv-dim');
+      });
+    }
+    startProjIdle();
+  }
+  function findProjectAt(x, y) {
+    var els = document.elementsFromPoint(x, y);
+    for (var i = 0; i < els.length; i++) {
+      var c = els[i].closest && els[i].closest('.proj-trigger');
+      if (c) return c;
+    }
+    return null;
+  }
+
+  document.addEventListener('click', function (e) {
+    // 1) Click sobre proyecto → activa convenio(s) asociados
+    var proj = findProjectAt(e.clientX, e.clientY);
+    if (proj) {
+      var pid = proj.getAttribute('data-proj');
+      if (activeProj === pid) clearProjActivation();
+      else                    activateProject(pid);
+      e.stopPropagation();
+      return;
+    }
+    // 2) Click sobre mención → activa camino eléctrico
+    var trigger = findMentionTriggerAt(e.clientX, e.clientY);
+    if (trigger) {
+      var key = trigger.getAttribute('data-mention');
+      if (activeMention === key) clearActivePath();
+      else { clearActivePath(); activatePath(key); }
+      e.stopPropagation();
+      return;
+    }
+    // 3) Click fuera → apaga ambos
+    if (activeMention) clearActivePath();
+    if (activeProj)   clearProjActivation();
+  }, true);
+
+  // ╔════════════════════════════════════════════════════════════════════╗
+  // ║ MODO DEMO · activable con ?demo=1 en la URL o tecla "D"            ║
+  // ║ Recorre todas las interacciones para grabar un loop limpio en GIF: ║
+  // ║   1. Hover sobre 3 puntos docentes (cards negras)                  ║
+  // ║   2. Hover sobre 4 nodos del diagrama (cards blancas)              ║
+  // ║   3. Click sobre las 4 menciones (camino eléctrico)                ║
+  // ║   4. Click sobre 4 proyectos (highlight de convenios)              ║
+  // ║ ESC detiene la demo. Después del último paso, el ciclo se repite.  ║
+  // ╚════════════════════════════════════════════════════════════════════╝
+  function runDemo() {
+    if (window.__demoRunning) return;
+    window.__demoRunning = true;
+
+    var demoCursor = document.getElementById('demo-cursor');
+    demoCursor.classList.add('visible');
+    var lastSvg = { x: 50, y: 1050 };  // posición SVG actual del cursor sintético
+
+    function svgToClient(sx, sy) {
+      var ctm = svg.getScreenCTM(); if (!ctm) return null;
+      var pt = svg.createSVGPoint(); pt.x = sx; pt.y = sy;
+      var p = pt.matrixTransform(ctm);
+      return { x: p.x, y: p.y };
+    }
+    function placeCursor(c) {
+      demoCursor.style.left = c.x + 'px';
+      demoCursor.style.top  = c.y + 'px';
+    }
+    function dispatchMove(sx, sy) {
+      var c = svgToClient(sx, sy); if (!c) return;
+      placeCursor(c);
+      hoverArea.dispatchEvent(new MouseEvent('mousemove', {
+        bubbles: true, cancelable: true, clientX: c.x, clientY: c.y, view: window
+      }));
+      lastSvg.x = sx; lastSvg.y = sy;
+    }
+    // Movimiento fluido · interpola entre la posición actual y (sx,sy) durante
+    // `duration` ms, disparando un mousemove por frame (~60 fps). Usa
+    // ease-in-out para arrancar y frenar suave, como un cursor humano.
+    function fireMove(sx, sy, duration) {
+      duration = (typeof duration === 'number') ? duration : 700;
+      var fromX = lastSvg.x, fromY = lastSvg.y;
+      var dx = sx - fromX, dy = sy - fromY;
+      // Si el salto es muy corto, dispatch directo
+      if (Math.abs(dx) < 1 && Math.abs(dy) < 1) { dispatchMove(sx, sy); return Promise.resolve(); }
+      return new Promise(function (resolve) {
+        var start = performance.now();
+        function step(now) {
+          if (!window.__demoRunning) { resolve(); return; }
+          var t = Math.min(1, (now - start) / duration);
+          // ease-in-out cubic
+          var e = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+          dispatchMove(fromX + dx * e, fromY + dy * e);
+          if (t < 1) requestAnimationFrame(step);
+          else resolve();
+        }
+        requestAnimationFrame(step);
+      });
+    }
+    function fireClick(sx, sy) {
+      var c = svgToClient(sx, sy); if (!c) return;
+      placeCursor(c);
+      lastSvg.x = sx; lastSvg.y = sy;
+      document.dispatchEvent(new MouseEvent('click', {
+        bubbles: true, cancelable: true, clientX: c.x, clientY: c.y, view: window
+      }));
+    }
+    function moveAway() { return fireMove(50, 1050, 600); }   // esquina sin elementos
+
+    // Resolución dinámica de puntos a recorrer
+    function getDot(idx) { return docentesGroup.querySelector('.docente-point[data-idx="' + idx + '"]'); }
+    function dotPos(dot) {
+      return { x: parseFloat(dot.getAttribute('cx')), y: parseFloat(dot.getAttribute('cy')) };
+    }
+    function nodeCenterByText(text) {
+      var found = null;
+      document.querySelectorAll('g.n-filled, g.n-open, #node-dir').forEach(function (g) {
+        if (found) return;
+        if (g.id === 'node-dir' && text === 'DIR') { found = g; return; }
+        var t = g.querySelector('text');
+        if (t && t.textContent.trim() === text) found = g;
+      });
+      if (!found) return null;
+      var rect = found.querySelector('rect');
+      var rx = parseFloat(rect.getAttribute('x'));
+      var ry = parseFloat(rect.getAttribute('y'));
+      var rw = parseFloat(rect.getAttribute('width'));
+      var rh = parseFloat(rect.getAttribute('height'));
+      return { x: rx + rw / 2, y: ry + rh / 2 };
+    }
+    function projPos(num) {
+      var el = document.querySelector('.proj-name[data-proj="' + num + '"]');
+      if (!el) return null;
+      var b = el.getBBox();
+      return { x: b.x + b.width / 2, y: b.y + b.height / 2 };
+    }
+
+    // Sleep encadenable + posibilidad de cancelar
+    var demoTimers = [];
+    function sleep(ms) {
+      return new Promise(function (res) {
+        var t = setTimeout(function () { res(); }, ms);
+        demoTimers.push(t);
+      });
+    }
+    function cancelAllTimers() {
+      demoTimers.forEach(function (t) { clearTimeout(t); });
+      demoTimers = [];
+    }
+
+    // Secuencia: hover 3 docentes → hover 4 nodos → click 4 menciones → click 4 proyectos
+    var seqDocentes = [3, 9, 16, 21];                                    // staff: Decana, Bejares, Ma. de la Paz, García
+    var seqNodes    = ['GRÁFICO', 'INDUSTRIAL', 'CICLO LICENCIATURA',    // título exacto del rect
+                       'VINCULACIÓN CON EL MEDIO', 'CENTRO EDITORIAL'];
+    var seqMentions = ['grafico', 'industrial', 'textil', 'interaccion'];
+    var seqProjects = ['07', '04', '16', '01'];
+
+    // Navegación libre · arco diagonal limpio top-left → bottom-right.
+    // Sin cambios de dirección ni movimientos laterales innecesarios. Pausas
+    // de ~900 ms en dos intersecciones de grilla (múltiplos de 60) para que
+    // el marcador en cruz blanco se vea claramente sobre el "+".
+    var seqNavigation = [
+      { x: 180,  y: 240,  travel: 1300, hold: 200 },  // entrada (arriba-izq)
+      { x: 480,  y: 420,  travel: 1300, hold: 200 },  // diagonal SE
+      { x: 720,  y: 540,  travel: 1000, hold: 900 },  // grid + · pausa marcador
+      { x: 1020, y: 660,  travel: 1200, hold: 200 },  // sigue diagonal SE
+      { x: 1320, y: 720,  travel: 1000, hold: 900 }   // grid + · pausa final
+    ];
+
+    async function loop() {
+      while (window.__demoRunning) {
+        // 0) Navegación libre · muestra coord-tip + marcador en intersecciones
+        for (var n = 0; n < seqNavigation.length && window.__demoRunning; n++) {
+          var nv = seqNavigation[n];
+          await fireMove(nv.x, nv.y, nv.travel);
+          await sleep(nv.hold);
+        }
+        await moveAway(); await sleep(400);
+        // 1) Docentes
+        for (var i = 0; i < seqDocentes.length && window.__demoRunning; i++) {
+          var dot = getDot(seqDocentes[i]);
+          if (dot) { var p = dotPos(dot); await fireMove(p.x, p.y, 1100); await sleep(2900); }
+        }
+        await moveAway(); await sleep(500);
+        // 2) Nodos
+        for (var j = 0; j < seqNodes.length && window.__demoRunning; j++) {
+          var c = nodeCenterByText(seqNodes[j]);
+          if (c) { await fireMove(c.x, c.y, 1100); await sleep(2400); }
+        }
+        await moveAway(); await sleep(500);
+        // 3) Menciones (camino eléctrico) · viaja al nodo, click, observa
+        for (var k = 0; k < seqMentions.length && window.__demoRunning; k++) {
+          var nm = nodeCenterByText(seqMentions[k] === 'grafico' ? 'GRÁFICO' :
+                                    seqMentions[k] === 'industrial' ? 'INDUSTRIAL' :
+                                    seqMentions[k] === 'textil' ? 'TEXTIL' : 'INTERACCIÓN');
+          if (nm) { await fireMove(nm.x, nm.y, 900); fireClick(nm.x, nm.y); await sleep(4000); }
+        }
+        await fireMove(50, 1050, 700); fireClick(50, 1050); await sleep(500);
+        // 4) Proyectos
+        for (var m = 0; m < seqProjects.length && window.__demoRunning; m++) {
+          var pp = projPos(seqProjects[m]);
+          if (pp) { await fireMove(pp.x, pp.y, 900); fireClick(pp.x, pp.y); await sleep(3700); }
+        }
+        await fireMove(50, 1050, 700); fireClick(50, 1050); await sleep(1200);
+      }
+      cancelAllTimers();
+    }
+
+    loop();
+
+    // ESC detiene la demo · oculta cursor + limpia estado
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && window.__demoRunning) {
+        window.__demoRunning = false;
+        cancelAllTimers();
+        moveAway();
+        fireClick(50, 1050);
+        demoCursor.classList.remove('visible');
+      }
+    });
+  }
+  window.__startDemo = runDemo;
+
+  // Auto-arranque por URL ?demo=1 o tecla "D"
+  if (location.search.indexOf('demo=1') >= 0) {
+    setTimeout(runDemo, 1200);
+  }
+  document.addEventListener('keydown', function (e) {
+    if ((e.key === 'd' || e.key === 'D') && !window.__demoRunning) runDemo();
+  });
+}());
+</script>
+
+</body>
+</html>

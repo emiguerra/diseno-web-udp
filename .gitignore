@@ -1,0 +1,14 @@
+# === Sistema operativo ===
+.DS_Store
+Thumbs.db
+
+# === Editores / herramientas locales ===
+.claude/
+.vscode/
+*.swp
+
+# === Netlify (hosting provisorio; se retira al pasar a GitHub Pages) ===
+.netlify/
+
+# === Material archivado (vive fuera del repo, nunca se versiona) ===
+_archivo-sin-uso-wireframe/

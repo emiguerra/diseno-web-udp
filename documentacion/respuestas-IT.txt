@@ -1,0 +1,490 @@
+========================================================================
+RESPUESTAS A CONSULTAS DE IT — SITIO WEB ESCUELA DE DISEÑO UDP
+========================================================================
+Fecha: 2026-08-31
+Sitio en producción (provisorio): https://disenoudp-wireframe.netlify.app
+Documento en construcción — se completa punto por punto.
+
+
+========================================================================
+CONTEXTO GENERAL
+========================================================================
+
+QUÉ ES EL SITIO
+Es un SITIO ESTÁTICO. No hay servidor de aplicación, ni base de datos,
+ni WordPress, ni PHP.
+
+- Frontend: HTML plano (index.html, nosotros.html, explora.html,
+  noticias.html, postula.html, cursos/), un CSS (assets/css/styles.css),
+  un JavaScript sin framework (assets/js/main.js) y tipografías propias
+  alojadas en el mismo repositorio.
+
+- Formularios: los del footer están inertes (onsubmit="return
+  false;"). No se captura ningún dato personal.
+
+- Operaciones: todo es SOLO LECTURA (GET). El sitio no escribe datos
+  en ningún servicio.
+
+- Contenido: mezcla de
+  * Archivos JSON versionados en el repo (contenido.json,
+    portafolio-data.json, agenda-data.json,
+    cursos/datos_catalogo/cursos.json).
+  * Lecturas en vivo desde el navegador hacia fuentes externas
+    (ver Punto E), siempre con "fallback" al JSON local si la
+    fuente externa falla.
+
+POR QUÉ ESTÁ EN HTML PLANO
+El proyecto se trabajó como WIREFRAME (prototipo navegable para validar
+estructura y contenidos), no como un sitio en desarrollo para
+producción. Al pasarlo a producción se mantiene el modelo estático por
+ser el más simple y seguro para este tipo de sitio.
+
+ARQUITECTURA DEFINIDA A FUTURO
+- Repositorio Git en GitHub. Hoy en "emiguerra/diseno-web-udp" (cuenta
+  personal); se transfiere a la ORGANIZACIÓN INSTITUCIONAL "disenoUDP".
+- Publicación mediante GITHUB PAGES (hosting estático servido
+  directamente desde el repositorio).
+- EDICIÓN DE CONTENIDO: modelo híbrido, con una sola puerta de entrada.
+  * Google Sheets se MANTIENE para las listas (proyectos, agenda,
+    docentes, cursos). El equipo lo sigue usando como hasta ahora.
+  * Se suma un PANEL DE ADMINISTRACIÓN (headless CMS: Decap / Sveltia /
+    Pages CMS) para imágenes, archivos y textos de página. Vive dentro
+    del propio repositorio; guarda cada cambio como commit. Sin
+    servidor ni base de datos.
+  * Una GITHUB ACTION (programada o con botón "Publicar") lee las
+    planillas y los formularios, regenera los archivos .json y
+    republica. Reemplaza la lectura en vivo: el navegador del visitante
+    deja de contactar a Google.
+  * Desde el panel /admin se accede tanto a los formularios como a
+    enlaces directos a cada planilla de Google (un solo login).
+  Detalle: plan-panel-admin.md
+- Los videos (~120 MB, 5 archivos .mp4) se moverán a una plataforma
+  externa (Vimeo o YouTube) y se insertarán embebidos, para no cargar
+  el repositorio.
+- El hosting actual en Netlify es PROVISORIO, bajo una cuenta personal,
+  y se retira una vez operativo GitHub Pages.
+
+LIMPIEZA Y ORGANIZACIÓN YA REALIZADAS
+- Se retiraron del proyecto ~90 MB de imágenes, un PDF, las fotos de
+  docentes y dos páginas huérfanas (incluida una versión antigua del
+  wireframe) que no estaban referenciados en el sitio. Quedaron
+  archivados fuera del repositorio, con un INVENTARIO.txt.
+- El repositorio se reorganizó con una estructura explícita: los .html
+  en la raíz y los recursos bajo assets/ con una subcarpeta por tipo
+  (css, js, fonts, img, video, documentos, vendor). Ver README.md.
+
+
+========================================================================
+PREGUNTA 1  —  Integración entre el repositorio y el sitio
+========================================================================
+
+Pregunta original:
+"¿Nos podrían detallar cómo tienen pensado realizar la integración
+entre el repositorio y el sitio? Idealmente una breve descripción del
+flujo propuesto, considerando: cómo se realizará la conexión entre el
+repositorio y el sitio; qué procesos serían manuales y cuáles
+automatizados; qué tecnologías, servicios o herramientas estarán
+involucradas; cómo se gestionarán las actualizaciones y despliegues; si
+existirán integraciones adicionales, APIs, servicios externos o
+dependencias que debamos considerar."
+
+
+------------------------------------------------------------------------
+A) CONEXIÓN ENTRE EL REPOSITORIO Y EL SITIO
+------------------------------------------------------------------------
+
+- Un único repositorio Git en la organización GitHub "disenoUDP"
+  (creado por un administrador/owner de la organización).
+
+- El sitio se publica con GitHub Pages: GitHub Pages toma los archivos
+  estáticos de la rama de publicación del repositorio y los sirve tal
+  cual por su CDN, con HTTPS.
+
+- No hay servidor propio, ni proceso de compilación, ni base de datos
+  entre el repositorio y el sitio: lo que está en el repositorio es
+  exactamente lo que se sirve.
+
+FLUJO RESUMIDO
+  Editar archivos  ->  Commit a la rama de publicación  ->  GitHub
+  Pages reconstruye y publica automáticamente (~1 min)  ->  Verificar
+  en la URL pública.
+
+Opcional: para revisar cambios antes de publicar se usan Pull Requests
+(una persona propone, otra aprueba y fusiona).
+
+
+------------------------------------------------------------------------
+B) PROCESOS MANUALES VS. AUTOMATIZADOS
+------------------------------------------------------------------------
+
+PROCESOS MANUALES (los realiza una persona):
+
+  1. Editar imágenes, archivos y textos de página desde el PANEL DE
+     ADMINISTRACIÓN (/admin): formularios y subida de archivos, con
+     inicio de sesión de GitHub. El panel guarda cada cambio como
+     commit.
+  2. Editar las listas (proyectos, agenda, docentes, cursos) en Google
+     Sheets: lo hace el equipo de comunicaciones directamente en la
+     planilla. Se accede a las planillas desde el mismo panel /admin.
+  3. Editar código (HTML, CSS, JS) cuando hay cambios de diseño o
+     estructura, desde la interfaz web de GitHub o con GitHub Desktop.
+  4. Confirmar el cambio (mensaje de commit). Opcionalmente mediante
+     Pull Request si se quiere revisión previa.
+  5. Optimizar las imágenes antes de subirlas (redimensionar y
+     comprimir a un peso razonable, por ejemplo < 300 KB).
+  6. Gestionar los videos en la plataforma externa (Vimeo / YouTube);
+     si se reemplaza un video, pegar el nuevo código de inserción en
+     el HTML. Es una tarea esporádica.
+  7. Revisar el resultado en la URL pública después de cada
+     publicación.
+  8. Revertir, si algo sale mal: restaurar un commit anterior desde
+     GitHub (2-3 clics).
+  9. Administrar quién tiene acceso de escritura al repositorio (lo
+     define un responsable en GitHub).
+
+PROCESOS AUTOMÁTICOS (los ejecuta GitHub / GitHub Pages, sin
+intervención):
+
+  1. SINCRONIZACIÓN DE CONTENIDO: una GitHub Action (programada, ej.
+     diaria, o con botón "Publicar") lee las planillas de Google y el
+     RSS de UDP, regenera los archivos .json y hace commit. El sitio se
+     republica. El navegador del visitante deja de contactar servicios
+     externos.
+  2. Publicación: cada commit a la rama de publicación dispara la
+     reconstrucción y el despliegue del sitio (aprox. 1 minuto).
+  3. HTTPS / certificado TLS: emitido y renovado por GitHub
+     automáticamente.
+  4. CDN y caché: el sitio se sirve desde la red global de GitHub
+     Pages; la caché se invalida sola en cada publicación.
+  5. Versionado: cada cambio queda registrado y es reversible; no hay
+     que hacer respaldos manuales del sitio.
+  6. Control de acceso por rol: GitHub aplica los permisos definidos
+     (lectura / escritura / administración).
+
+AUTOMATIZABLE MÁS ADELANTE (opcional, misma GitHub Action):
+
+  - Validar enlaces rotos y HTML antes de publicar.
+  - Comprimir imágenes automáticamente al subirlas.
+
+LO QUE NO ES AUTOMÁTICO (a considerar por IT):
+
+  - Mientras no esté implementada la GitHub Action de sincronización, el
+    contenido de Google Sheets lo lee el navegador del visitante en
+    vivo (ver sección E). Es un estado transitorio.
+  - La optimización de imágenes y la administración de la plataforma de
+    video son pasos manuales aparte.
+
+
+------------------------------------------------------------------------
+C) TECNOLOGÍAS, SERVICIOS Y HERRAMIENTAS INVOLUCRADAS
+------------------------------------------------------------------------
+
+1. REPOSITORIO Y CONTROL DE VERSIONES
+   - GitHub, organización "disenoUDP" (plan Enterprise ya existente).
+     Aloja el código y todo el historial de versiones, gestiona
+     permisos por rol (lectura / escritura / administración) y la
+     revisión de cambios vía Pull Requests. Cuenta institucional, sin
+     costo adicional.
+
+2. PUBLICACIÓN / HOSTING
+   - GitHub Pages. Publica los archivos estáticos del repositorio tal
+     cual. Incluye CDN global y certificado HTTPS automático. Sin
+     servidor que administrar ni actualizar. Sin costo. Límites
+     holgados para un sitio de facultad (repositorio ~1 GB, ~100 GB
+     de tráfico al mes) una vez que los videos salen del repositorio.
+
+3. HERRAMIENTAS DE EDICIÓN (se usa una)
+   - Interfaz web de GitHub: editar y confirmar desde el navegador,
+     sin instalar nada.
+   - GitHub Desktop: aplicación de escritorio con botones (sin
+     terminal) para editar en el computador y sincronizar. Gratis,
+     Windows / Mac.
+   - VS Code (opcional, para cambios grandes): editor gratuito.
+
+4. GESTIÓN DE CONTENIDO EDITORIAL
+   - PANEL DE ADMINISTRACIÓN (headless CMS): Decap CMS / Sveltia CMS /
+     Pages CMS (se elige al implementar; recomendado Sveltia). Es una
+     página del propio repositorio (/admin) con formularios para
+     imágenes, archivos y textos de página. Inicio de sesión con
+     GitHub. Guarda cada cambio como commit. NO es un servidor ni una
+     base de datos: no hay nada que hostear ni parchar. Gratis y de
+     código abierto.
+   - Google Sheets: planillas para las listas (proyectos, agenda,
+     docentes, cursos). Parte de Google Workspace institucional. Se
+     mantiene; el equipo la sigue usando. Se accede a las planillas
+     desde el propio panel /admin (enlaces en su menú).
+   - Google Apps Script: script corto que expone una planilla como
+     JSON. Se ejecuta en infraestructura de Google. En uso solo hasta
+     que la GitHub Action de sincronización lo reemplace.
+
+5. AUTOMATIZACIÓN
+   - GitHub Actions: proceso que corre dentro de GitHub (programado o
+     con botón). Lee las planillas de Google y el RSS de UDP, regenera
+     los archivos .json del repositorio y hace commit. Las credenciales
+     de Google se guardan como "secrets" del repositorio, nunca en el
+     código ni en el navegador. Gratis en repositorios públicos.
+
+6. APIS EXTERNAS QUE EL NAVEGADOR CONSULTA EN VIVO (estado transitorio)
+   - Google Sheets API v4: REST de Google, para el portafolio. Usa una
+     API key de navegador (a restringir por dominio y a solo lectura).
+   - rss2json.com: convierte los feeds RSS de UDP a JSON para la
+     agenda. Servicio gratuito de terceros.
+   Ambas se ELIMINAN al implementar la GitHub Action de sincronización
+   (el contenido pasa a leerse de los .json ya regenerados).
+
+7. LIBRERÍAS FRONT-END (vía CDN cdnjs.cloudflare.com)
+   - GSAP + ScrollTrigger (animación al hacer scroll), gif.js (genera
+     un GIF en el navegador), html2canvas (captura un elemento como
+     imagen). Recomendación: alojarlas en el repositorio y fijar la
+     versión con Subresource Integrity (SRI).
+
+8. ALOJAMIENTO DE VIDEO
+   - Vimeo o YouTube: los 5 videos se sirven embebidos desde la
+     plataforma, no desde el repositorio. Cuenta de la Escuela /
+     Facultad.
+
+9. TIPOGRAFÍAS
+   - Archivos .woff2 / .otf alojados en el propio repositorio. No se
+     cargan desde Google Fonts ni terceros.
+
+CUENTAS Y QUIÉN LAS OPERA
+   - GitHub (repo del sitio) ....... hoy "emiguerra" (personal); se
+                                     transfiere a la org "disenoUDP"
+   - Panel /admin ................. vive en el repo; sin cuenta aparte
+   - Google Workspace (Sheets + Apps Script) . institucional UDP /
+                                               comunicaciones - TI
+   - Vimeo / YouTube ............... Escuela / Facultad / comunicaciones
+   - cdnjs ........................ servicio público, sin cuenta
+   - Netlify ...................... personal — PROVISORIO, se retira
+
+
+------------------------------------------------------------------------
+D) GESTIÓN DE ACTUALIZACIONES Y DESPLIEGUES
+------------------------------------------------------------------------
+
+1. DÓNDE CAEN LOS CAMBIOS
+   - La rama "main" es la rama de publicación: GitHub Pages sirve
+     siempre lo que hay en "main".
+   - Regla recomendada: los cambios grandes (rediseños, páginas
+     nuevas) se hacen en una rama aparte y se fusionan a "main"
+     mediante Pull Request revisado por otra persona. Los cambios
+     chicos (una fecha, un texto, una imagen) pueden ir directo a
+     "main".
+
+2. CÓMO SE PUBLICA (DESPLIEGUE)
+   - Al confirmar un commit en "main", GitHub Pages reconstruye y
+     publica el sitio automáticamente en ~1 minuto. No hay paso de
+     "subir" ni servidor que tocar.
+   - Para HTML plano no hay compilación: lo que está en el
+     repositorio es exactamente lo que queda publicado.
+
+3. CÓMO SE GESTIONA CADA TIPO DE ACTUALIZACIÓN
+   - Imágenes, archivos y textos de página:
+       Comunicaciones -> panel /admin (formularios) -> el panel hace
+       el commit -> publica solo.
+   - Listas (proyectos, agenda, docentes, cursos):
+       Comunicaciones -> editar la planilla Google Sheets (se abre
+       desde el propio panel /admin) -> la GitHub Action la convierte
+       en JSON y republica (programada o con botón "Publicar").
+   - Diseño / estructura (HTML, CSS, JS):
+       Equipo web -> editar -> commit a "main" (o Pull Request) ->
+       publica solo.
+   - Videos:
+       Comunicaciones -> subir / reemplazar en Vimeo o YouTube y
+       pegar el código de inserción en el HTML.
+
+4. VERIFICACIÓN
+   Después de cada publicación se revisa la URL pública (portada +
+   la página afectada). El despliegue anterior queda accesible hasta
+   que el nuevo termina de propagarse.
+
+5. REVERSIÓN (ROLLBACK)
+   Cada publicación equivale a un estado en el historial de Git. Para
+   volver atrás se restaura un commit anterior desde GitHub (2-3
+   clics) y el sitio se republica solo. No se requieren respaldos
+   manuales del sitio.
+
+6. URGENCIAS / CORRECCIONES RÁPIDAS
+   Se edita el archivo directamente en la interfaz web de GitHub, se
+   confirma en "main", y queda en vivo en ~1 minuto.
+
+7. QUIÉN PUEDE PUBLICAR
+   Publicar = tener acceso de escritura al repositorio. Se define un
+   equipo reducido ("web") con escritura; el resto, solo lectura. Lo
+   administran los owners de la organización "disenoUDP".
+
+8. REGISTRO DE CAMBIOS / AUDITORÍA
+   Todo cambio queda registrado automáticamente con autor, fecha,
+   hora y descripción (historial de Git). No hay que llevar un
+   registro aparte.
+
+9. QUÉ NO HAY QUE GESTIONAR
+   Renovación de certificado TLS, purga de caché de la CDN, parches
+   de servidor, migraciones de base de datos: nada de eso existe en
+   este modelo.
+
+10. CADENCIA
+    No hay ventana de despliegue ni "release": se publica en cuanto
+    se confirma un cambio. Recomendación: agrupar ediciones
+    relacionadas en un mismo commit y usar mensajes de commit
+    descriptivos.
+
+
+------------------------------------------------------------------------
+E) INTEGRACIONES, APIS, SERVICIOS EXTERNOS Y DEPENDENCIAS
+------------------------------------------------------------------------
+
+LISTA COMPLETA DE LLAMADAS QUE EL NAVEGADOR DEL VISITANTE HACE A
+SERVICIOS EXTERNOS (todas son GET, solo lectura):
+
+
+1. TEXTOS DEL SITIO  —  Google Apps Script
+   URL exacta:
+     https://script.google.com/macros/s/AKfycbz...TvM7tNx3NQ/exec
+   Dónde: assets/js/main.js ~línea 2880. La activa contenido.json
+     (_config.fuente: "apps-script").
+   Planilla detrás: Google Sheet
+     1mL5QaYPKIpGw2zbBDEwuaHTGzdOmPq2XdTTM95kmujY
+   Qué viaja: GET sin parámetros, sin cookies, sin datos personales.
+     Vuelve un JSON con los textos (hero, historia, visión...).
+   Si falla: el sitio usa el archivo contenido.json del repositorio.
+   Riesgo en simple: la URL es pública y sin contraseña; cualquiera
+     que la tenga lee los mismos textos ya publicados. NO permite
+     escribir.
+   Recomendación: una GitHub Action copia esos textos al JSON en cada
+     publicación -> el visitante deja de llamar a Google.
+
+2. PORTAFOLIO (DATOS)  —  Google Sheets API v4
+   URL exacta:
+     https://sheets.googleapis.com/v4/spreadsheets/1Y_pmmK7...Emdks/
+     values/Proyectos?key=AIzaSyD2Rwj6...hA2y6I
+   Dónde: assets/js/main.js línea 2053 (SHEETS_API_URL); se consulta en
+     la línea 2435.
+   Planilla: Sheet 1Y_pmmK7...Emdks, pestaña "Proyectos".
+   Qué viaja: GET con la API key (visible en el código; es inevitable
+     en una key de navegador). Vuelve las filas de "Proyectos".
+   Si falla: usa portafolio-data.json del repositorio.
+   Riesgo en simple: la key está a la vista. Si NO está restringida,
+     alguien puede copiarla y gastar la cuota de Google del proyecto
+     dueño de la key. NO da acceso a planillas privadas, solo a las
+     compartidas como "cualquiera con el enlace".
+   Recomendación (concreta): en Google Cloud Console -> esa key ->
+     Restricción de aplicación: referentes HTTP = disenoudp.github.io/*
+     (+ dominio propio si hay); Restricción de API = solo "Google
+     Sheets API". Así la key no sirve en ningún otro sitio.
+
+3. PORTAFOLIO (IMÁGENES DE PORTADA)  —  Google Drive
+   URL exacta:
+     https://lh3.googleusercontent.com/d/<ID_DE_ARCHIVO>=w1200
+   Dónde: assets/js/main.js líneas 2325 / 2419 / 2466. La planilla
+     "Proyectos" guarda el ID de archivo de Drive de cada portada y
+     el código arma esa URL.
+   Qué viaja: el navegador pide la imagen al CDN de Google
+     (lh3.googleusercontent.com) usando el ID de Drive.
+   Si falla / si la fila trae un enlace drive.google.com antiguo: la
+     línea 2497 descarta ese ítem; con el fallback local se usan las
+     imágenes de assets/.
+   Riesgo en simple: cada portada se sirve desde Google, no desde el
+     repositorio. Si el archivo de Drive se borra o cambia de
+     permisos, esa imagen desaparece.
+   Recomendación: al pasar a producción, bajar las portadas a assets/
+     y versionarlas en el repositorio (o dejar que la Action las
+     descargue).
+
+4. AGENDA DE EVENTOS  —  rss2json.com
+   URL exacta:
+     https://api.rss2json.com/v1/api.json?rss_url=
+     https://www.udp.cl/agenda-udp/feed/&count=15
+   Dónde: assets/js/main.js línea 1574, función cargarAgenda(). Feed
+     único: https://www.udp.cl/agenda-udp/feed/
+   Qué viaja: el navegador le pide a rss2json que lea el RSS de UDP y
+     lo devuelva como JSON. Se mezcla con agenda-data.json.
+   Si falla: los eventos curados de agenda-data.json igual se
+     muestran (cargan primero); el RSS es un agregado.
+   Riesgo en simple: es un servicio gratuito de un tercero
+     desconocido. Cada visitante que abre la agenda genera una
+     llamada a rss2json, y ese tercero ve la IP del visitante. Si el
+     servicio se cae, limita o inyecta contenido, afecta esa sección.
+   Recomendación: eliminar esta llamada. Una GitHub Action diaria lee
+     www.udp.cl/agenda-udp/feed/ y escribe agenda-data.json. Sin
+     terceros, sin dependencia en vivo.
+
+5. LIBRERÍAS JAVASCRIPT  —  cdnjs.cloudflare.com
+   URLs exactas:
+     https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js
+     https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/
+       ScrollTrigger.min.js
+     https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js
+     https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/
+       html2canvas.min.js
+   Qué hace cada una: GSAP + ScrollTrigger = animaciones al hacer
+     scroll; gif.js = arma un GIF en el navegador; html2canvas =
+     convierte un elemento de la página en imagen.
+   Qué viaja: el navegador descarga esos 4 archivos desde Cloudflare
+     en cada carga.
+   Riesgo en simple: "cadena de suministro". Si cdnjs se ve
+     comprometido y sirve un archivo alterado, ese código corre en el
+     sitio con acceso total a la página.
+   Recomendación (concreta): bajar los 4 archivos a assets/vendor/,
+     enlazarlos localmente y agregar el atributo
+     integrity="sha384-..." (hash SRI) para que el navegador rechace
+     un archivo modificado. Las versiones ya están fijadas.
+
+6. VIDEO  —  Vimeo o YouTube (nuevo, por diseño)
+   URL: https://player.vimeo.com/video/<ID>  ó
+        https://www.youtube-nocookie.com/embed/<ID>
+   Qué viaja: el navegador carga el reproductor desde la plataforma;
+     ese tercero ve al visitante.
+   Recomendación: usar Vimeo, o YouTube en su dominio
+     youtube-nocookie.com con rel=0, y cargar el reproductor solo
+     cuando el video entra en pantalla (lazy-load).
+
+
+NOTA: al implementar el panel + la GitHub Action de sincronización,
+las llamadas 1, 2, 3 y 4 (Apps Script, Sheets API, Drive, rss2json)
+dejan de hacerse desde el navegador del visitante: ese contenido pasa
+a leerse de los .json regenerados en cada publicación.
+
+
+ALOJADO EN EL PROPIO REPOSITORIO — NO SON DEPENDENCIAS EXTERNAS
+   Tipografías (.woff2 / .otf), styles.css, main.js, todas las
+   imágenes (tras la limpieza), los JSON de datos (que además son el
+   respaldo), el panel /admin y el iframe de "constelación".
+
+
+VERIFICADO QUE NO EXISTE
+   Sin Google Analytics / Tag Manager / píxel de Meta; sin Google
+   Fonts; sin Google Maps; sin reCAPTCHA ni captcha; sin widget de
+   chat; sin cookies propias; sin formularios que envíen datos; sin
+   login de visitante; sin base de datos; sin backend ni funciones
+   serverless; sin pasarela de pago.
+   (El panel /admin tiene inicio de sesión, pero es solo para el
+   equipo editor y no forma parte del sitio público.)
+
+
+------------------------------------------------------------------------
+ACCIONES PENDIENTES PARA DEJAR LA ARQUITECTURA OPERATIVA
+------------------------------------------------------------------------
+
+  1. Completar la subida del sitio al repositorio
+     "emiguerra/diseno-web-udp" (hoy solo están las páginas .html y
+     los .json; faltan assets/, cursos/ y documentacion/).
+  2. Activar GitHub Pages (Settings -> Pages, servir desde la raíz de
+     "main").
+  3. Transferir el repositorio a la organización "disenoUDP" y dar
+     acceso de escritura al equipo responsable.
+  4. Implementar el panel de administración + la GitHub Action de
+     sincronización (ver plan-panel-admin.md).
+  5. Mover los 5 videos .mp4 a Vimeo / YouTube y reemplazarlos por
+     inserciones embebidas.
+  6. Restringir la API key de Google Sheets (por referrer y a solo
+     lectura) mientras exista la lectura en vivo.
+  7. Alojar las librerías JS en assets/vendor/ con hash SRI.
+  8. Retirar el hosting provisorio de Netlify.
+
+
+========================================================================
+PRÓXIMAS PREGUNTAS DE IT
+========================================================================
+
+(pendiente)
