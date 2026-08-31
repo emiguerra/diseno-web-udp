@@ -2050,7 +2050,11 @@
         /* =========================================
            PORTAFOLIO — Sheets API v4 (fuente principal)
         ========================================= */
-        const SHEETS_API_URL = 'https://sheets.googleapis.com/v4/spreadsheets/1Y_pmmK7_d_mQAK3xOXO9k0ADidAzcqXbBcZnTqEmdks/values/Proyectos?key=AIzaSyD2Rwj6W9qbRnCmtg9g8cMG9iLAvhA2y6I';
+        // Lectura en vivo del portafolio desactivada: la API key de navegador
+        // no debe vivir en el repositorio. El portafolio se lee de
+        // portafolio-data.json (fallback). La sincronizacion con la planilla
+        // vuelve via GitHub Action del lado del servidor (ver documentacion/plan-panel-admin.md).
+        const SHEETS_API_URL = '';
         const GAS_API_URL = '';
         const SHEET_CSV_URL = '';
 
