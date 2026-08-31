@@ -3,13 +3,15 @@
 Sitio **estático** (HTML + CSS + JavaScript, sin servidor ni base de datos)
 de la Escuela de Diseño de la Universidad Diego Portales.
 
-- **Publicación:** GitHub Pages (sirve estos archivos tal cual).
+- **En línea:** https://emiguerra.github.io/diseno-web-udp/ (GitHub Pages,
+  rama `main` / raíz).
+- **Repositorio:** `emiguerra/diseno-web-udp` (cuenta personal, público);
+  pendiente transferir a la organización GitHub `disenoUDP`.
 - **Contenido editorial:** modelo híbrido — un **panel de administración**
   (`/admin`) para imágenes, archivos y textos de página, y **Google
   Sheets** para las listas (proyectos, agenda, docentes, cursos). Una
   GitHub Action sincroniza todo. Ver `documentacion/plan-panel-admin.md`.
-- **Repositorio:** hoy `emiguerra/diseno-web-udp` (personal); se
-  transfiere a la organización GitHub `disenoUDP`.
+  *(El panel y la Action aún no están implementados.)*
 
 > Este proyecto nació como *wireframe* (prototipo navegable) y se está
 > pasando a producción manteniendo el modelo estático por ser el más
@@ -58,6 +60,7 @@ de la Escuela de Diseño de la Universidad Diego Portales.
 ├── documentacion/
 │   ├── respuestas-IT.txt          respuestas técnicas para IT/UDP
 │   ├── arquitectura.md            resumen de arquitectura
+│   ├── plan-panel-admin.md        plan del panel /admin + planillas + Action
 │   └── guia-edicion.md            cómo editar y publicar (paso a paso)
 │
 ├── .nojekyll              evita que GitHub Pages procese el sitio con Jekyll
@@ -116,9 +119,10 @@ Regla: **tabla → planilla; archivo o texto de página → panel `/admin`.**
 | Diseño / estructura | Equipo web | Editar los `.html`, `assets/css/styles.css` o `assets/js/main.js` → *commit*. |
 | Videos | Comunicaciones | Ver sección 6. |
 
-> El panel `/admin` aún no está implementado. Mientras tanto: listas en
-> Google Sheets (lectura en vivo), imágenes y archivos subidos
-> directamente al repo. Ver `documentacion/plan-panel-admin.md`.
+> El panel `/admin` aún no está implementado. Mientras tanto: los textos
+> y el portafolio se editan directamente en los `.json` del repo; la
+> agenda se sigue leyendo del RSS de UDP en vivo; imágenes y archivos se
+> suben directamente al repo. Ver `documentacion/plan-panel-admin.md`.
 
 Paso a paso para no-programadores: **`documentacion/guia-edicion.md`**.
 
@@ -130,18 +134,23 @@ Paso a paso para no-programadores: **`documentacion/guia-edicion.md`**.
 y el RSS de UDP en cada publicación; el navegador del visitante no
 contacta servicios externos.
 
-**Estado actual (transitorio),** hasta implementar la Action: cada
-bloque lee una fuente externa en vivo y, si falla, usa el JSON local:
+**Estado actual:** los textos y el portafolio se leen **de los archivos
+`.json` del repo** (las llamadas en vivo a Google se quitaron por
+seguridad — ver más abajo). Solo la agenda hace una llamada externa en
+vivo:
 
-| Bloque | Fuente en vivo (transitoria) | Respaldo / destino local |
+| Bloque | Fuente | Nota |
 |---|---|---|
-| Textos | Google Apps Script (Google Sheet) | `contenido.json` |
-| Portafolio | Google Sheets API v4 (hoja "Proyectos") | `portafolio-data.json` |
-| Agenda | `rss2json.com` sobre el RSS de UDP | `agenda-data.json` |
-| Catálogo / malla | — | `cursos/datos_catalogo/cursos.json` |
+| Textos | `contenido.json` (repo) | `_config.fuente` = `"local"` |
+| Portafolio | `portafolio-data.json` (repo) | `SHEETS_API_URL` vacío |
+| Agenda | `rss2json.com` sobre el RSS de UDP | única llamada externa en vivo; se quita con la Action |
+| Catálogo / malla | `cursos/datos_catalogo/cursos.json` (repo) | — |
 
-Detalle completo (URLs, claves, riesgos y recomendaciones) en
-**`documentacion/respuestas-IT.txt`**, sección E.
+> **Nota de seguridad:** una API key de Google quedó en `assets/js/main.js`
+> al subir el repo. Ya fue **eliminada en Google** y removida del código.
+> Regla: **ninguna clave, token ni endpoint privado vive en el repo.** Los
+> secretos van en *GitHub Actions secrets* y los usa la Action del lado del
+> servidor. Detalle en `documentacion/respuestas-IT.txt`, sección E.
 
 Librerías de terceros vía CDN: GSAP + ScrollTrigger, gif.js, html2canvas
 (ver `assets/vendor/LEEME.md`).
@@ -154,11 +163,15 @@ pasarela de pago.
 
 ## 6. Videos
 
-Los 5 videos de fondo están hoy en `assets/video/` (~114 MB).
+4 de los 5 videos de fondo están en `assets/video/`. **Falta
+`Facultad.mp4` (69 MB)** — supera el límite de subida por web (25 MB); se
+sube con **GitHub Desktop** o se pasa a Vimeo. Hasta entonces, el video
+de fondo de `nosotros.html` da 404.
 
-**Pendiente:** subirlos a **Vimeo** (o YouTube en `youtube-nocookie.com`)
-e insertarlos embebidos, para no cargar el repositorio ni el ancho de
-banda del sitio. Al hacerlo, quitar los `.mp4` del repo.
+**Pendiente:** subir los 5 a **Vimeo** (o YouTube en
+`youtube-nocookie.com`) e insertarlos embebidos, para no cargar el
+repositorio ni el ancho de banda del sitio. Al hacerlo, quitar los `.mp4`
+del repo.
 
 ---
 
@@ -172,19 +185,21 @@ manuales.
 
 ## 8. Pendientes para dejar la arquitectura operativa
 
-1. Completar la subida del sitio al repo `emiguerra/diseno-web-udp` (hoy
-   faltan `assets/`, `cursos/` y `documentacion/`).
-2. Activar GitHub Pages (**Settings → Pages**, servir desde la raíz de
-   `main`).
-3. Transferir el repositorio a la organización `disenoUDP` y dar acceso
+Hecho: sitio subido al repo · GitHub Pages activo · API key filtrada
+eliminada en Google y removida del código.
+
+1. Subir `Facultad.mp4` (69 MB) por GitHub Desktop, o pasarlo a Vimeo.
+2. Cerrar la alerta de Secret Scanning en GitHub como *Revoked*.
+3. Revisar el sitio renderizado en el navegador (no solo que cargue).
+4. Transferir el repositorio a la organización `disenoUDP` y dar acceso
    de escritura al equipo.
-4. Implementar el panel `/admin` + la GitHub Action de sincronización
+5. Implementar el panel `/admin` + la GitHub Action de sincronización
    (ver `documentacion/plan-panel-admin.md`).
-5. Mover los videos a Vimeo / YouTube (sección 6).
-6. Restringir la API key de Google Sheets (por dominio y a solo lectura)
-   mientras exista la lectura en vivo.
-7. Alojar las librerías JS en `assets/vendor/` con hash SRI.
-8. Retirar el hosting provisorio de Netlify.
+6. Quitar la llamada en vivo a `rss2json.com` (agenda) — la resuelve la
+   Action.
+7. Mover los videos a Vimeo / YouTube (sección 6).
+8. Alojar las librerías JS en `assets/vendor/` con hash SRI.
+9. Retirar el hosting provisorio de Netlify.
 
 ---
 
