@@ -1,0 +1,105 @@
+IMÁGENES DEL SITIO — DÓNDE ESTÁN Y CÓMO SE ENTREGAN A LA AGENCIA
+Escuela de Diseño UDP · migración a WordPress
+====================================================================
+
+Detalle archivo por archivo: documentacion/inventario-imagenes.csv
+(se abre en Excel o Google Sheets; una fila por imagen, video o PDF)
+
+CARPETA PARA LA AGENCIA (Google Drive de Comunicaciones)
+https://drive.google.com/drive/folders/1cJ89TGm70fkbv0soU-sbqInn8e_AwD4-
+Trae los 206 archivos en uso (mismas rutas que en los JSON), inventario.csv,
+LEEME.txt y docentes/ con 448 retratos de 52 docentes, nombrados
+nombre-apellido-NN.jpg y con el nombre incrustado en los metadatos.
+
+
+1. DÓNDE ESTÁN GUARDADAS HOY
+----------------------------
+Las imágenes viven en 3 lugares:
+
+A) Repositorio GitHub del sitio  (fuente principal, completa)
+   https://github.com/emiguerra/diseno-web-udp
+   Carpetas:
+     assets/img/                       ~138 MB · imágenes del sitio
+        provisorios/                   portadas TEMPORALES del portafolio (23)
+        programas/ noticias/ convenios/ red-udp/ faad/   por sección
+        (sueltas en la raíz)           proyectos destacados, laboratorios, etc.
+     assets/video/                     videos de fondo (5)
+     assets/documentos/                PDF de la malla
+     cursos/datos_catalogo/imagenes/   ~25 MB · fotos de la malla de cursos (122)
+
+B) Google Drive de Comunicaciones (comunicaciones.diseno@mail.udp.cl)
+   Fotos ORIGINALES de los proyectos del portafolio, una carpeta por
+   proyecto. La portada oficial de cada proyecto es la columna PORTADA_ID
+   de la planilla del portafolio. El CSV trae el link a la carpeta de cada
+   portada provisoria (columna carpeta_drive_original).
+
+C) Mac de Emilia (carpeta en iCloud)
+   Es una copia de A. NO usarla para entregar: los archivos están solo en
+   la nube de iCloud (no descargados) y el disco está casi lleno.
+
+
+2. RESUMEN DEL INVENTARIO (225 archivos)
+----------------------------------------
+  EN USO, referenciadas en un JSON .................. 129
+  EN USO, pero SOLO en el código (HTML/JS) .......... 54   ← ojo
+  PROVISORIAS (portadas del portafolio) ............. 23
+  SIN USO (no migrar) ............................... 19
+
+  Cómo cada JSON apunta a sus imágenes:
+  - portafolio-data.json → campo "imgUrl", ruta completa
+      (ej. assets/img/provisorios/lignum.jpg)
+  - contenido.json       → rutas completas dentro de cada sección
+  - cursos/datos_catalogo/cursos.json → campo "imagenes", SOLO el nombre
+      (ej. "p04_00.jpg"); la carpeta es cursos/datos_catalogo/imagenes/
+  - agenda-data.json     → no tiene imágenes
+
+
+3. PUNTOS A RESOLVER ANTES DE ENTREGAR
+--------------------------------------
+a) 54 archivos NO están en ningún JSON. Están escritos directamente en
+   nosotros.html, index.html, postula.html y assets/js/main.js
+   (programas, noticias, convenios, red UDP, laboratorios, video de
+   fondo, PDF de la malla). Si la agencia migra solo desde los JSON,
+   NO los va a ver. El CSV los marca con la nota "Solo en código".
+
+b) 18 de esos están en una lista antigua de proyectos dentro de main.js
+   (Fauna Primavera, Metamorfa, Silla Metal, Kayak, etc.). Hay que decidir
+   si esos proyectos se migran o se descartan. Las 6 imágenes de Noticias
+   también están escritas en main.js y no en un JSON.
+
+c) Las 23 portadas del portafolio son PROVISORIAS. Las definitivas están
+   en el Drive de Comunicaciones (ver punto 1-B).
+
+d) Facultad.mp4 (69 MB, video de fondo de Nosotros) NO está en GitHub
+   porque supera el límite de tamaño. Se entrega aparte (link de Drive) o
+   se sube a Vimeo/YouTube y se inserta.
+
+e) Hay 19 archivos sin uso: no se entregan.
+
+f) Hay nombres con espacios ("montoya 1.png",
+   "faad_lockupsArtboard 5 copy 4_1@2x.png"). Conviene renombrarlos o
+   avisar a la agencia, porque WordPress cambia los nombres al subirlos.
+
+g) Hay 37 imágenes de más de 1 MB (la mayor: example.gif, 11,7 MB; varias
+   fotos de 4-6 MB). Hay que pedir a la agencia que las optimice al
+   subirlas (WebP, máximo ~2000 px de ancho).
+
+
+4. CÓMO TRANSFERIRLAS — RECOMENDACIÓN
+-------------------------------------
+1. Darle a la agencia acceso al repositorio de GitHub (es público hoy).
+   Lo ideal es transferirlo antes a la organización disenoUDP. Desde ahí
+   descargan todo en un ZIP (botón "Code" → "Download ZIP"): imágenes,
+   JSON y el inventario quedan juntos y con las mismas rutas.
+2. Entregar Facultad.mp4 por link de Drive.
+3. Compartir con la agencia, como LECTOR, las carpetas de proyectos del
+   Drive de Comunicaciones, o descargar las portadas definitivas y
+   ponerlas en el repo en lugar de las provisorias.
+4. Entregar documentacion/inventario-imagenes.csv como guía: dice qué
+   migrar, dónde se usa cada archivo y qué campo de JSON lo apunta.
+5. Pedir a la agencia, al subir a la Biblioteca de Medios de WordPress:
+   - conservar los nombres de archivo;
+   - devolver una tabla "ruta antigua → URL nueva en WordPress", para
+     revisar que no quede ninguna imagen rota;
+   - agregar texto alternativo (alt) a cada imagen (los JSON no tienen
+     ningún campo de texto alternativo).
