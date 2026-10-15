@@ -13,6 +13,12 @@ de la Escuela de Diseño de la Universidad Diego Portales.
   GitHub Action sincroniza todo. Ver `documentacion/plan-panel-admin.md`.
   *(El panel y la Action aún no están implementados.)*
 
+- **Imágenes para la migración a WordPress:** carpeta del Drive de Comunicaciones
+  [imagenes-sitio-diseno-udp](https://drive.google.com/drive/folders/1cJ89TGm70fkbv0soU-sbqInn8e_AwD4-)
+  — todos los archivos que usa el sitio (mismas rutas que los JSON) más
+  `docentes/` con los retratos de la sesión de docentes ya nombrados y
+  etiquetados. Guía en `documentacion/imagenes-traspaso-agencia.txt`.
+
 > Este proyecto nació como *wireframe* (prototipo navegable) y se está
 > pasando a producción manteniendo el modelo estático por ser el más
 > simple y seguro para un sitio de facultad.
