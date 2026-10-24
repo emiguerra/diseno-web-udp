@@ -11,6 +11,20 @@ Trae los 206 archivos en uso (mismas rutas que en los JSON), inventario.csv,
 LEEME.txt y docentes/ con 448 retratos de 52 docentes, nombrados
 nombre-apellido-NN.jpg y con el nombre incrustado en los metadatos.
 
+QUÉ IMAGEN ES DE QUÉ PROYECTO (PORTAFOLIO)
+Las imágenes no están en una carpeta por proyecto. Se relacionan así:
+  - Cada proyecto de portafolio-data.json tiene:
+      "imgUrl"        su portada en el repo (hoy PROVISORIA), nombrada
+                      igual que el proyecto: assets/img/provisorios/lignum.jpg
+      "carpetaDrive"  la carpeta del Drive de Comunicaciones con TODAS las
+                      fotos de ese proyecto (galería y portada definitiva)
+  - documentacion/portafolio.csv resume lo mismo en una tabla: una fila por
+    proyecto con título, autor, portada en el repo y link a su carpeta.
+En el repo hay una sola imagen por proyecto; el resto de las fotos de cada
+proyecto se toma de su carpetaDrive.
+Las demás imágenes del sitio (noticias, programas, convenios, docentes...)
+se ubican con inventario-imagenes.csv, columnas "en_json" y "usado_en".
+
 
 1. DÓNDE ESTÁN GUARDADAS HOY
 ----------------------------
