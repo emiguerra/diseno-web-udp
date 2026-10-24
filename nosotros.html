@@ -452,8 +452,15 @@
                 </div>
             </div>
             <div class="cons-iframe-wrap">
-                <iframe src="cursos/constelacion.html" title="Constelación — Escuela de Diseño UDP" loading="lazy"></iframe>
+                <iframe id="cons-iframe" src="cursos/constelacion.html" data-src-mobile="cursos/constelacion-mobile.html" title="Constelación — Escuela de Diseño UDP" loading="lazy"></iframe>
             </div>
+            <script>
+                // En celular se carga la versión vertical del organigrama
+                (function () {
+                    var f = document.getElementById('cons-iframe');
+                    if (window.matchMedia('(max-width: 768px)').matches) f.src = f.dataset.srcMobile;
+                })();
+            </script>
         </section>
         <canvas class="cons-canvas-transition" id="cons-trans-out"></canvas>
         <section id="menciones" class="seccion">
