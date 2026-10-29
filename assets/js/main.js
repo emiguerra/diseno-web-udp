@@ -2892,33 +2892,22 @@
     })();
 
         /* =========================================
-           FORMULARIOS (Google Forms en ventana)
-           Oportunidad laboral · Visita FAAD.
-           Los formularios viven en Google Forms (cuenta emilia.guerra@mail.udp.cl,
-           abiertos a todo público). Las respuestas quedan en sus planillas y
-           avisan por correo vía Apps Script (Desktop/disenoUdp/herramientas-formularios).
-           Para cambiar de formulario basta con cambiar la URL en FORMULARIOS.
+           FORMULARIOS (oportunidad laboral · visita FAAD)
+           Páginas propias en formularios/, con el diseño del formulario de
+           proyectos. Envían las respuestas a sus Google Forms (cuenta
+           emilia.guerra@mail.udp.cl), que guardan la planilla y avisan por
+           correo vía Apps Script (Desktop/disenoUdp/herramientas-formularios).
         ========================================= */
         const FORMULARIOS = {
-            laboral: {
-                titulo: 'Publica una oportunidad laboral',
-                url: 'https://docs.google.com/forms/d/e/1FAIpQLScIf8oGG0cYxPTSpc5_Bybzz1mogkPzTKTbFb3iRLVqjzguoQ/viewform',
-                // Pregunta "Tipo de oportunidad", para dejarla marcada según el botón
-                campoTipo: 'entry.153850580'
-            },
-            visita: {
-                titulo: 'Agenda tu visita',
-                url: 'https://docs.google.com/forms/d/e/1FAIpQLSdCxKlago3fptu_5n6iofPq4nOT2DGzIB8gwiF4GPOfkXeTNQ/viewform',
-                // Pregunta "Tipo de visita" (Presencial / Virtual)
-                campoTipo: 'entry.1507481813'
-            }
+            laboral: { titulo: 'Publicar oportunidad', url: 'formularios/oportunidad-laboral.html' },
+            visita:  { titulo: 'Agenda tu visita',     url: 'formularios/visita.html' }
         };
 
         function abrirFormulario(clave, tipo) {
             const f = FORMULARIOS[clave];
             if (!f) return;
-            let url = f.url + '?embedded=true';
-            if (tipo && f.campoTipo) url += '&usp=pp_url&' + f.campoTipo + '=' + encodeURIComponent(tipo);
+            const q = tipo ? '?tipo=' + encodeURIComponent(tipo) : '';
+            const url = f.url + q + (q ? '&' : '?') + 'embed=1';
 
             let ov = document.getElementById('form-overlay');
             if (!ov) {
@@ -2934,7 +2923,7 @@
                     '    <a class="form-modal-externo" target="_blank" rel="noopener">Abrir en otra pestaña ↗</a>' +
                     '    <button type="button" class="form-modal-cerrar" aria-label="Cerrar">×</button>' +
                     '  </div>' +
-                    '  <iframe class="form-modal-iframe" title="Formulario" loading="lazy"></iframe>' +
+                    '  <iframe class="form-modal-iframe" title="Formulario"></iframe>' +
                     '</div>';
                 document.body.appendChild(ov);
                 ov.addEventListener('click', e => { if (e.target === ov) cerrarFormulario(); });
@@ -2944,7 +2933,7 @@
                 });
             }
             ov.querySelector('.form-modal-titulo').textContent = f.titulo;
-            ov.querySelector('.form-modal-externo').href = url.replace('?embedded=true', '?').replace('?&', '?');
+            ov.querySelector('.form-modal-externo').href = f.url + q;
             ov.querySelector('.form-modal-iframe').src = url;
             ov.classList.add('abierto');
             document.body.style.overflow = 'hidden';
