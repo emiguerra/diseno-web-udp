@@ -110,6 +110,16 @@
             <h1>Laboral</h1>
             <p class="estudia-intro">Publica y encuentra oportunidades laborales, prácticas profesionales y proyectos colaborativos dentro de la comunidad FaAAD.</p>
 
+            <!-- Publicar: abierto a todo público (fuera del acceso de suscriptores) -->
+            <div class="laboral-publicar">
+                <p>¿Tienes una oportunidad para la comunidad FaAAD? Publícala con el formulario: la Escuela la revisa antes de publicarla.</p>
+                <a class="btn btn-solid" onclick="abrirFormulario('laboral')">Publicar oportunidad</a>
+                <span class="laboral-mail">Escríbenos para publicar:
+                    <a href="mailto:barbara.gutierrez1@mail.udp.cl?subject=Pr%C3%A1ctica%20profesional">Práctica</a> ·
+                    <a href="mailto:felipe.sepulveda7@mail.udp.cl?subject=Oferta%20laboral">Trabajo</a>
+                </span>
+            </div>
+
             <div class="subs-gate" id="gate-laboral">
                 <span class="subs-gate-icon">&#128274;</span>
                 <h3>Acceso exclusivo para suscriptores</h3>
@@ -126,7 +136,7 @@
                 <div class="laboral-col">
                     <h2>Oferta laboral</h2>
                     <p>Empresas y estudios pueden publicar vacantes dirigidas a estudiantes y egresados FaAAD.</p>
-                    <a class="btn btn-solid" onclick="alert('Publicar oferta laboral')">Publicar oferta</a>
+                    <a class="btn btn-solid" onclick="abrirFormulario('laboral', 'Trabajo')">Publicar oferta</a>
                     <div class="laboral-lista" style="margin-top:24px;">
                         <div class="laboral-item"><span class="laboral-tag">Tiempo completo</span><h3>Diseñador/a gráfico/a Sr.</h3><p>Estudio de diseño — Santiago</p></div>
                         <div class="laboral-item"><span class="laboral-tag">Freelance</span><h3>Diseñador/a de interacción</h3><p>Startup tecnológica — Remoto</p></div>
@@ -147,7 +157,7 @@
                 <div class="laboral-col">
                     <h2>Prácticas profesionales</h2>
                     <p>Ofrece y encuentra prácticas profesionales para estudiantes desde el quinto semestre.</p>
-                    <a class="btn btn-solid" onclick="alert('Publicar práctica')">Publicar práctica</a>
+                    <a class="btn btn-solid" onclick="abrirFormulario('laboral', 'Práctica')">Publicar práctica</a>
                     <a class="btn" onclick="alert('Buscar práctica')" style="margin-top:8px;">Buscar práctica</a>
                     <div class="laboral-lista" style="margin-top:24px;">
                         <div class="laboral-item"><span class="laboral-tag">Práctica</span><h3>Diseño de comunicación interna</h3><p>ONG — Santiago · 3 meses</p></div>
