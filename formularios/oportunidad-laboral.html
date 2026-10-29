@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Publicar oportunidad — FaAAD UDP</title>
+  <link rel="stylesheet" href="formulario.css">
+</head>
+<body>
+
+<div class="form-wrap">
+
+  <div class="page-header">
+    <h1>Publicar oportunidad</h1>
+    <p>Comparte una oferta de trabajo, práctica, freelance o proyecto colaborativo con la comunidad de la Escuela de Diseño UDP.</p>
+  </div>
+
+  <div class="aviso-previo">
+    <p>El registro no garantiza la publicación. La Escuela revisa cada oportunidad antes de publicarla en el sitio.</p>
+  </div>
+
+  <!-- Las respuestas van al Google Form "Publica una oportunidad laboral" (cuenta emilia.guerra@mail.udp.cl) -->
+  <form id="formulario" novalidate
+        data-destino="https://docs.google.com/forms/d/e/1FAIpQLScIf8oGG0cYxPTSpc5_Bybzz1mogkPzTKTbFb3iRLVqjzguoQ/formResponse">
+
+    <div id="error-summary" role="alert" aria-live="polite"></div>
+
+    <div class="form-card">
+
+      <div class="form-section">
+        <p class="section-title">La oportunidad</p>
+
+        <div class="field">
+          <label>Tipo de oportunidad <span class="req">*</span></label>
+          <div class="tags-grid" data-tipo data-grupo-req="entry.153850580">
+            <label class="tag-chip"><input type="radio" name="entry.153850580" value="Trabajo"><span>Trabajo</span></label>
+            <label class="tag-chip"><input type="radio" name="entry.153850580" value="Práctica"><span>Práctica</span></label>
+            <label class="tag-chip"><input type="radio" name="entry.153850580" value="Freelance"><span>Freelance</span></label>
+            <label class="tag-chip"><input type="radio" name="entry.153850580" value="Proyecto colaborativo"><span>Proyecto colaborativo</span></label>
+          </div>
+          <p class="field-error"></p>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="cargo">Cargo o título de la oportunidad <span class="req">*</span></label>
+            <input type="text" id="cargo" name="entry.1357976794" placeholder="Ej. Diseñador/a gráfico/a" required>
+            <p class="field-error"></p>
+          </div>
+          <div class="field">
+            <label for="empresa">Empresa u organización <span class="req">*</span></label>
+            <input type="text" id="empresa" name="entry.1661186956" placeholder="Nombre de la empresa, estudio u organización" required>
+            <p class="field-error"></p>
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label>Modalidad <span class="req">*</span></label>
+            <div class="tags-grid" data-grupo-req="entry.1695144715">
+              <label class="tag-chip"><input type="radio" name="entry.1695144715" value="Presencial"><span>Presencial</span></label>
+              <label class="tag-chip"><input type="radio" name="entry.1695144715" value="Remoto"><span>Remoto</span></label>
+              <label class="tag-chip"><input type="radio" name="entry.1695144715" value="Híbrido"><span>Híbrido</span></label>
+            </div>
+            <p class="field-error"></p>
+          </div>
+          <div class="field">
+            <label>Jornada <span class="req">*</span></label>
+            <div class="tags-grid" data-grupo-req="entry.1315368230">
+              <label class="tag-chip"><input type="radio" name="entry.1315368230" value="Completa"><span>Completa</span></label>
+              <label class="tag-chip"><input type="radio" name="entry.1315368230" value="Part-time"><span>Part-time</span></label>
+              <label class="tag-chip"><input type="radio" name="entry.1315368230" value="Por proyecto"><span>Por proyecto</span></label>
+            </div>
+            <p class="field-error"></p>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="ciudad">Ciudad</label>
+          <input type="text" id="ciudad" name="entry.1038615063" placeholder="Ej. Santiago">
+        </div>
+
+        <div class="field">
+          <label for="descripcion">Descripción y funciones <span class="req">*</span></label>
+          <textarea id="descripcion" name="entry.1957310031" placeholder="¿En qué consiste la oportunidad? ¿Qué hará la persona?" required></textarea>
+          <p class="field-error"></p>
+        </div>
+
+        <div class="field">
+          <label for="requisitos">Requisitos</label>
+          <textarea id="requisitos" name="entry.1625269985" placeholder="Experiencia, programas, portafolio, disponibilidad…"></textarea>
+        </div>
+
+        <div class="field">
+          <label>Mención afín</label>
+          <div class="tags-grid">
+            <label class="tag-chip" data-m="grafico"><input type="checkbox" name="entry.424784949" value="Diseño Gráfico"><span>Diseño Gráfico</span></label>
+            <label class="tag-chip" data-m="industrial"><input type="checkbox" name="entry.424784949" value="Diseño Industrial"><span>Diseño Industrial</span></label>
+            <label class="tag-chip" data-m="indumentaria"><input type="checkbox" name="entry.424784949" value="Textil e Indumentaria"><span>Textil e Indumentaria</span></label>
+            <label class="tag-chip" data-m="interaccion"><input type="checkbox" name="entry.424784949" value="Interacción Digital"><span>Interacción Digital</span></label>
+          </div>
+          <p class="helper">Puedes marcar más de una.</p>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="remuneracion">Remuneración</label>
+            <input type="text" id="remuneracion" name="entry.1326560987" placeholder="Opcional">
+          </div>
+          <div class="field">
+            <label for="fecha">Fecha límite para postular</label>
+            <input type="date" id="fecha" name="entry.607056380" data-fecha>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="postular">Link o dirección para postular <span class="req">*</span></label>
+          <input type="text" id="postular" name="entry.2049658394" placeholder="https://… o correo donde recibir postulaciones" required>
+          <p class="field-error"></p>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <p class="section-title">Quién publica</p>
+        <div class="field-row">
+          <div class="field">
+            <label for="nombre">Tu nombre <span class="req">*</span></label>
+            <input type="text" id="nombre" name="entry.1645241090" placeholder="Nombre completo" required>
+            <p class="field-error"></p>
+          </div>
+          <div class="field">
+            <label for="correo">Tu correo de contacto <span class="req">*</span></label>
+            <input type="email" id="correo" name="entry.1331844061" placeholder="correo@ejemplo.com" required>
+            <p class="field-error"></p>
+          </div>
+        </div>
+        <p class="helper">Tus datos de contacto no se publican: son para que la Escuela pueda escribirte.</p>
+
+        <div class="field" style="margin-top:28px">
+          <label class="consentimiento" for="acepto">
+            <input type="checkbox" id="acepto" name="entry.283406326" value="Sí" required>
+            Entiendo que la oferta será revisada por la Escuela antes de publicarse.
+          </label>
+          <p class="field-error"></p>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-outline" id="clearBtn">Limpiar</button>
+        <button type="submit" class="btn btn-primary" id="submitBtn">
+          <span id="btnText">Enviar oportunidad</span>
+          <span id="btnArrow">→</span>
+          <div class="spinner" id="spinner"></div>
+        </button>
+      </div>
+    </div>
+    <div class="status" id="statusMsg"></div>
+  </form>
+
+  <div id="confirmacion">
+    <h2 class="confirm-title">Oportunidad<br>enviada.</h2>
+    <p class="confirm-body">
+      La Escuela de Diseño UDP revisará la oportunidad antes de publicarla.
+      Si necesitamos más información, te escribiremos a <strong id="confirm-email"></strong>.
+    </p>
+    <button class="btn btn-primary" id="btnVolverFormulario">Enviar otra oportunidad</button>
+  </div>
+
+</div>
+
+<script src="formulario.js"></script>
+</body>
+</html>
