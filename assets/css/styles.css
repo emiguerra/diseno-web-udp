@@ -2955,3 +2955,29 @@
             transition: all 0.18s;
         }
         .ev-art-inscribir:hover { background: #111; color: var(--bg); }
+
+        /* =========================================
+           FORMULARIOS (Google Forms en ventana)
+        ========================================= */
+        .form-overlay { position: fixed; inset: 0; z-index: 9000; display: none;
+                        align-items: center; justify-content: center;
+                        background: rgba(0,0,0,0.55); padding: 24px; }
+        .form-overlay.abierto { display: flex; }
+        .form-modal { background: var(--bg); width: min(760px, 100%); height: min(88vh, 900px);
+                      display: flex; flex-direction: column; border: 1px solid var(--fg); }
+        .form-modal-bar { display: flex; align-items: center; gap: 16px; padding: 12px 16px;
+                          border-bottom: 1px solid var(--fg); }
+        .form-modal-titulo { flex: 1; font-weight: bold; text-transform: uppercase; font-size: 0.8rem; }
+        .form-modal-externo { font-size: 0.75rem; color: var(--fg); text-decoration: underline; cursor: pointer; }
+        .form-modal-cerrar { border: 0; padding: 0 4px; font-size: 1.6rem; line-height: 1; }
+        .form-modal-iframe { flex: 1; width: 100%; border: 0; background: #fff; }
+        .laboral-publicar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px;
+                            margin: 24px 0 32px; padding: 16px 0; border-top: 1px solid var(--fg);
+                            border-bottom: 1px solid var(--fg); }
+        .laboral-publicar p { margin: 0; flex: 1 1 260px; }
+        .laboral-publicar .laboral-mail { font-size: 0.8rem; }
+        .laboral-publicar .laboral-mail a { color: var(--fg); text-decoration: underline; }
+        @media (max-width: 768px) {
+            .form-overlay { padding: 0; }
+            .form-modal { height: 100%; border: 0; }
+        }
