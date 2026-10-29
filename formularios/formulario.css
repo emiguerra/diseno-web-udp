@@ -1066,3 +1066,13 @@ button, [role="button"], .btn, .step-btn, .tag-chip span, .drop-zone, .aviso-cri
 /* Dentro de la ventana del sitio: sin márgenes laterales grandes */
 body.embebido { padding: 0 32px 48px; }
 @media (max-width: 600px) { body.embebido { padding: 0 0 48px; } }
+/* Logo FaAAD UDP (mismo archivo del encabezado del sitio; es blanco,
+   se muestra en negro con el mismo filtro que usa el sitio) */
+.form-logo { display: inline-block; padding-top: 32px; line-height: 0; }
+.form-logo img { height: 47px; width: auto; filter: brightness(0); }
+.form-logo + .page-header { padding-top: 40px; }
+@media (max-width: 600px) {
+  .form-logo { padding: 20px 18px 0; }
+  .form-logo img { height: 38px; }
+  .form-logo + .page-header { padding-top: 20px; }
+}
