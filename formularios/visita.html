@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agenda tu visita — FaAAD UDP</title>
+  <link rel="stylesheet" href="formulario.css">
+</head>
+<body>
+
+<div class="form-wrap">
+
+  <div class="page-header">
+    <h1>Agenda tu visita</h1>
+    <p>Conoce en persona o en línea la Escuela de Diseño UDP: sus sedes, laboratorios, talleres, docentes y estudiantes.</p>
+  </div>
+
+  <div class="aviso-previo">
+    <p>Esta es una solicitud: te escribiremos para confirmar la fecha y el horario de la visita.</p>
+  </div>
+
+  <!-- Las respuestas van al Google Form "Agenda tu visita" (cuenta emilia.guerra@mail.udp.cl) -->
+  <form id="formulario" novalidate
+        data-destino="https://docs.google.com/forms/d/e/1FAIpQLSdCxKlago3fptu_5n6iofPq4nOT2DGzIB8gwiF4GPOfkXeTNQ/formResponse">
+
+    <div id="error-summary" role="alert" aria-live="polite"></div>
+
+    <div class="form-card">
+
+      <div class="form-section">
+        <p class="section-title">Tus datos</p>
+        <div class="field-row">
+          <div class="field">
+            <label for="nombre">Nombre completo <span class="req">*</span></label>
+            <input type="text" id="nombre" name="entry.966204300" placeholder="Nombre y apellido" required>
+            <p class="field-error"></p>
+          </div>
+          <div class="field">
+            <label for="correo">Tu correo de contacto <span class="req">*</span></label>
+            <input type="email" id="correo" name="entry.2038251807" placeholder="correo@ejemplo.com" required>
+            <p class="field-error"></p>
+          </div>
+        </div>
+        <div class="field">
+          <label for="telefono">Teléfono</label>
+          <input type="text" id="telefono" name="entry.2101687045" placeholder="+56 9 …">
+        </div>
+        <div class="field">
+          <label>¿Quién eres? <span class="req">*</span></label>
+          <div class="tags-grid" data-grupo-req="entry.921955067">
+            <label class="tag-chip"><input type="radio" name="entry.921955067" value="Estudiante de enseñanza media"><span>Estudiante de enseñanza media</span></label>
+            <label class="tag-chip"><input type="radio" name="entry.921955067" value="Apoderado/a"><span>Apoderado/a</span></label>
+            <label class="tag-chip"><input type="radio" name="entry.921955067" value="Colegio o grupo"><span>Colegio o grupo</span></label>
+            <label class="tag-chip"><input type="radio" name="entry.921955067" value="Otro"><span>Otro</span></label>
+          </div>
+          <p class="field-error"></p>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label for="colegio">Colegio o institución</label>
+            <input type="text" id="colegio" name="entry.110747536">
+          </div>
+          <div class="field">
+            <label for="curso">Curso</label>
+            <input type="text" id="curso" name="entry.63993134" placeholder="Ej. 4° medio">
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <p class="section-title">La visita</p>
+        <div class="field-row">
+          <div class="field">
+            <label>Tipo de visita <span class="req">*</span></label>
+            <div class="tags-grid" data-tipo data-grupo-req="entry.1507481813">
+              <label class="tag-chip"><input type="radio" name="entry.1507481813" value="Presencial"><span>Presencial</span></label>
+              <label class="tag-chip"><input type="radio" name="entry.1507481813" value="Virtual"><span>Virtual</span></label>
+            </div>
+            <p class="field-error"></p>
+          </div>
+          <div class="field">
+            <label for="cantidad">Cantidad de personas</label>
+            <input type="text" id="cantidad" name="entry.330726443" placeholder="Si vienen en grupo">
+          </div>
+        </div>
+        <div class="field">
+          <label>Mención que te interesa</label>
+          <div class="tags-grid">
+            <label class="tag-chip" data-m="grafico"><input type="checkbox" name="entry.705924915" value="Diseño Gráfico"><span>Diseño Gráfico</span></label>
+            <label class="tag-chip" data-m="industrial"><input type="checkbox" name="entry.705924915" value="Diseño Industrial"><span>Diseño Industrial</span></label>
+            <label class="tag-chip" data-m="indumentaria"><input type="checkbox" name="entry.705924915" value="Textil e Indumentaria"><span>Textil e Indumentaria</span></label>
+            <label class="tag-chip" data-m="interaccion"><input type="checkbox" name="entry.705924915" value="Interacción Digital"><span>Interacción Digital</span></label>
+            <label class="tag-chip"><input type="checkbox" name="entry.705924915" value="Aún no lo sé"><span>Aún no lo sé</span></label>
+          </div>
+        </div>
+        <div class="field">
+          <label for="fechas">Fechas u horarios preferidos <span class="req">*</span></label>
+          <textarea id="fechas" name="entry.1318682101" placeholder="Ej. martes o jueves en la tarde, desde el 10 de noviembre" required></textarea>
+          <p class="field-error"></p>
+        </div>
+        <div class="field">
+          <label for="comentarios">Comentarios</label>
+          <textarea id="comentarios" name="entry.831104795" placeholder="Lo que quieras contarnos o preguntarnos"></textarea>
+        </div>
+        <div class="field" style="margin-top:28px">
+          <label class="consentimiento" for="acepto">
+            <input type="checkbox" id="acepto" name="entry.1730185840" value="Sí" required>
+            Acepto que mis datos se usen solo para coordinar la visita.
+          </label>
+          <p class="field-error"></p>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-outline" id="clearBtn">Limpiar</button>
+        <button type="submit" class="btn btn-primary" id="submitBtn">
+          <span id="btnText">Enviar solicitud</span>
+          <span id="btnArrow">→</span>
+          <div class="spinner" id="spinner"></div>
+        </button>
+      </div>
+    </div>
+    <div class="status" id="statusMsg"></div>
+  </form>
+
+  <div id="confirmacion">
+    <h2 class="confirm-title">Solicitud<br>enviada.</h2>
+    <p class="confirm-body">
+      Recibimos tu solicitud de visita. Te escribiremos a <strong id="confirm-email"></strong>
+      para confirmar la fecha y el horario.
+    </p>
+    <button class="btn btn-primary" id="btnVolverFormulario">Enviar otra solicitud</button>
+  </div>
+
+</div>
+
+<script src="formulario.js"></script>
+</body>
+</html>
