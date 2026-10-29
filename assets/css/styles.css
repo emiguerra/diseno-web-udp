@@ -2963,7 +2963,7 @@
                         align-items: center; justify-content: center;
                         background: rgba(0,0,0,0.55); padding: 24px; }
         .form-overlay.abierto { display: flex; }
-        .form-modal { background: var(--bg); width: min(760px, 100%); height: min(88vh, 900px);
+        .form-modal { background: var(--bg); width: min(1100px, 100%); height: min(92vh, 1000px);
                       display: flex; flex-direction: column; border: 1px solid var(--fg); }
         .form-modal-bar { display: flex; align-items: center; gap: 16px; padding: 12px 16px;
                           border-bottom: 1px solid var(--fg); }
