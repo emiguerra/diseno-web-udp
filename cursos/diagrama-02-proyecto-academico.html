@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Proyecto Académico — Diagrama 02</title>
+<style>
+  @font-face{
+    font-family:'NectoMono';
+    src:url('../assets/fonts/NectoMono-Regular.woff2') format('woff2'),
+        url('../assets/fonts/NectoMono-Regular.otf') format('opentype');
+    font-weight:400; font-style:normal; font-display:swap;
+  }
+  @font-face{
+    font-family:'WorkSans';
+    src:url('../assets/fonts/WorkSans-Regular.woff2') format('woff2'),
+        url('../assets/fonts/WorkSans-Regular.ttf') format('truetype');
+    font-weight:400 600; font-style:normal; font-display:swap;
+  }
+  @font-face{
+    font-family:'WorkFaAAD';
+    src:url('../assets/fonts/WorkFaAAD-A.woff2') format('woff2'),
+        url('../assets/fonts/WorkFaAAD-A.otf') format('opentype');
+    font-weight:400; font-style:normal; font-display:swap;
+  }
+
+  :root{
+    --bg:#000; --ink:#fff;
+    --dim:rgba(255,255,255,.6);
+    --faint:rgba(255,255,255,.3);
+    --line:rgba(255,255,255,.2);
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{background:var(--bg); color:var(--ink); font-family:'WorkSans',system-ui,sans-serif; -webkit-font-smoothing:antialiased;}
+
+  /* ---------- Cabecera ---------- */
+  .top{position:fixed; top:0; left:0; right:0; z-index:40; display:flex; justify-content:space-between; align-items:flex-start; padding:16px 20px; pointer-events:none; mix-blend-mode:difference;}
+  .tag{font-family:'NectoMono',monospace; font-size:11px; letter-spacing:.22em; text-transform:uppercase; color:var(--ink);}
+  .tag small{display:block; opacity:.6; margin-top:3px; letter-spacing:.16em;}
+  .motion-toggle{pointer-events:auto; font-family:'NectoMono',monospace; font-size:10px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink); background:transparent; border:1px solid var(--line); border-radius:40px; padding:7px 13px; cursor:pointer; transition:background .2s,color .2s;}
+  .motion-toggle:hover,.motion-toggle[aria-pressed="true"]{background:var(--ink); color:#000;}
+
+  /* ---------- Escenario (dos columnas, pegajoso) ---------- */
+  .scrolly{position:relative;}
+  .stage{position:sticky; top:0; height:100vh; display:flex; align-items:stretch; overflow:hidden;}
+
+  /* Riel narrativo ligado al diagrama */
+  .rail{position:relative; width:390px; flex:none; border-right:1px solid var(--line);}
+  .railstep{position:absolute; left:0; right:0; top:50%; transform:translateY(-50%); padding:0 40px; opacity:0; transition:opacity .45s ease; pointer-events:none; max-height:84vh; overflow:auto;}
+  .railstep.is-active{opacity:1; pointer-events:auto;}
+  .railstep .k{font-family:'NectoMono',monospace; font-size:10px; letter-spacing:.22em; text-transform:uppercase; color:var(--dim); display:block; margin-bottom:12px;}
+  .railstep h2{font-family:'WorkFaAAD','WorkSans',sans-serif; font-weight:400; font-size:30px; line-height:1.1; margin-bottom:14px;}
+  .railstep p{font-family:'WorkSans',sans-serif; font-size:15px; line-height:1.55; color:var(--dim);}
+  .railstep ol,.railstep ul{list-style:none; margin-top:14px; display:grid; gap:7px; counter-reset:it;}
+  .railstep li{font-family:'WorkSans',sans-serif; font-size:13px; line-height:1.35; color:var(--dim); padding-left:24px; position:relative;}
+  .railstep ul li::before{content:''; position:absolute; left:4px; top:7px; width:5px; height:5px; border:1px solid var(--faint); border-radius:50%;}
+  .railstep ol li{counter-increment:it;}
+  .railstep ol li::before{content:counter(it,decimal-leading-zero); position:absolute; left:0; top:1px; font-family:'NectoMono',monospace; font-size:10px; color:var(--ink);}
+
+  /* Diagrama (protagonista) */
+  .diagram{position:relative; flex:1; min-width:0;}
+  .diagram svg{position:absolute; inset:0; width:100%; height:100%;}
+
+  /* ---------- Nodos SVG ---------- */
+  .layer{opacity:0; transition:opacity .7s ease;}
+  .edge{stroke:var(--line); stroke-width:1; fill:none; opacity:0; transition:opacity .7s ease;}
+  .node{cursor:pointer;}
+  .node circle{transition:stroke .2s, stroke-width .2s;}
+
+  /* flotación sutil de cada círculo (deriva propia por nodo) */
+  @keyframes floaty{0%,100%{transform:translate(0,0);}50%{transform:translate(var(--fx,0px),var(--fy,-5px));}}
+  .sello,.eje{animation:floaty var(--fdur,6s) ease-in-out var(--fdel,0s) infinite; will-change:transform;}
+  .hub{animation:floaty 9s ease-in-out infinite; --fx:0px; --fy:-3px;}
+  body.no-motion .sello,body.no-motion .eje,body.no-motion .hub{animation:none;}
+
+  .node:focus{outline:none;}
+  .node:focus .ring,.node:hover .ring{opacity:1;}
+  .ring{fill:none; stroke:var(--ink); stroke-width:1; opacity:0; transition:opacity .2s;}
+
+  .hub circle{fill:#000; stroke:var(--ink); stroke-width:1.6;}
+  .hub text{font-family:'NectoMono',monospace; fill:var(--ink); text-anchor:middle; letter-spacing:.1em; text-transform:uppercase;}
+
+  .sello circle.dot{fill:#000; stroke:var(--faint); stroke-width:1.2;}
+  .sello:hover circle.dot,.sello:focus circle.dot{stroke:var(--ink); stroke-width:1.8;}
+  .sello .num{font-family:'NectoMono',monospace; font-size:15px; fill:var(--ink); text-anchor:middle; dominant-baseline:central; letter-spacing:.04em;}
+
+  .modelo-ring{fill:none; stroke:var(--faint); stroke-width:1; stroke-dasharray:2 8;}
+  .modelo-dot{fill:var(--ink);}
+
+  .eje circle.halo{fill:none; stroke:var(--line); stroke-width:1;}
+  .eje circle.core{fill:#000; stroke:var(--ink); stroke-width:1.6;}
+  .eje:hover circle.core,.eje:focus circle.core{stroke-width:2.6;}
+  .eje .ttl{font-family:'NectoMono',monospace; font-size:11px; letter-spacing:.05em; text-transform:uppercase; text-anchor:middle; fill:var(--ink);}
+
+  /* estados por etapa */
+  .stage-root[data-stage="0"] .l-hub{opacity:1;}
+  .stage-root[data-stage="1"] .l-hub,.stage-root[data-stage="1"] .l-sellos,.stage-root[data-stage="1"] .e-hub-sello{opacity:1;}
+  .stage-root[data-stage="2"] .l-hub,.stage-root[data-stage="2"] .l-sellos,.stage-root[data-stage="2"] .l-modelo,.stage-root[data-stage="2"] .e-hub-sello{opacity:1;}
+  .stage-root[data-stage="2"] .l-sellos{opacity:.45;}
+  .stage-root[data-stage="3"] .layer,.stage-root[data-stage="3"] .e-hub-sello,.stage-root[data-stage="3"] .e-hub-eje{opacity:1;}
+  .stage-root[data-stage="3"] .l-modelo{opacity:.5;}
+  .stage-root[data-stage="4"] .layer{opacity:1;}
+  .stage-root[data-stage="4"] .l-sellos,.stage-root[data-stage="4"] .l-modelo{opacity:.25;}
+  .stage-root[data-stage="4"] .e-hub-eje{opacity:1;}
+  .stage-root[data-stage="5"] .layer,.stage-root[data-stage="5"] .edge{opacity:1;}
+  .stage-root[data-stage="5"] .l-modelo{opacity:.7;}
+  .stage-root[data-stage="5"] .e-constel{opacity:.28;}
+
+  @keyframes breathe{0%,100%{transform:scale(1);}50%{transform:scale(1.015);}}
+  .stage-root[data-stage="5"] .l-ejes{animation:breathe 7s ease-in-out infinite; transform-origin:700px 700px;}
+
+  /* ---------- Panel de detalle ---------- */
+  .panel{position:fixed; top:0; right:0; z-index:60; height:100vh; width:min(430px,90vw); background:#0a0a0a; border-left:1px solid var(--line); transform:translateX(100%); transition:transform .4s cubic-bezier(.4,0,.1,1); display:flex; flex-direction:column; padding:66px 32px 34px;}
+  .panel.open{transform:none;}
+  .panel .ptag{font-family:'NectoMono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:var(--dim); margin-bottom:14px;}
+  .panel h3{font-family:'WorkFaAAD','WorkSans',sans-serif; font-weight:400; font-size:28px; line-height:1.1; margin-bottom:8px;}
+  .panel .psub{font-family:'WorkSans',sans-serif; font-size:14px; color:var(--dim); margin-bottom:20px;}
+  .panel p.body{font-family:'WorkSans',sans-serif; font-size:15px; line-height:1.6; color:rgba(255,255,255,.85);}
+  .panel .edit-note{margin-top:auto; font-family:'WorkSans',sans-serif; font-size:11px; line-height:1.5; color:var(--faint); border-top:1px solid var(--line); padding-top:14px;}
+  .panel .pclose{position:absolute; top:20px; right:22px; width:34px; height:34px; background:transparent; border:1px solid var(--line); border-radius:50%; color:var(--ink); font-size:18px; cursor:pointer; line-height:1;}
+  .panel .pclose:hover{background:var(--ink); color:#000;}
+  .scrim{position:fixed; inset:0; z-index:55; background:rgba(0,0,0,.45); opacity:0; pointer-events:none; transition:opacity .4s;}
+  .scrim.open{opacity:1; pointer-events:auto;}
+
+  /* ---------- Progreso / hint ---------- */
+  .progress{position:fixed; left:20px; bottom:20px; z-index:40; display:flex; gap:7px; mix-blend-mode:difference;}
+  .progress b{width:20px; height:2px; background:var(--ink); opacity:.3; transition:opacity .3s;}
+  .progress b.on{opacity:1;}
+  .hint{position:fixed; right:22px; bottom:20px; z-index:40; font-family:'NectoMono',monospace; font-size:10px; letter-spacing:.2em; text-transform:uppercase; color:var(--dim); mix-blend-mode:difference; transition:opacity .4s;}
+  @keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(5px);}}
+  .hint span{display:inline-block; animation:bob 1.8s ease-in-out infinite;}
+
+  /* ---------- Sin movimiento ---------- */
+  body.no-motion .layer,body.no-motion .edge{opacity:1 !important; transition:none !important; animation:none !important;}
+  body.no-motion .l-sellos,body.no-motion .l-modelo{opacity:1 !important;}
+  body.no-motion .railstep{transition:none;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    .layer,.edge,.railstep{transition:none;}
+    .stage-root[data-stage="5"] .l-ejes{animation:none;}
+  }
+
+  /* ---------- Mobile: diagrama arriba, texto abajo ---------- */
+  @media (max-width:820px){
+    .stage{flex-direction:column;}
+    .diagram{order:-1; height:54vh; flex:none;}
+    .rail{width:auto; height:46vh; border-right:none; border-top:1px solid var(--line);}
+    .railstep{padding:14px 20px; top:0; transform:none; height:100%; max-height:none; display:flex; flex-direction:column; justify-content:center;}
+    .railstep h2{font-size:22px;}
+    .progress{display:none;}
+  }
+</style>
+</head>
+<body>
+
+  <header class="top">
+    <div class="tag">Diagrama 02<small>Proyecto Académico · Escuela de Diseño UDP</small></div>
+    <button class="motion-toggle" id="motionToggle" aria-pressed="false">Reducir movimiento</button>
+  </header>
+
+  <div class="scrolly">
+
+    <!-- Escenario pegajoso: riel + diagrama -->
+    <div class="stage">
+      <div class="rail" id="rail">
+        <div class="railstep is-active" data-stage="0">
+          <span class="k">01 — Punto de partida</span>
+          <h2>El proyecto académico como sistema</h2>
+          <p>Todo lo que define a la Escuela converge en un mismo núcleo. Desplázate para ver cómo se despliega.</p>
+        </div>
+        <div class="railstep" data-stage="1">
+          <span class="k">02 — Sellos formativos</span>
+          <h2>Ocho principios que orientan la formación</h2>
+          <p>Rodean el núcleo, numerados del 01 al 08. Haz clic en un sello para leer su descripción.</p>
+          <ol id="selloList"></ol>
+        </div>
+        <div class="railstep" data-stage="2">
+          <span class="k">03 — Modelo formativo</span>
+          <h2>Cómo se articula la experiencia educativa</h2>
+          <p>Diez componentes conectan los principios con la práctica:</p>
+          <ul id="modeloList"></ul>
+        </div>
+        <div class="railstep" data-stage="3">
+          <span class="k">04 — Ejes temáticos</span>
+          <h2>Tres áreas de exploración</h2>
+          <p>Interdisciplina, prácticas emergentes en Latinoamérica y emergencias tecnológicas orientan investigación, docencia y práctica.</p>
+        </div>
+        <div class="railstep" data-stage="4">
+          <span class="k">05 — Exploración</span>
+          <h2>Cada eje, en detalle</h2>
+          <p>Haz clic en un eje para expandir su descripción y su relación con los sellos y el modelo.</p>
+        </div>
+        <div class="railstep" data-stage="5">
+          <span class="k">06 — Visualización integrada</span>
+          <h2>Un ecosistema de relaciones</h2>
+          <p>Sellos, modelo y ejes conviven como una constelación: la identidad académica de la Escuela como sistema vivo.</p>
+        </div>
+      </div>
+
+      <div class="diagram">
+        <svg class="stage-root" id="stageRoot" data-stage="0" viewBox="0 0 1400 1400"
+             preserveAspectRatio="xMidYMid meet" role="img"
+             aria-label="Diagrama del proyecto académico: un núcleo central conecta ocho sellos formativos, un anillo de modelo formativo y tres ejes temáticos.">
+          <g id="gEdges"></g>
+          <g id="gModelo" class="layer l-modelo"></g>
+          <g id="gSellos" class="layer l-sellos"></g>
+          <g id="gEjes"   class="layer l-ejes"></g>
+          <g id="gHub"    class="layer l-hub hub"></g>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Disparadores de scroll (invisibles) -->
+    <div class="triggers">
+      <section class="step" data-stage="0"></section>
+      <section class="step" data-stage="1"></section>
+      <section class="step" data-stage="2"></section>
+      <section class="step" data-stage="3"></section>
+      <section class="step" data-stage="4"></section>
+      <section class="step" data-stage="5"></section>
+    </div>
+  </div>
+
+  <nav class="progress" id="progress" aria-hidden="true"><b></b><b></b><b></b><b></b><b></b><b></b></nav>
+  <div class="hint" id="hint"><span>Scroll ↓</span></div>
+
+  <div class="scrim" id="scrim"></div>
+  <aside class="panel" id="panel" role="dialog" aria-modal="false" aria-labelledby="pTitle" tabindex="-1">
+    <button class="pclose" id="pClose" aria-label="Cerrar">×</button>
+    <div class="ptag" id="pTag">Sello formativo</div>
+    <h3 id="pTitle">—</h3>
+    <div class="psub" id="pSub" hidden></div>
+    <p class="body" id="pBody">—</p>
+    <p class="edit-note" id="pNote"></p>
+  </aside>
+
+<style>.step{height:100vh;}</style>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- Contenido (editable) ---------- */
+  const SELLOS=[
+    {n:1,t:"Diversidad y pluralismo",d:"La Escuela reúne trayectorias, miradas y culturas distintas como base de su comunidad y de su manera de proyectar."},
+    {n:2,t:"Impacto en la esfera pública",d:"El diseño se entiende como una práctica que interviene en lo común y aporta a los debates y necesidades de la sociedad."},
+    {n:3,t:"Formación integral y pensamiento crítico",d:"Se forma a personas capaces de analizar, cuestionar y fundamentar sus decisiones proyectuales."},
+    {n:4,t:"Formación especializada y flexibilidad curricular",d:"Una base común se combina con itinerarios que cada estudiante adapta a sus intereses y campo de especialización."},
+    {n:5,t:"Prácticas situadas y basadas en evidencia",d:"El trabajo parte del contexto real y se sostiene en información, investigación y experimentación."},
+    {n:6,t:"Interdisciplina y abordaje de problemas complejos",d:"El diseño dialoga con otras disciplinas para responder a problemas que ninguna resuelve por sí sola."},
+    {n:7,t:"Tecnología e innovación continua",d:"La incorporación permanente de nuevas herramientas y lenguajes es parte estructural de la formación."},
+    {n:8,t:"Docentes de excelencia y conexión con el medio profesional",d:"El cuerpo docente vincula la formación con la práctica profesional vigente y el medio laboral."}
+  ];
+  const MODELO=[
+    "Formación intelectual, profesional y social",
+    "Teoría, técnica y experiencia práctica",
+    "Docencia aplicada en escenarios reales",
+    "Experiencia profesional temprana",
+    "Formación académica rigurosa",
+    "Investigación y comprensión teórica",
+    "Impacto social del diseño",
+    "Emprendimiento y colaboración interdisciplinaria",
+    "Desarrollo metodológico de proyectos",
+    "Vinculación con el medio"
+  ];
+  const EJES=[
+    {t:"Interdisciplina",sub:"Abordaje de problemas complejos",d:"Colaboración entre distintas áreas del conocimiento para desarrollar respuestas integrales y sistémicas frente a problemáticas contemporáneas."},
+    {t:"Prácticas emergentes en Latinoamérica",sub:"Diseño situado y contextual",d:"Prácticas de diseño que reconocen las determinantes culturales, sociales y ambientales del contexto latinoamericano, integrando una perspectiva crítica y situada."},
+    {t:"Emergencias tecnológicas",sub:"Innovación y transformación disciplinar",d:"Exploración e incorporación de tecnologías emergentes, herramientas digitales y metodologías de última generación en los procesos de diseño y en sus distintas áreas de especialización."}
+  ];
+
+  const NS="http://www.w3.org/2000/svg";
+  const CX=700,CY=700;
+  const R_SELLO=275, R_MODELO=445, R_EJE=565, rEje=58;
+  const el=(t,a={})=>{const n=document.createElementNS(NS,t);for(const k in a)n.setAttribute(k,a[k]);return n;};
+  const pt=(deg,r)=>{const a=(deg-90)*Math.PI/180;return [CX+r*Math.cos(a),CY+r*Math.sin(a)];};
+  // deriva flotante determinista por nodo
+  function floaty(node,seed){
+    const r=n=>{const x=Math.sin(seed*99.13+n*7.7)*43758.5;return x-Math.floor(x);};
+    node.style.setProperty('--fy',(-(3+r(1)*3)).toFixed(2)+'px');
+    node.style.setProperty('--fx',((r(2)-0.5)*5).toFixed(2)+'px');
+    node.style.setProperty('--fdur',(5+r(3)*3.5).toFixed(2)+'s');
+    node.style.setProperty('--fdel',(-(r(4)*6)).toFixed(2)+'s');
+  }
+
+  const gHub=document.getElementById('gHub'),gSellos=document.getElementById('gSellos'),
+        gModelo=document.getElementById('gModelo'),gEjes=document.getElementById('gEjes'),
+        gEdges=document.getElementById('gEdges');
+
+  /* Hub */
+  gHub.appendChild(el('circle',{cx:CX,cy:CY,r:98}));
+  [['Proyecto',-4],['académico',16]].forEach(([s,dy])=>{
+    const t=el('text',{x:CX,y:CY+dy,'font-size':14}); t.textContent=s; gHub.appendChild(t);
+  });
+
+  /* Sellos — número dentro del círculo; nombre va en el riel y en <title> */
+  const selloAngles=[];
+  SELLOS.forEach((s,i)=>{
+    const deg=22.5+i*45; selloAngles.push(deg);
+    const [x,y]=pt(deg,R_SELLO);
+    const g=el('g',{class:'node sello',tabindex:0,role:'button','aria-label':`Sello ${s.n}: ${s.t}`});
+    g.dataset.kind='sello'; g.dataset.i=i;
+    const title=el('title'); title.textContent=`${s.n}. ${s.t}`; g.append(title);
+    g.append(el('circle',{class:'dot',cx:x,cy:y,r:34}), el('circle',{class:'ring',cx:x,cy:y,r:43}));
+    const num=el('text',{class:'num',x:x,y:y}); num.textContent=s.n; g.append(num);
+    floaty(g,i+1);
+    gSellos.append(g);
+    const [hx,hy]=pt(deg,98),[sx,sy]=pt(deg,R_SELLO-34);
+    gEdges.append(el('line',{class:'edge e-hub-sello',x1:hx,y1:hy,x2:sx,y2:sy}));
+  });
+
+  /* Modelo — anillo punteado + 10 puntos (sin etiquetas en el lienzo) */
+  gModelo.append(el('circle',{class:'modelo-ring',cx:CX,cy:CY,r:R_MODELO}));
+  MODELO.forEach((m,i)=>{
+    const [x,y]=pt(i*36+18,R_MODELO);
+    const d=el('circle',{class:'modelo-dot',cx:x,cy:y,r:5});
+    const tt=el('title'); tt.textContent=m; d.append(tt);
+    gModelo.append(d);
+  });
+
+  /* Ejes — triada externa (0,120,240), título Necto dentro */
+  EJES.forEach((e,i)=>{
+    const deg=i*120; const [x,y]=pt(deg,R_EJE);
+    const g=el('g',{class:'node eje',tabindex:0,role:'button','aria-label':`Eje: ${e.t}`});
+    g.dataset.kind='eje'; g.dataset.i=i;
+    g.append(el('circle',{class:'halo',cx:x,cy:y,r:rEje+13}),
+             el('circle',{class:'core',cx:x,cy:y,r:rEje}),
+             el('circle',{class:'ring',cx:x,cy:y,r:rEje+22}));
+    const ttl=el('text',{class:'ttl',x:x,y:y}); wrapTitle(ttl,e.t,x,y); g.append(ttl);
+    floaty(g,i+21);
+    gEjes.append(g);
+    const [hx,hy]=pt(deg,98),[ex,ey]=pt(deg,R_EJE-rEje);
+    gEdges.append(el('line',{class:'edge e-hub-eje',x1:hx,y1:hy,x2:ex,y2:ey}));
+  });
+
+  /* Constelación: cada eje a sus 2 sellos más cercanos (solo etapa final) */
+  EJES.forEach((e,i)=>{
+    const degE=i*120; const [ex,ey]=pt(degE,R_EJE-rEje);
+    selloAngles.map((a,si)=>({si,diff:Math.min(Math.abs(a-degE),360-Math.abs(a-degE))}))
+      .sort((p,q)=>p.diff-q.diff).slice(0,2).forEach(({si})=>{
+        const [sx,sy]=pt(selloAngles[si],R_SELLO+34);
+        gEdges.append(el('line',{class:'edge e-constel',x1:ex,y1:ey,x2:sx,y2:sy}));
+      });
+  });
+
+  /* helpers de texto (solo para títulos DENTRO de círculos) */
+  function wrap(textEl,str,x,y,max,lh){
+    const words=str.split(' '),lines=[];let cur='';
+    words.forEach(w=>{ if((cur+' '+w).trim().length>max){lines.push(cur.trim());cur=w;} else cur+=' '+w; });
+    if(cur.trim())lines.push(cur.trim());
+    const y0=y-((lines.length-1)*lh)/2+lh*0.32;
+    textEl.textContent='';
+    lines.forEach((ln,k)=>{const ts=el('tspan',{x:x,y:y0+k*lh});ts.textContent=ln;textEl.append(ts);});
+  }
+  function wrapTitle(textEl,str,x,y){ wrap(textEl,str,x,y,14,12); }
+
+  /* listas del riel */
+  const ol=document.getElementById('selloList');
+  SELLOS.forEach(s=>{const li=document.createElement('li');li.textContent=s.t;ol.append(li);});
+  const ul=document.getElementById('modeloList');
+  MODELO.forEach(m=>{const li=document.createElement('li');li.textContent=m;ul.append(li);});
+
+  /* ---------- Scrollytelling ---------- */
+  const root=document.getElementById('stageRoot');
+  const rails=[...document.querySelectorAll('.railstep')];
+  const steps=[...document.querySelectorAll('.triggers .step')];
+  const bars=[...document.querySelectorAll('#progress b')];
+  const hint=document.getElementById('hint');
+  const io=new IntersectionObserver(es=>{
+    es.forEach(en=>{ if(en.isIntersecting&&en.intersectionRatio>=0.5){
+      const stg=+en.target.dataset.stage;
+      root.setAttribute('data-stage',stg);
+      rails.forEach(r=>r.classList.toggle('is-active',+r.dataset.stage===stg));
+      bars.forEach((b,k)=>b.classList.toggle('on',k<=stg));
+      hint.style.opacity=stg===0?'1':'0';
+    }});
+  },{threshold:[0.5]});
+  steps.forEach(s=>io.observe(s));
+
+  /* ---------- Panel ---------- */
+  const panel=document.getElementById('panel'),scrim=document.getElementById('scrim');
+  const pTag=document.getElementById('pTag'),pTitle=document.getElementById('pTitle'),
+        pSub=document.getElementById('pSub'),pBody=document.getElementById('pBody'),pNote=document.getElementById('pNote');
+  let lastFocus=null;
+  function openSello(i){const s=SELLOS[i];pTag.textContent=`Sello formativo · 0${s.n}`;pTitle.textContent=s.t;pSub.hidden=true;pBody.textContent=s.d;pNote.textContent='Descripción provisional (síntesis editorial). Reemplazar por el texto institucional oficial.';show();}
+  function openEje(i){const e=EJES[i];pTag.textContent='Eje temático';pTitle.textContent=e.t;pSub.hidden=false;pSub.textContent=e.sub;pBody.textContent=e.d;pNote.textContent='Síntesis editorial del material, no un texto institucional aprobado.';show();}
+  function show(){lastFocus=document.activeElement;panel.classList.add('open');scrim.classList.add('open');panel.focus();}
+  function close(){panel.classList.remove('open');scrim.classList.remove('open');if(lastFocus&&lastFocus.focus)lastFocus.focus();}
+  document.getElementById('pClose').addEventListener('click',close);
+  scrim.addEventListener('click',close);
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
+  function activate(g){const k=g.dataset.kind,i=+g.dataset.i;if(k==='sello')openSello(i);else if(k==='eje')openEje(i);}
+  [gSellos,gEjes].forEach(layer=>{
+    layer.addEventListener('click',e=>{const g=e.target.closest('.node');if(g)activate(g);});
+    layer.addEventListener('keydown',e=>{const g=e.target.closest('.node');if(g&&(e.key==='Enter'||e.key===' ')){e.preventDefault();activate(g);}});
+  });
+
+  /* ---------- Toggle movimiento ---------- */
+  const mt=document.getElementById('motionToggle');
+  mt.addEventListener('click',()=>{const on=document.body.classList.toggle('no-motion');mt.setAttribute('aria-pressed',on?'true':'false');mt.textContent=on?'Activar movimiento':'Reducir movimiento';});
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){document.body.classList.add('no-motion');mt.setAttribute('aria-pressed','true');mt.textContent='Activar movimiento';}
+})();
+</script>
+</body>
+</html>
