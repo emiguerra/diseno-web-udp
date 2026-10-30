@@ -39,6 +39,7 @@ es además la **fuente para la migración a WordPress** que hará la agencia.
 | Postula (incluye Visita FAAD) | [ver](https://emiguerra.github.io/diseno-web-udp/postula.html) | [postula.html](postula.html) |
 | Organigrama · escritorio | [ver](https://emiguerra.github.io/diseno-web-udp/cursos/constelacion.html) | [cursos/constelacion.html](cursos/constelacion.html) |
 | Organigrama · celular | [ver](https://emiguerra.github.io/diseno-web-udp/cursos/constelacion-mobile.html) | [cursos/constelacion-mobile.html](cursos/constelacion-mobile.html) |
+| Diagrama 02 · Proyecto Académico | [ver](https://emiguerra.github.io/diseno-web-udp/cursos/diagrama-02-proyecto-academico.html) | [cursos/diagrama-02-proyecto-academico.html](cursos/diagrama-02-proyecto-academico.html) |
 | Formulario oportunidad laboral | [ver](https://emiguerra.github.io/diseno-web-udp/formularios/oportunidad-laboral.html) | [formularios/oportunidad-laboral.html](formularios/oportunidad-laboral.html) |
 | Formulario visita FAAD | [ver](https://emiguerra.github.io/diseno-web-udp/formularios/visita.html) | [formularios/visita.html](formularios/visita.html) |
 
@@ -81,6 +82,7 @@ es además la **fuente para la migración a WordPress** que hará la agencia.
 ├── cursos/
 │   ├── constelacion.html          organigrama, versión escritorio
 │   ├── constelacion-mobile.html   organigrama, versión celular (≤ 768 px)
+│   ├── diagrama-02-proyecto-academico.html  diagrama del proyecto académico (scrollytelling)
 │   ├── datos_catalogo/            cursos.json, cursos.csv e imagenes/
 │   └── scraper_catalogo.py        regenera cursos.json desde el catálogo
 │
