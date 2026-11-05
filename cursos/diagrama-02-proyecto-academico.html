@@ -81,11 +81,11 @@
   .hub text{font-family:'NectoMono',monospace; font-size:22px; dominant-baseline:central; fill:var(--ink); text-anchor:middle; letter-spacing:.1em; text-transform:uppercase;}
 
   .sello circle.dot{fill:none; stroke:var(--faint); stroke-width:1.2;}
-  .sello circle.dot{transition:fill .2s, stroke .2s;}
+  .sello circle.dot{pointer-events:all; transition:fill .2s, stroke .2s;}
   .sello .num{font-family:'NectoMono',monospace; font-size:26px; fill:var(--ink); text-anchor:middle; dominant-baseline:central; letter-spacing:.04em;}
 
   .modelo-ring{fill:none; stroke:var(--faint); stroke-width:1; stroke-dasharray:2 8;}
-  .modelo .dotc{fill:none; stroke:var(--faint); stroke-width:1.2; transition:fill .2s, stroke .2s;}
+  .modelo .dotc{fill:none; pointer-events:all; stroke:var(--faint); stroke-width:1.2; transition:fill .2s, stroke .2s;}
   .modelo .mnum{font-family:'NectoMono',monospace; font-size:16px; fill:var(--ink); text-anchor:middle; dominant-baseline:central; pointer-events:none; transition:fill .2s;}
   .modelo{cursor:pointer;}
   /* Mientras dure la acción (cursor encima, foco, ítem de la lista o panel abierto) el círculo se rellena con la tinta */
@@ -99,7 +99,7 @@
   .sello.is-hot .ring,.modelo.is-hot .ring,.sello.is-active .ring,.modelo.is-active .ring,.eje.is-active .ring{opacity:1;}
 
   .eje circle.halo{fill:none; stroke:var(--line); stroke-width:1;}
-  .eje circle.core{fill:none; stroke:var(--ink); stroke-width:1.6;}
+  .eje circle.core{fill:none; pointer-events:all; stroke:var(--ink); stroke-width:1.6;}
   .eje .ttl{font-family:'NectoMono',monospace; font-size:15px; letter-spacing:.05em; text-transform:uppercase; text-anchor:middle; dominant-baseline:central; fill:var(--ink);}
 
   /* estados por etapa */
