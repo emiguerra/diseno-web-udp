@@ -6,6 +6,9 @@
  * (entry.123…). Así las respuestas quedan en la planilla del formulario y se
  * disparan los avisos por correo que ya están instalados ahí.
  *
+ * Si el <form> lleva data-modo="script", los campos usan nombres simples y
+ * data-destino es la URL /exec de un Apps Script (ver apps-script/).
+ *
  * Marcas en el HTML:
  *   required                   campo de texto obligatorio
  *   data-grupo-req="entry.X"   en un .tags-grid: hay que marcar al menos una opción
@@ -80,11 +83,12 @@
 
   function datos() {
     var d = new URLSearchParams();
-    form.querySelectorAll('[name^="entry."]').forEach(function (el) {
+    var script = form.dataset.modo === 'script';   // Apps Script: nombres simples, sin entry.
+    form.querySelectorAll(script ? '[name]' : '[name^="entry."]').forEach(function (el) {
       if ((el.type === 'radio' || el.type === 'checkbox') && !el.checked) return;
       var v = el.value.trim();
       if (!v) return;
-      if (el.hasAttribute('data-fecha')) {
+      if (el.hasAttribute('data-fecha') && !script) {
         var p = v.split('-');               // aaaa-mm-dd
         d.append(el.name + '_year', p[0]);
         d.append(el.name + '_month', String(+p[1]));
