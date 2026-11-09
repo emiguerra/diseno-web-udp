@@ -627,6 +627,18 @@
             abrirMCPopup(cell);
         }
 
+        /* ── Categorías de ramo (líneas curriculares) ── */
+        function mallaFiltrarCategoria(el) {
+            const cat = el.dataset.categoria;
+            const yaActivo = el.classList.contains('activo');
+            document.querySelectorAll('#malla-controles-categoria .mi-ciclo-btn').forEach(c => c.classList.remove('activo'));
+            document.querySelectorAll('.mi-camino-ciclo').forEach(c => c.classList.remove('mi-camino-ciclo'));
+            if (yaActivo) return;
+            el.classList.add('activo');
+            document.querySelectorAll(`.malla-interactiva .mi-cell[data-categoria="${cat}"]`)
+                .forEach(cell => cell.classList.add('mi-camino-ciclo'));
+        }
+
         function _renderCatalogList(scroll, mallaNombre, cat, cursos) {
             const cards = cursos.map((c, idx) => {
                 const imgSrc = c.imagenes && c.imagenes[0] ? `${IMGS_BASE_MALLA}${c.imagenes[0]}` : null;

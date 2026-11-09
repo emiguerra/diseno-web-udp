@@ -1507,6 +1507,14 @@
         }
         .mi-filtro-doble:hover { border-color: #111; color: #111; border-style: dashed; }
         .mi-filtro-doble.activo { background: #111; color: var(--bg); border-color: #111; border-style: solid; }
+        .mi-ciclo-btn {
+            font-family: 'NectoMono', monospace;
+            font-size: 0.5rem; letter-spacing: 0.08em; text-transform: uppercase;
+            padding: 6px 12px; border: 1px solid #d0d0d0;
+            background: var(--bg); color: #bbb; cursor: pointer; transition: all 0.18s;
+        }
+        .mi-ciclo-btn:hover { border-color: #111; color: #111; }
+        .mi-ciclo-btn.activo { background: #111; color: var(--bg); border-color: #111; }
         .malla-controles.modo-doble .mi-filtro-btn[data-filtro=""] { opacity: 0.4; }
         .mi-filtro-info {
             font-family: 'NectoMono', monospace; font-size: 0.5rem;
@@ -1523,10 +1531,16 @@
             font-size: 0.52rem; font-weight: 500; text-transform: uppercase;
             letter-spacing: 0.2em; font-family: 'NectoMono', monospace;
             display: flex; align-items: center; justify-content: center; gap: 10px;
+            cursor: pointer; transition: color 0.15s;
         }
         .mi-ciclo::before, .mi-ciclo::after {
             content: ''; flex: 1; height: 1px; background: #ccc; display: block;
+            transition: background 0.15s;
         }
+        .mi-ciclo:hover { color: #111; }
+        .mi-ciclo:hover::before, .mi-ciclo:hover::after { background: #111; }
+        .mi-ciclo.activo { color: #111; }
+        .mi-ciclo.activo::before, .mi-ciclo.activo::after { background: #111; }
         .malla-dashboard {
             display: flex; flex-direction: column;
             border: 1px solid #111;
@@ -1597,6 +1611,13 @@
         .mi-h-interaccion .mi-star, .mi-h-indumentaria .mi-star { color: var(--bg) !important; opacity: 1; }
         .mi-h-grafico:hover, .mi-h-industrial:hover,
         .mi-h-interaccion:hover, .mi-h-indumentaria:hover { background: #2a2a2a !important; }
+        /* Camino de ciclo activo (sin color, siempre negro) */
+        .mi-camino-ciclo {
+            background: #111 !important; color: var(--bg) !important;
+            transition: background 0.2s, color 0.2s;
+        }
+        .mi-camino-ciclo .mi-cell-name, .mi-camino-ciclo .mi-star { color: var(--bg) !important; opacity: 1; }
+        .mi-camino-ciclo:hover { background: #2a2a2a !important; }
         /* Footbar */
         .malla-footbar {
             display: flex; align-items: center; gap: 16px;
