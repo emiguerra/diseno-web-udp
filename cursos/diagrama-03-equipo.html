@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Equipo — Diagrama 03</title>
+<style>
+  @font-face{
+    font-family:'NectoMono';
+    src:url('../assets/fonts/NectoMono-Regular.woff2') format('woff2'),
+        url('../assets/fonts/NectoMono-Regular.otf') format('opentype');
+    font-weight:400; font-style:normal; font-display:swap;
+  }
+  @font-face{
+    font-family:'WorkSans';
+    src:url('../assets/fonts/WorkSans-Regular.woff2') format('woff2'),
+        url('../assets/fonts/WorkSans-Regular.ttf') format('truetype');
+    font-weight:400 600; font-style:normal; font-display:swap;
+  }
+  @font-face{
+    font-family:'WorkFaAAD';
+    src:url('../assets/fonts/WorkFaAAD-A.woff2') format('woff2'),
+        url('../assets/fonts/WorkFaAAD-A.otf') format('opentype');
+    font-weight:400; font-style:normal; font-display:swap;
+  }
+  :root{
+    --ink:#111; --paper:#f4f4f4;
+    --dim:rgba(17,17,17,.7); --faint:rgba(17,17,17,.42); --line:rgba(17,17,17,.26);
+    --mark:7px;
+  }
+  html,body{background:transparent;}
+  html.standalone,html.standalone body{background:var(--paper);}
+  html.embedded .top{display:none;}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{color:var(--ink); font-family:'WorkSans',system-ui,sans-serif; -webkit-font-smoothing:antialiased;}
+
+  .top{position:absolute; top:0; left:0; right:0; z-index:30; padding:16px 20px; display:flex; justify-content:space-between; align-items:flex-start; gap:24px; pointer-events:none;}
+  .step{max-width:430px; text-align:right;}
+  .step b{display:block; font-family:'NectoMono',monospace; font-weight:400; font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--ink);}
+  .step span{display:block; font-size:.8rem; line-height:1.45; color:var(--dim); margin-top:6px;}
+  .tag{font-family:'NectoMono',monospace; font-size:14px; letter-spacing:.22em; text-transform:uppercase;}
+  .tag small{display:block; opacity:.6; margin-top:3px; letter-spacing:.16em;}
+
+  /* ---------- Escenario: el equipo (instancia 01) se transforma en la constelación (instancia 02) con el scroll ---------- */
+  .morph{position:relative; height:700vh;}   /* altura extendida: equipo, transición larga, ortho leíble, orbital final */
+  .stage{position:sticky; top:0; height:100vh; overflow:hidden; isolation:isolate;}
+  .stage svg{overflow:visible;}   /* las órbitas grandes de D3 pueden extenderse fuera del viewBox sin cortarse */
+  /* cuadrante de + sobre todo el panel (misma tipografía de signos del referente de Pedro). Opacidad baja; los textos y recuadros llevan fondo paper para no superponerse. */
+  .stage::before{content:''; position:absolute; inset:0; z-index:0; pointer-events:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='48' height='48'><g stroke='%23111' stroke-width='.8' stroke-opacity='.17' stroke-linecap='square' fill='none'><path d='M24 20v8M20 24h8'/></g></svg>");
+    background-size:48px 48px; background-position:0 0;}
+  /* textos sobre fondo paper para que los + no los atraviesen */
+  .lvl b, .lvl span, .cap, .name, .top .tag, .step b, .step span, .hint{background:var(--paper);}
+  .lvl b, .step b, .hint{padding:1px 6px 1px 0;}
+  .lvl span, .step span{padding:1px 6px 1px 0; display:inline-block;}
+  .cap{padding:0 3px; box-sizing:content-box;}
+  .name{display:inline-block; padding:2px 4px; margin:14px -4px 0;}
+  .cards{z-index:1;} .cons{z-index:2;} .caps{z-index:3;} .lvls{z-index:4;} .top{z-index:5;} .hint{z-index:5;}
+  .cards,.lvls,.caps{position:absolute; inset:0; pointer-events:none;}
+  .lvls{z-index:4;} .caps{z-index:3;}
+  .hint{position:absolute; left:20px; bottom:18px; font-family:'NectoMono',monospace; font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--dim); transition:opacity .3s;}
+
+  /* ---------- Recuadro ---------- */
+  .card{position:absolute; left:0; top:0; text-align:left; will-change:transform;}
+  .frame{position:relative;}
+  /* bordes que se prolongan y se cruzan en las esquinas */
+  .frame::after{
+    content:''; position:absolute; inset:calc(var(--mark) * -1); pointer-events:none; opacity:var(--cm,1);
+    background:
+      linear-gradient(var(--ink),var(--ink)) left 0 top var(--mark) / 100% 1px no-repeat,
+      linear-gradient(var(--ink),var(--ink)) left 0 bottom var(--mark) / 100% 1px no-repeat,
+      linear-gradient(var(--ink),var(--ink)) left var(--mark) top 0 / 1px 100% no-repeat,
+      linear-gradient(var(--ink),var(--ink)) right var(--mark) top 0 / 1px 100% no-repeat;
+  }
+  .ph{
+    position:absolute; inset:0; overflow:hidden;
+    background:rgba(17,17,17,.06); color:var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'NectoMono',monospace; letter-spacing:.06em;
+  }
+  /* Encuadre del rostro: --fx/--fy centro de la cara (0–1) · --w ancho de la foto respecto del recuadro · --ar alto/ancho de la foto */
+  .ph img{
+    position:absolute; max-width:none; display:block;
+    width:calc(var(--w) * 100%); height:auto;
+    left:clamp(calc(100% - var(--w) * 100%), calc(50% - var(--fx) * var(--w) * 100%), 0%);
+    top:clamp(calc(100% - var(--w) * var(--ar) / 1.5 * 100%), calc(34% - var(--fy) * var(--w) * var(--ar) / 1.5 * 100%), 0%);
+    filter:grayscale(1) contrast(1.05);
+  }
+  .card.vacante .ph{background:none; color:var(--faint);}
+  .card.vacante .frame::after{opacity:calc(var(--cm,1) * .4);}
+  .card.vacante .name{color:var(--faint);}
+  .frame{cursor:pointer; outline:none;}
+  .name{font-family:'WorkFaAAD','WorkSans',sans-serif; line-height:1.18; margin-top:.9em;}
+
+  /* ---------- Pop-up con la info de la persona ---------- */
+  .pop{
+    --mark:8px; --dim:rgba(255,255,255,.62); --line:rgba(255,255,255,.24);
+    position:fixed; z-index:60; top:0; left:0; width:min(360px,calc(100vw - 32px));
+    background:#111; color:#fff; padding:20px 22px 18px;
+    pointer-events:none; opacity:0; visibility:hidden; transform:translateY(4px);
+    transition:opacity .16s ease, transform .16s ease, visibility 0s .16s;
+  }
+  .pop.on{opacity:1; visibility:visible; transform:none; transition:opacity .16s ease, transform .16s ease;}
+  .pop::after{
+    content:''; position:absolute; inset:calc(var(--mark) * -1); pointer-events:none;
+    background:
+      linear-gradient(var(--ink),var(--ink)) left 0 top var(--mark) / 100% 1px no-repeat,
+      linear-gradient(var(--ink),var(--ink)) left 0 bottom var(--mark) / 100% 1px no-repeat,
+      linear-gradient(var(--ink),var(--ink)) left var(--mark) top 0 / 1px 100% no-repeat,
+      linear-gradient(var(--ink),var(--ink)) right var(--mark) top 0 / 1px 100% no-repeat;
+  }
+  .pop .face{float:right; width:84px; height:112px; margin:0 0 8px 14px; background:#1b1b1b; overflow:hidden;}
+  .pop .face img{width:100%; height:100%; object-fit:cover; filter:grayscale(1) contrast(1.05); display:block;}
+  .pop .face.no{display:none;}
+  .pop .ptag{font-family:'NectoMono',monospace; font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--dim); line-height:1.5;}
+  .pop h3{font-family:'WorkFaAAD','WorkSans',sans-serif; font-weight:400; font-size:1.45rem; line-height:1.12; margin:8px 0 10px;}
+  .pop dl{display:grid; grid-template-columns:auto 1fr; gap:6px 14px; border-top:1px solid var(--line); padding-top:12px; font-size:.8rem; line-height:1.4;}
+  .pop dt{font-family:'NectoMono',monospace; font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--dim); padding-top:2px;}
+  .pop dd ul{list-style:none;}
+  .pop .note{margin-top:12px; font-size:.74rem; color:var(--dim);}
+
+  /* ---------- Nombre del nivel ---------- */
+  .lvl{position:absolute; left:0; top:0;}
+  .stage.port .lvl{white-space:nowrap; background:var(--paper); padding-right:8px; line-height:16px;}
+  .stage.port .lvl b{display:inline; font-size:10.5px;}
+  .stage.port .lvl span{display:inline; max-width:none; margin:0 0 0 6px; font-size:.7rem;}
+  /* nombre del área bajo su círculo en niveles 01 y 02 (vuelve el organigrama clásico) */
+  .cap{position:absolute; left:0; top:0; font-family:'WorkFaAAD','WorkSans',sans-serif; line-height:1.18; opacity:0;}
+  .lvl b{display:block; font-family:'NectoMono',monospace; font-weight:400; font-size:13px; letter-spacing:.2em; text-transform:uppercase;}
+  .lvl span{display:block; font-size:.78rem; color:var(--dim); margin-top:4px; max-width:150px; line-height:1.3;}
+
+  .foot-note{margin-top:40px; padding-top:16px; border-top:1px solid var(--line); font-size:.78rem; line-height:1.5; color:var(--dim);}
+  @media (max-width:760px){ .step{display:none;} }
+
+  /* =====================================================================
+     INSTANCIA 02 · Organigrama sobre la grilla del equipo
+     ===================================================================== */
+  .after{max-width:1240px; margin:0 auto; padding:10px 32px 90px;}
+  .cons{position:absolute; inset:0; width:100%; height:100%; display:block; overflow:visible; z-index:2; pointer-events:none;}
+  .cons .node,.cons .it,.cons .doc{pointer-events:none; outline:none;}
+  .cons.live .node,.cons.live .it,.cons.live .doc{pointer-events:auto; cursor:pointer;}
+  .cons .crz{display:none;}            /* las esquinas por celda se reemplazaron por el cuadrante de + sobre todo el panel */
+  .cons .node .c{fill:var(--paper); stroke:var(--ink); stroke-width:1.5; transition:fill .2s;}
+  .cons .node.lab .c,.cons .node.sat .c,.cons .node.staff .c{stroke-width:1.2;}
+  .cons .node text,.cons .it text{font-family:'NectoMono',monospace; fill:var(--ink); text-anchor:middle; dominant-baseline:central; text-transform:uppercase; letter-spacing:.04em; pointer-events:none; transition:fill .2s;}
+  .cons .it text{letter-spacing:0;}
+  .cons .node:hover .c,.cons .node:focus-visible .c,.cons .node.is-on .c{fill:var(--ink);}
+  .cons .node:hover text,.cons .node:focus-visible text,.cons .node.is-on text{fill:var(--paper);}
+  .cons .node.rel .c{stroke-width:2.8;}
+  /* jerarquía ortogonal tipo organigrama clásico: trazo delgado gris, se encienden las conectadas al área al pasar el cursor */
+  .cons .edge{fill:none; stroke:#a2a2a2; stroke-width:1.1; transition:stroke .15s;}
+  .cons .edge.hot{stroke:var(--ink); stroke-width:1.9 !important; stroke-opacity:1 !important; stroke-dasharray:7 4 !important; stroke-dashoffset:0 !important; animation:electric-flow .7s linear infinite;}
+  @keyframes electric-flow{from{stroke-dashoffset:0;}to{stroke-dashoffset:-22;}}
+  @media (prefers-reduced-motion:reduce){ .cons .edge.hot{animation:none;} }
+  /* las órbitas de vínculo (REL) no se dibujan: D3 usa solo 3 órbitas de agrupación */
+  .cons .relx{display:none;}
+  /* D3 · 3 órbitas de agrupación. Dashed, se encienden en la tercera fase del scroll. */
+  .cons .d3-orb{fill:none; stroke:var(--ink); stroke-width:1.2; stroke-dasharray:6 4; pointer-events:none; opacity:0;}
+  .d3-lab{position:absolute; left:0; top:0; font-family:'NectoMono',monospace; font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--ink); background:var(--paper); padding:2px 8px; opacity:0; pointer-events:none;}
+  .cons .it .c{fill:var(--paper); stroke:var(--ink); stroke-width:1.1; transition:fill .2s;}
+  .cons .it:hover .c,.cons .it:focus-visible .c,.cons .it.is-on .c{fill:var(--ink);}
+  .cons .it:hover text,.cons .it:focus-visible text,.cons .it.is-on text{fill:var(--paper);}
+  .cons .doc{fill:var(--ink); fill-opacity:.6; stroke:transparent; stroke-width:4; transition:fill-opacity .15s;}
+  .cons .doc:hover,.cons .doc.is-on{fill-opacity:1; stroke:var(--ink); stroke-width:2;}
+
+  .legend2{border-top:1px solid var(--ink); padding-top:20px; display:grid; grid-template-columns:repeat(5,1fr); gap:26px 32px;}
+  .legend2 .lg.g-proj{grid-column:span 2;}
+  .legend2 .lg.g-proj ul{grid-template-columns:1fr 1fr; column-gap:28px;}
+  .legend2 .lg.g-sig ul{grid-template-columns:1fr; }
+  .legend2 .lg.g-leng ul{grid-template-columns:1fr; }
+  .legend2 h4{font-family:'NectoMono',monospace; font-weight:400; font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--dim); margin-bottom:12px;}
+  .legend2 ul{list-style:none; display:grid; gap:7px;}
+  .legend2 li{display:flex; align-items:baseline; gap:12px; font-size:.8rem; line-height:1.35;}
+  .legend2 li b{flex:none; min-width:52px; font-family:'NectoMono',monospace; font-weight:400; letter-spacing:.08em;}
+  .legend2 .sym-dot{display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--ink);}
+  .legend2 .sym-cnv{display:inline-block; width:11px; height:11px; border-radius:50%; border:1.2px solid var(--ink);}
+  .legend2 .sym-rel{display:inline-block; width:26px; border-top:1.2px dashed var(--ink); vertical-align:middle;}
+  .legend2 .sym-proj{display:inline-flex; align-items:center; justify-content:center; width:22px; height:22px; border-radius:50%; border:1.2px solid var(--ink); font-style:normal; font-size:9px; letter-spacing:0;}
+  /* símbolos del "Lenguaje visual": líneas de jerarquía por nivel + órbita de vínculo */
+  .legend2 .line-l1{display:inline-block; width:28px; border-top:1.5px solid var(--ink); vertical-align:middle;}
+  .legend2 .line-l2{display:inline-block; width:28px; border-top:1.1px solid var(--ink); vertical-align:middle; opacity:.72;}
+  .legend2 .line-l3{display:inline-block; width:28px; border-top:.8px solid var(--ink); vertical-align:middle; opacity:.58;}
+  .legend2 .sym-orb{display:inline-block; width:16px; height:16px; border:1.1px dashed var(--ink); border-radius:50%; vertical-align:middle;}
+  @media (max-width:1000px){ .legend2{grid-template-columns:1fr 1fr;} }
+  @media (max-width:620px){ .after{padding:10px 16px 60px;} .legend2{grid-template-columns:1fr;} .legend2 .lg.g-proj{grid-column:auto;} .legend2 .lg.g-proj ul{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+
+  <section class="morph" id="morph">
+    <div class="stage" id="stage">
+      <header class="top">
+        <div class="tag">Diagrama 03<small>Organigrama · Equipo · Escuela de Diseño UDP</small></div>
+        <div class="step" aria-live="polite"><b id="stepK">01 — Equipo</b><span id="stepT"></span></div>
+      </header>
+      <div class="cards" id="cards" aria-label="Equipo de la Escuela"></div>
+      <svg class="cons" id="cons" role="group" aria-label="Organigrama: áreas, docentes, proyectos y convenios de la Escuela de Diseño UDP"></svg>
+      <div class="caps" id="caps" aria-hidden="true"></div>
+      <div class="lvls" id="lvls" aria-hidden="true"></div>
+      <div class="hint" id="hint">Scroll ↓</div>
+    </div>
+  </section>
+
+  <section class="after">
+    <div class="legend2" id="legend2" aria-label="Leyenda"></div>
+    <p class="foot-note">Cargos y dependencias según el organigrama actual del sitio (ver Diagrama 01). Quienes aún no tienen retrato en la carpeta de docentes se muestran con sus iniciales.</p>
+  </section>
+
+  <aside class="pop" id="pop" role="tooltip" aria-hidden="true"></aside>
+
+<script>
+(function(){
+  "use strict";
+  document.documentElement.classList.add(window.self===window.top?'standalone':'embedded');
+
+  /* Mismo set de datos que el Diagrama 01 (cursos/diagrama-01-organigrama.html).
+     foto: archivo en assets/img/equipo/ · f: centro del rostro en la foto [x,y] (0–1) */
+  const PEOPLE={
+    dir:[
+      {id:'pedro',n:'Pedro Silva Mardones',c:'Director',foto:'pedro-silva',f:[.47,.31],w:2.3,ar:.687},
+      {id:'claudio',n:'Claudio Fredes',c:'Secretario Académico',foto:'claudio-fredes',f:[.52,.37],w:2.4,ar:.652},
+      {id:'laura',n:'Laura González',c:'Secretaria de Estudios'},
+    ],
+    sec:[
+      {id:'patricia',n:'Patricia Reyes',c:'Secretaria Dirección'},
+      {id:'sandra',n:'Sandra Orellana',c:'Secretaria de Estudios'},
+    ],
+    coord:[
+      {id:'jorge',n:'Jorge Morales',c:'Ciclo Inicial',foto:'jorge-morales',f:[.5,.35],w:1.6,ar:1},
+      {id:'dominique',n:'Dominique Tetzner',c:'Mejora Continua · Ciclo Licenciatura',foto:'dominique-tetzner',f:[.49,.33],w:2.2,ar:.72},
+      {id:'bejares',n:'Joaquín Bejares',c:'Ciclo Profesional · Titulación y LINC',foto:'joaquin-bejares',f:[.52,.29]},
+      {id:'helga',n:'Helga Peralta',c:'Apoyo al Aprendizaje',foto:'helga-peralta',f:[.42,.42]},
+      {id:'zerene',n:'Joaquín Zerené',c:'Teoría',foto:'joaquin-zerene',f:[.51,.26]},
+      {id:'antonieta',n:'Antonieta López',c:'Centro Editorial',foto:'antonieta-lopez',f:[.53,.38]},
+      {id:'paz',n:'Ma. de la Paz Faúndez',c:'Vinculación con el Medio',foto:'paz-faundez',f:[.5,.34],w:1.6,ar:1},
+    ],
+    mencion:[
+      {id:'guisela',n:'Guisela Mendoza',c:'Diseño Gráfico',foto:'guisela-mendoza',f:[.60,.36]},
+      {id:'sebastian',n:'Sebastián Rodríguez',c:'Diseño Industrial',foto:'sebastian-rodriguez',f:[.47,.31]},
+      {id:'paulina',n:'Paulina Romero',c:'Textil e Indumentaria',foto:'paulina-romero',f:[.45,.28]},
+      {id:'jgonzalez',n:'Joaquín González',c:'Interacción Digital'},
+    ],
+    vcm:[
+      {id:'simon',n:'Simón Gallardo',c:'Comunicaciones',foto:'simon-gallardo',f:[.52,.31]},
+      {id:'angelo',n:'Angelo García',c:'Admisión',foto:'angelo-garcia',f:[.51,.37],w:1.6,ar:1},
+      {id:'felipe',n:'Felipe Sepúlveda',c:'Internacionalización',foto:'felipe-sepulveda',f:[.54,.32]},
+      /* Extensión depende directo de VCM, sin encargado: no aparece en la grilla del equipo. En el organigrama se dibuja como círculo bajo VCM. */
+    ],
+    nucleo:[
+      {id:'lid',n:'Aarón Montoya',c:'LID · Lab Interacción Digital',foto:'aaron-montoya',f:[.50,.29],w:1.6,ar:1.064},
+      {id:'otf',n:'Guisela Mendoza',c:'OTF',foto:'guisela-mendoza',f:[.60,.36]},
+      {id:'ce',n:'Antonieta López',c:'CE · Centro Editorial',foto:'antonieta-lopez',f:[.53,.38]},
+      {id:'linc',n:'Joaquín Bejares',c:'LINC',foto:'joaquin-bejares',f:[.52,.29]},
+      {id:'labtex',n:'Paulina Pavez',c:'Lab Textil'},
+      {id:'lab360',n:'Angelo García',c:'LAB 360',foto:'angelo-garcia',f:[.51,.37],w:1.6,ar:1},
+      {id:'bio',n:'Sebastián Rodríguez',c:'Biomateriales',foto:'sebastian-rodriguez',f:[.47,.31]},
+    ],
+  };
+
+  /* Información conocida de cada persona.
+     p/g: formación y postgrados (Diagrama 01) · full/asig: nombre completo y cursos (ficha de docentes, assets/js/main.js) */
+  const INFO={
+    'Pedro Silva Mardones':{p:'Diseñador Industrial (UDP)',g:'Magíster en Territorio y Paisaje'},
+    'Claudio Fredes':{p:'Arquitecto (FSM)',g:'Diplomado en Diseño Tecnología · Magíster Ciencias del Diseño'},
+    'Laura González':{p:'Arquitecta (PUC)',g:'Magíster en Arquitectura (Católica)'},
+    'Patricia Reyes':{p:'Administración de Empresas'},
+    'Sandra Orellana':{},
+    'Jorge Morales':{p:'Arquitecto (PUC)',g:'Doctor Proyecto Arquitectónico (Pol. de Cataluña)'},
+    'Dominique Tetzner':{p:'Diseñadora Gráfica (PUC)',g:'Master Visual Communication (Bauhaus Weimar)'},
+    'Joaquín Bejares':{p:'Diseñador Industrial (UDP)',g:'Master Live Design (Londres) · Master Arquitectura (Londres)'},
+    'Helga Peralta':{p:'Lic. Educación (U. La Serena) · Profesora en Filosofía',g:'Magíster en Filosofía (U. Chile) · Doctora'},
+    'Joaquín Zerené':{p:'Artista (UCh)',g:'Magíster Diseño Comunicacional (UBA) · Candidato a Doctor (UBA)'},
+    'Antonieta López':{p:'Diseñadora Gráfica (UDP)',g:'Magíster Territorio y Paisaje (UDP) · Diplomado Tipografía (U. Chile)'},
+    'Ma. de la Paz Faúndez':{p:'Arquitecta (PUC)',g:'Magíster en Arquitectura (Católica)'},
+    'Guisela Mendoza':{p:'Diseñadora Gráfica (Duoc)',g:'Candidata a Magíster'},
+    'Sebastián Rodríguez':{p:'Diseñador Industrial (UCh)'},
+    'Paulina Romero':{full:'Paulina Romero Solimano',p:'Diseñadora (PUC)',g:'Magíster en Artes, mención Artes Visuales (U. Chile)',
+      asig:['Taller Vertical Indumentaria','Superficies Textiles']},
+    'Joaquín González':{p:'Arquitecto (UCh)'},
+    'Simón Gallardo':{full:'Simón Gallardo Ban',p:'Diseñador Industrial (UDP)',g:'Magíster en Territorio y Paisaje (UDP)',
+      asig:['Proyecto de Título','Taller Diseño en Áreas Protegidas']},
+    'Angelo García':{p:'Diseñador Gráfico Publicitario (U. Antofagasta)'},
+    'Felipe Sepúlveda':{full:'Felipe Sepúlveda Tamayo',p:'Diseñador Industrial y Artista (PUC)',g:'Magíster Diseño e Innovación Sostenible (UDD)',
+      asig:['Taller Vertical Integrado de Productos Sostenibles','Taller de Textiles de Punto']},
+    'Aarón Montoya':{full:'Aarón Montoya Moraga',p:'Ingeniero Electrónico (PUC)',g:'Master Media Arts (MIT) · Master Interactive Telecommunication (NYU)',
+      asig:['Taller de Interfaz de Usuario UI (DIS8636)','Taller de Experiencia de Usuario UX (DIS8637)','Diseño Página Web (DIS9005)','Programación Creativa Multimedia (DIS9034)']},
+    'Paulina Pavez':{p:'Diseño de Vestuario'},
+  };
+
+  const initials=n=>n.split(/\s+/).filter(w=>w&&!/^(de|del|la|las|los|y|ma\.)$/i.test(w)).slice(0,2).map(w=>w[0].toUpperCase()).join('');
+  const ALL=Object.values(PEOPLE).flat();
+
+  const cardsEl=document.getElementById('cards'),CARDS=[];
+  Object.keys(PEOPLE).forEach(key=>{
+    PEOPLE[key].forEach(p=>{
+      const card=document.createElement('div');card.className='card'+(p.vacante?' vacante':'');
+      const frame=document.createElement('div');frame.className='frame';frame.tabIndex=0;
+      frame.setAttribute('aria-label',p.vacante?p.c+': por asignar':p.n+', '+p.c);
+      const ph=document.createElement('div');ph.className='ph';
+      if(p.foto){
+        const img=document.createElement('img');
+        img.src='../assets/img/equipo/'+p.foto+'.jpg';img.alt=p.n;img.loading='lazy';
+        img.style.setProperty('--fx',p.f[0]);img.style.setProperty('--fy',p.f[1]);
+        img.style.setProperty('--w',p.w||1.7);img.style.setProperty('--ar',p.ar||1.5);
+        ph.append(img);
+      }else ph.textContent=p.vacante?'—':initials(p.n);
+      frame.append(ph);
+      const name=document.createElement('p');name.className='name';name.textContent=p.vacante?p.c:p.n;
+      card.append(frame,name);cardsEl.append(card);
+      CARDS.push({p,key,card,frame,ph,name});
+      frame.addEventListener('mouseenter',e=>show(p,frame,e));
+      frame.addEventListener('mousemove',e=>{if(cur===frame)placeAt(e.clientX,e.clientY);});
+      frame.addEventListener('mouseleave',hide);
+      frame.addEventListener('focus',()=>{if(cur!==frame)show(p,frame);});
+      frame.addEventListener('blur',hide);
+      frame.addEventListener('click',e=>{e.stopPropagation();show(p,frame,e);});
+    });
+  });
+
+  /* ---------- Pop-up ---------- */
+  const pop=document.getElementById('pop');let cur=null;
+  const add=(parent,tag,cls,text)=>{const e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;parent.append(e);return e;};
+  function fill(p){
+    pop.textContent='';
+    if(p.vacante){
+      add(pop,'div','ptag',p.c);add(pop,'h3',null,'Por asignar');
+      add(pop,'p','note','Cargo sin titular confirmado.');return;
+    }
+    const i=INFO[p.n]||{},roles=[...new Set(ALL.filter(x=>x.n===p.n).map(x=>x.c))];
+    add(pop,'div','ptag',roles.join(' · '));
+    add(pop,'h3',null,i.full||p.n);
+    const dl=document.createElement('dl');
+    const row=(k,v)=>{if(!v||(Array.isArray(v)&&!v.length))return;add(dl,'dt',null,k);const dd=add(dl,'dd');
+      if(Array.isArray(v)&&k==='Cursos'){const ul=add(dd,'ul');v.forEach(t=>add(ul,'li',null,t));}else dd.textContent=Array.isArray(v)?v.join(', '):v;};
+    row('Formación',i.p);row('Postgrado',i.g);row('Cursos',i.asig);
+    if(dl.children.length)pop.append(dl);
+  }
+  /* el pop-up flota junto al cursor; si no cabe, se da vuelta hacia el otro lado */
+  function placeAt(x,y){
+    const pw=pop.offsetWidth,ph=pop.offsetHeight,off=22,W=innerWidth,H=innerHeight;
+    let left=x+off;if(left+pw>W-12)left=x-off-pw;left=Math.max(12,Math.min(left,W-pw-12));
+    let top=y+off;if(top+ph>H-12)top=y-off-ph;top=Math.max(12,Math.min(top,H-ph-12));
+    pop.style.left=left+'px';pop.style.top=top+'px';
+  }
+  /* abre el pop-up anclado a un elemento; fillFn escribe el contenido (lo usan ambas instancias) */
+  function open(anchor,fillFn,ev){
+    cur=anchor;pop.textContent='';fillFn();pop.classList.add('on');pop.setAttribute('aria-hidden','false');
+    if(ev&&ev.clientX!=null)placeAt(ev.clientX,ev.clientY);
+    else{const r=anchor.getBoundingClientRect();placeAt(r.left+r.width/2,r.top+r.height/2);}
+  }
+  function show(p,frame,ev){open(frame,()=>fill(p),ev);}
+  function hide(){pop.classList.remove('on');pop.setAttribute('aria-hidden','true');cur=null;}
+  document.addEventListener('click',hide);
+  addEventListener('scroll',hide,{passive:true});
+  addEventListener('resize',hide);
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')hide();});
+  window.dp03={open,hide,placeAt,add:(parent,tag,cls,text)=>add(parent,tag,cls,text),pop,isCur:a=>cur===a,cards:CARDS};
+})();
+</script>
+
+<script>
+/* =====================================================================
+   INSTANCIA 01 → 02 · El equipo se transforma en el organigrama con el scroll
+   Contenido: el del Diagrama 01 (cursos/diagrama-01-organigrama-mobile.html).
+   Diagramación: la misma grilla del equipo (referente de Pedro: "2 = la grilla").
+   Cada retrato queda en su lugar: se le dibuja el círculo sobre el rostro, la foto se desvanece
+   y queda la sigla del área. Debajo de cada círculo van sus proyectos, convenios y docentes.
+   ===================================================================== */
+(function(){
+  "use strict";
+  const REDUCED=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const PROV='Descripción provisional (síntesis editorial). Reemplazar por el texto institucional oficial.';
+  const NODES=[
+    {id:'dir',lvl:0,tag:'Dirección',label:['DIRECCIÓN'],short:'DIR',title:'Dirección',coord:'Pedro Silva Mardones',role:'Director',
+     desc:'Conduce el proyecto académico de la Escuela y articula los ciclos formativos, las menciones, los laboratorios y las unidades de apoyo.',note:PROV},
+    {id:'ci',lvl:1,parent:'dir',tag:'Ciclo formativo',label:['CICLO','INICIAL'],short:'CI',title:'Ciclo Inicial',coord:'Jorge Morales',role:'Coordinador Ciclo Inicial',
+     desc:'Primer tramo de la formación. Reúne Taller I y II, Visualidad y cultura, Comunicación Visual, Dibujo y Observación y Experimentación Material, y facilita el tránsito a la educación universitaria.',note:PROV},
+    {id:'mc',lvl:1,parent:'dir',tag:'Unidad de gestión',label:['MEJORA','CONTINUA'],short:'MC',title:'Mejora Continua',coord:'Dominique Tetzner',role:'Coordinadora Mejora Continua',
+     desc:'Revisa y ajusta de forma permanente los procesos formativos y curriculares de la Escuela.',note:PROV},
+    {id:'cl',lvl:1,parent:'dir',tag:'Ciclo formativo',label:['CICLO','LICENCIATURA'],short:'CL',title:'Ciclo Licenciatura',coord:'Dominique Tetzner',role:'Coordinadora Segundo Ciclo',
+     desc:'Segundo tramo de la formación: profundiza la base proyectual con los Talleres III y IV, Análisis crítico del diseño, Tipografía y Diagramación, Pensamiento Computacional y Fabricación Digital, y da paso a las menciones.',note:PROV},
+    {id:'cp',lvl:1,parent:'dir',tag:'Ciclo formativo',label:['CICLO','PROFESIONAL'],short:'CP',title:'Ciclo Profesional',coord:'Joaquín Bejares',role:'Coordinador Titulación y LINC',
+     desc:'Tramo final de la formación, orientado a la titulación y vinculado al LINC.',note:PROV},
+    {id:'aa',lvl:1,parent:'dir',tag:'Unidad de gestión',label:['APOYO AL','APRENDIZAJE'],short:'AA',title:'Apoyo al Aprendizaje',coord:'Helga Peralta',role:'Coordinadora Apoyo al Aprendizaje',
+     desc:'Acompaña a las y los estudiantes en su proceso de aprendizaje a lo largo de la carrera.',note:PROV},
+    {id:'te',lvl:1,parent:'dir',tag:'Unidad de gestión',label:['TEORÍA'],short:'TE',title:'Teoría',coord:'Joaquín Zerené',role:'Teoría e Investigación',
+     desc:'Sostiene la línea de Historia, Teoría e Investigación que recorre los ciclos: de Visualidad y cultura al Análisis crítico, la Investigación en Diseño y la Formulación de Proyectos.',note:PROV},
+    {id:'ce',lvl:1,parent:'dir',tag:'Unidad de gestión',label:['CENTRO','EDITORIAL'],short:'CE',title:'Centro Editorial',coord:'Antonieta López',role:'Coordinadora Centro Editorial',
+     desc:'Produce y difunde las publicaciones de la Escuela.',note:PROV},
+    {id:'vcm',lvl:1,parent:'dir',tag:'Vinculación',label:['VINCULACIÓN','CON EL','MEDIO'],short:'VCM',title:'Vinculación con el Medio',coord:'Ma. de la Paz Faúndez',role:'Coordinadora VCM',
+     desc:'Articula los vínculos de la Escuela con instituciones, comunidades y el medio profesional, junto a Comunicaciones, Admisión, Internacionalización, Extensión y LINC.',note:PROV},
+
+    {id:'gr',lvl:2,parent:'cl',tag:'Mención',label:['DISEÑO','GRÁFICO'],short:'GRA',title:'Diseño Gráfico',coord:'Guisela Mendoza',role:'Coordinadora Mención Gráfico',
+     desc:'Prepara profesionales capaces de identificar y resolver problemáticas visuales mediante soluciones innovadoras y creativas. A través de la dirección de arte y la comunicación visual, los estudiantes adquieren competencias en expresión gráfica, tipografía, composición fotográfica y audiovisual, combinando técnicas tradicionales con medios de producción digital avanzados.',note:'Texto de la sección Menciones del sitio.'},
+    {id:'in',lvl:2,parent:'cl',tag:'Mención',label:['DISEÑO','INDUSTRIAL'],short:'IND',title:'Diseño Industrial',coord:'Sebastián Rodríguez',role:'Coordinador Mención Industrial',
+     desc:'Forma profesionales que abordan y resuelven problemáticas relacionadas con objetos, materiales y espacios, con un enfoque integral y reflexivo. Los estudiantes desarrollan habilidades en experimentación material e incorporan principios de sostenibilidad y diseño circular, junto al manejo de herramientas de fabricación avanzada.',note:'Texto de la sección Menciones del sitio.'},
+    {id:'tx',lvl:2,parent:'cl',tag:'Mención',label:['TEXTIL E','INDUMENTARIA'],short:'TEX',title:'Textil e Indumentaria',coord:'Paulina Romero',role:'Coordinadora Mención Textil',
+     desc:'Forma profesionales creativos y críticos que abordan el textil y la indumentaria con una perspectiva innovadora y especulativa. Los estudiantes desarrollan conocimientos teóricos, técnicos y de gestión, integrando conceptos de sostenibilidad y economía circular, y experimentando en los límites de lo textil desde un enfoque interdisciplinario.',note:'Texto de la sección Menciones del sitio.'},
+    {id:'id',lvl:2,parent:'cl',tag:'Mención',label:['INTERACCIÓN','DIGITAL'],short:'DIG',title:'Interacción Digital',coord:'Joaquín González',role:'Coordinador Mención Interacción',
+     desc:'Forma profesionales que comprenden y desarrollan las múltiples interacciones con el entorno digital en la vida cotidiana. Abarca el diseño de interfaces físicas y digitales, experiencia de usuario, visualización de datos, realidad aumentada y virtual, hasta la creación de productos, espacios y sistemas interactivos centrados en el usuario.',note:'Texto de la sección Menciones del sitio.'},
+
+    {id:'lab360',lvl:3,kind:'lab',parent:'gr',tag:'Laboratorio',label:['LAB360'],short:'360',title:'LAB 360',coord:'Angelo García',role:'Lab 360 y Admisión',desc:'Laboratorio asociado a la mención de Diseño Gráfico.',note:PROV},
+    {id:'otf',lvl:3,kind:'lab',parent:'gr',tag:'Laboratorio',label:['OTF'],short:'OTF',title:'OTF',coord:'Por asignar',role:'',desc:'Laboratorio asociado a la mención de Diseño Gráfico.',note:PROV},
+    {id:'lamp',lvl:3,kind:'lab',parent:'in',tag:'Laboratorio',label:['LAMP'],short:'LAMP',title:'LAMP',coord:'Por asignar',role:'',desc:'Laboratorio asociado a la mención de Diseño Industrial.',note:PROV},
+    {id:'pd',lvl:3,kind:'lab',parent:'in',tag:'Laboratorio',label:['PD'],short:'PD',title:'PD',coord:'Por asignar',role:'',desc:'Laboratorio asociado a la mención de Diseño Industrial.',note:PROV},
+    {id:'lt',lvl:3,kind:'lab',parent:'tx',tag:'Laboratorio',label:['LT'],short:'LT',title:'Lab Textil',coord:'Paulina Pavez',role:'Lab Manager Textil',desc:'Laboratorio asociado a la mención de Textil e Indumentaria.',note:PROV},
+    {id:'lid',lvl:3,kind:'lab',parent:'id',tag:'Laboratorio',label:['LID'],short:'LID',title:'Lab Interacción Digital',coord:'Aarón Montoya',role:'Lab Interacción Digital',desc:'Laboratorio asociado a la mención de Interacción Digital.',note:PROV},
+
+    {id:'com',lvl:2,kind:'sat',parent:'vcm',tag:'Vinculación',label:['COM'],short:'COM',title:'Comunicaciones',coord:'Simón Gallardo',role:'Posicionamiento Estratégico',desc:'Posiciona y difunde el trabajo de la Escuela.',note:PROV},
+    {id:'adm',lvl:2,kind:'sat',parent:'vcm',tag:'Vinculación',label:['ADM'],short:'ADM',title:'Admisión',coord:'Angelo García',role:'Lab 360 y Admisión',desc:'Recibe y orienta a quienes postulan a la Escuela.',note:PROV},
+    {id:'int',lvl:2,kind:'sat',parent:'vcm',tag:'Vinculación',label:['INT'],short:'INT',title:'Internacionalización',coord:'Felipe Sepúlveda',role:'Internacionalización',desc:'Gestiona los vínculos y el intercambio con instituciones del extranjero.',note:PROV},
+    {id:'ext',lvl:2,kind:'sat',parent:'vcm',tag:'Vinculación',label:['EXT'],short:'EXT',title:'Extensión',coord:'Por asignar',role:'',desc:'Lleva las actividades de la Escuela a públicos fuera del aula.',note:PROV},
+    {id:'linc',lvl:2,kind:'sat',parent:'vcm',tag:'Vinculación',label:['LINC'],short:'LINC',title:'LINC',coord:'Joaquín Bejares',role:'Titulación y LINC',desc:'Instancia vinculada a la titulación y al Ciclo Profesional.',note:PROV}
+  ];
+  const BYID=Object.fromEntries(NODES.map(n=>[n.id,n]));
+
+  /* Relaciones transversales (solo aparecen al transformarse en constelación).
+     src:'dato'  → se desprende de la información del organigrama (misma persona coordina ambas áreas
+                   o línea curricular documentada)
+     src:'prov'  → relación editorial provisional, por validar con la Escuela */
+  /* Solo vínculos confirmados por dato del organigrama (los supuestos interdisciplinarios se bajaron) */
+  const REL=[
+    {a:'mc',b:'cl',src:'dato',why:'Comparten coordinación (Dominique Tetzner)'},
+    {a:'cp',b:'linc',src:'dato',why:'Comparten coordinación (Joaquín Bejares)'},
+    {a:'lab360',b:'adm',src:'dato',why:'Comparten coordinación (Angelo García)'},
+    {a:'te',b:'ci',src:'dato',why:'La línea de Teoría e Investigación recorre los ciclos'},
+    {a:'te',b:'cl',src:'dato',why:'La línea de Teoría e Investigación recorre los ciclos'},
+    {a:'te',b:'cp',src:'dato',why:'La línea de Teoría e Investigación recorre los ciclos'}
+  ];
+  const NS="http://www.w3.org/2000/svg";
+  const el=(t,a={})=>{const n=document.createElementNS(NS,t);for(const k in a)n.setAttribute(k,a[k]);return n;};
+  const clamp=(v,a=0,b=1)=>Math.min(b,Math.max(a,v));
+  const lerp=(a,b,t)=>a+(b-a)*t;
+  const ease=t=>t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+  const ECO={"docs":[{"n":"Alejandra Celedón","c":"Decana FaAAD","a":"dir","p":"Arquitecta (PUC)","g":"Máster en Arquitectura · Doctora Architectural Association · Magíster Bartlett","k":["Curaduría","Investigación","Teoría"],"cs":[],"t":"planta"},{"n":"Pedro Silva Mardones","c":"Director","a":"dir","p":"Diseñador Industrial (UDP)","g":"Magíster en Territorio y Paisaje","k":["Gestión","Patrimonio","Cultura"],"cs":[],"t":"planta"},{"n":"Claudio Fredes","c":"Secretario Académico","a":"dir","p":"Arquitecto (FSM)","g":"Diplomado en Diseño Tecnología · Magíster Ciencias del Diseño","k":["Gestión Académica","Tecnología","Interdisciplina"],"cs":[],"t":"planta"},{"n":"Laura González","c":"Secretaria de Estudios","a":"dir","p":"Arquitecta (PUC)","g":"Magíster en Arquitectura (Católica)","k":["Ciudad","Género","Territorio"],"cs":[],"t":"planta"},{"n":"Patricia Reyes","c":"Secretaria Dirección","a":"dir","p":"Administración de Empresas","g":"","k":["Soporte","Coordinación","Gestión"],"cs":[],"t":"planta"},{"n":"Sandra Orellana","c":"Secretaria de Estudios","a":"dir","p":"—","g":"","k":["Acompañamiento","Apoyo","Coordinación"],"cs":[],"t":"planta"},{"n":"Joaquín Zerené","c":"Teoría e Investigación","a":"grafico","p":"Artista (UCh)","g":"Magíster Diseño Comunicacional (UBA) · Candidato a Doctor (UBA)","k":["Creatividad","Narrativa","Teoría"],"cs":[],"t":"planta"},{"n":"Jorge Morales","c":"Ciclo Inicial","a":"ci","p":"Arquitecto (PUC)","g":"Doctor Proyecto Arquitectónico (Pol. de Cataluña)","k":["Evaluación","Metodología","Investigación"],"cs":[],"t":"planta"},{"n":"Dominique Tetzner","c":"Segundo Ciclo","a":"cl","p":"Diseñadora Gráfica (PUC)","g":"Master Visual Communication (Bauhaus Weimar)","k":["Diseño de Información","Diseño de Servicios","Gestión Académica"],"cs":[],"t":"planta"},{"n":"Joaquín Bejares","c":"Titulación y LINC","a":"cp","p":"Diseñador Industrial (UDP)","g":"Master Live Design (Londres) · Master Arquitectura (Londres)","k":["Gestión Cultural","Oficios","Identidad Visual"],"cs":[],"t":"planta"},{"n":"Guisela Mendoza","c":"Diseño Gráfico","a":"grafico","p":"Diseñadora Gráfica (Duoc)","g":"Candidata a Magíster","k":["Tipografía","Investigación","Diseño Editorial"],"cs":[],"t":"planta"},{"n":"Sebastián Rodríguez","c":"Diseño Industrial","a":"industrial","p":"Diseñador Industrial (UCh)","g":"","k":["Biomateriales / Biofabricación","Diseño Industrial","Fabricación Digital"],"cs":[],"t":"planta"},{"n":"Paulina Romero","c":"Textil e Indumentaria","a":"textil","p":"Diseñadora (PUC)","g":"","k":["Producción Textil","Gestión de Proyectos","Innovación Social"],"cs":[],"t":"planta"},{"n":"Joaquín González","c":"Interacción Digital","a":"interaccion","p":"Arquitecto (UCh)","g":"","k":["Gestión de Proyectos","Tecnología","Innovación"],"cs":[],"t":"planta"},{"n":"Paulina Pavez","c":"Lab Manager Textil","a":"textil","p":"Diseño de Vestuario","g":"","k":["Confección","Experimentación Textil","Indumentaria"],"cs":[],"t":"planta"},{"n":"Felipe Sepúlveda","c":"Internacionalización","a":"textil","p":"Diseñador Industrial y Artista (PUC)","g":"Magíster Diseño e Innovación Sostenible (UDD)","k":["Arte Textil (Tejido Contemporáneo)","Instalación Efímera","Gestión de proyectos"],"cs":[],"t":"planta"},{"n":"Ma. de la Paz Faúndez","c":"Vinculación con el Medio","a":"cp","p":"Arquitecta (PUC)","g":"Magíster en Arquitectura (Católica)","k":["Innovación Social","Gestión Cultural","Teoría"],"cs":[],"t":"planta"},{"n":"Aarón Montoya","c":"Lab Interacción Digital","a":"interaccion","p":"Ingeniero Electrónico (PUC)","g":"Master Media Arts (MIT) · Master Interactive Telecommunication (NYU)","k":["Interacción Digital","Artes Mediales","Código Abierto"],"cs":[],"t":"planta"},{"n":"Simón Gallardo","c":"Posicionamiento Estratégico","a":"industrial","p":"Diseñador Industrial (UDP)","g":"Magíster en Territorio y Paisaje (UDP)","k":["Producción Audiovisual","Paisaje","Diseño Industrial"],"cs":[],"t":"planta"},{"n":"Helga Peralta","c":"Apoyo al Aprendizaje","a":"aa","p":"Lic. Educación (U. La Serena) · Profesora en Filosofía","g":"Magíster en Filosofía (U. Chile) · Doctora","k":["Apoyo Psicoeducativo","Acompañamiento Estudiantil","Teoría"],"cs":[],"t":"planta"},{"n":"Antonieta López","c":"Centro Editorial","a":"grafico","p":"Diseñadora Gráfica (UDP)","g":"Magíster Territorio y Paisaje (UDP) · Diplomado Tipografía (U. Chile)","k":["Diseño Editorial","Gestión Editorial","Edición Académica"],"cs":[],"t":"planta"},{"n":"Angelo García","c":"Lab 360 y Admisión","a":"grafico","p":"Diseñador Gráfico Publicitario (U. Antofagasta)","g":"","k":["Producción Gráfica","Dibujo / Sketch","Ilustración"],"cs":[],"t":"planta"},{"n":"Álvaro Arteaga","c":"Docente · ½ jornada","a":"grafico","p":"Diseñador Gráfico (UVM)","g":"","k":["Ilustración Digital","Dirección de Arte","IA Audiovisual"],"cs":[],"t":"planta"},{"n":"Jenny Abud","c":"Docente · ½ jornada","a":"grafico","p":"Diseñadora Gráfica (UCh)","g":"Magíster en Edición (UDP)","k":["Producción Editorial","Gestión Cultural","Diseño de Información"],"cs":[],"t":"planta"},{"n":"Manuel Córdoba","c":"Docente · ½ jornada","a":"grafico","p":"Diseñador Gráfico (UCh)","g":"Magíster Estrategia de Marca (Pompeu Fabra)","k":["Branding","Ilustración","Audiovisual"],"cs":[],"t":"planta"},{"n":"Héctor Novoa","c":"Docente · ½ jornada","a":"industrial","p":"Diseñador (Católica Valparaíso) · Arquitecto (Católica)","g":"Magíster en Arquitectura · Candidato a Doctor","k":["Innovación","Investigación Aplicada","Interdisciplina"],"cs":[],"t":"planta"},{"n":"Sara Freire","c":"Docente · ¼ jornada","a":"grafico","p":"Diseñadora Gráfica (UDP)","g":"Magíster en Diseño Comunicacional (UBA)","k":["Investigación","Teoría","Pensamiento Crítico"],"cs":[],"t":"planta"},{"n":"Ma. Trinidad Justiniano","c":"","a":"grafico","p":"","g":"","k":[],"cs":["DIS09111"],"t":"parttime"},{"n":"Almendra Baus","c":"","a":"grafico","p":"","g":"","k":[],"cs":["DIS09111"],"t":"parttime"},{"n":"Daniela Rivera","c":"","a":"industrial","p":"","g":"","k":[],"cs":["DIS09111"],"t":"parttime"},{"n":"Paula Corrales","c":"","a":"industrial","p":"","g":"","k":[],"cs":["DIS09111"],"t":"parttime"},{"n":"Bernardita Marambio","c":"","a":"textil","p":"","g":"","k":[],"cs":["DIS09111"],"t":"parttime"},{"n":"Bárbara Gutiérrez","c":"","a":"textil","p":"","g":"","k":[],"cs":["DIS09111","DIS8014"],"t":"parttime"},{"n":"Javiera Figueroa","c":"","a":"interaccion","p":"","g":"","k":[],"cs":["DIS09111"],"t":"parttime"},{"n":"Belén Rebolledo","c":"","a":"textil","p":"","g":"","k":[],"cs":["DIS09111"],"t":"parttime"},{"n":"Kathryn Gillmore","c":"","a":"interaccion","p":"","g":"","k":[],"cs":["DIS09111"],"t":"parttime"},{"n":"Claudio Guerrero","c":"","a":"grafico","p":"","g":"","k":[],"cs":["DIS09112"],"t":"parttime"},{"n":"Leslie Núñez","c":"","a":"textil","p":"","g":"","k":[],"cs":["DIS09112"],"t":"parttime"},{"n":"Patricio Albornoz","c":"","a":"grafico","p":"","g":"","k":[],"cs":["DIS09113"],"t":"parttime"},{"n":"Elenita Fuenzalida","c":"","a":"grafico","p":"","g":"","k":[],"cs":["DIS09113"],"t":"parttime"},{"n":"Andrea Ovalle","c":"","a":"grafico","p":"","g":"","k":[],"cs":["DIS09113"],"t":"parttime"},{"n":"Javier Carrasco","c":"","a":"grafico","p":"","g":"","k":[],"cs":["DIS09113"],"t":"parttime"},{"n":"Daniela Román","c":"","a":"grafico","p":"","g":"","k":[],"cs":["DIS09113"],"t":"parttime"},{"n":"Javiera Lorca","c":"","a":"grafico","p":"","g":"","k":[],"cs":["DIS09113"],"t":"parttime"},{"n":"Patricio Araya","c":"","a":"grafico","p":"","g":"","k":[],"cs":["DIS09114"],"t":"parttime"},{"n":"Marianne Strobl","c":"","a":"industrial","p":"","g":"","k":[],"cs":["DIS09115"],"t":"parttime"},{"n":"Hernán Cárcamo","c":"","a":"industrial","p":"","g":"","k":[],"cs":["DIS09115"],"t":"parttime"},{"n":"Felipe Cardemil","c":"","a":"industrial","p":"","g":"","k":[],"cs":["DIS09115","DIS09211"],"t":"parttime"},{"n":"Eduardo Valenzuela","c":"","a":"industrial","p":"","g":"","k":[],"cs":["DIS09115","DIS09215"],"t":"parttime"},{"n":"Diego Contreras","c":"","a":"industrial","p":"","g":"","k":[],"cs":["DIS09115"],"t":"parttime"},{"n":"Felipe Fuenzalida","c":"","a":"industrial","p":"","g":"","k":[],"cs":["DIS09115","DIS8VIAT2_2"],"t":"parttime"},{"n":"Camilo Zúñiga","c":"","a":"grafico","p":"","g":"","k":[],"cs":["DIS09211"],"t":"parttime"},{"n":"Nicolás Sagredo","c":"","a":"industrial","p":"","g":"","k":[],"cs":["DIS09211"],"t":"parttime"},{"n":"Natalia Hurtado","c":"","a":"textil","p":"","g":"","k":[],"cs":["DIS09211"],"t":"parttime"},{"n":"Felipe Sanzana","c":"","a":"industrial","p":"","g":"","k":[],"cs":["DIS09211"],"t":"parttime"},{"n":"Anto Necochea","c":"","a":"grafico","p":"","g":"","k":[],"cs":["DIS09211"],"t":"parttime"},{"n":"Carolina Kusanovich","c":"","a":"industrial","p":"","g":"","k":[],"cs":["DIS09211","DIS9075"],"t":"parttime"},{"n":"Juan Manuel Gili","c":"","a":"interaccion","p":"","g":"","k":[],"cs":["DIS09211"],"t":"parttime"},{"n":"Sebastián Romero V.","c":"","a":"industrial","p":"","g":"","k":[],"cs":["DIS09211","DIS09215"],"t":"parttime"},{"n":"Karla Villarroel","c":"","a":"textil","p":"","g":"","k":[],"cs":["DIS09211"],"t":"parttime"},{"n":"Beatriz Yáñez","c":"","a":"grafico","p":"","g":"","k":[],"cs":["DIS09211"],"t":"parttime"},{"n":"Carolina Pino","c":"","a":"interaccion","p":"","g":"","k":[],"cs":["DIS09211"],"t":"parttime"},{"n":"Dusan Cotoras","c":"","a":"industrial","p":"","g":"","k":[],"cs":["DIS09212"],"t":"parttime"},{"n":"David Maulén","c":"","a":"interaccion","p":"","g":"","k":[],"cs":["DIS09212"],"t":"parttime"},{"n":"Gonzalo Osorio","c":"","a":"grafico","p":"","g":"","k":[],"cs":["DIS09213"],"t":"parttime"},{"n":"Juan Bruce","c":"","a":"grafico","p":"","g":"","k":[],"cs":["DIS09213"],"t":"parttime"},{"n":"Katrin Klapp","c":"","a":"grafico","p":"","g":"","k":[],"cs":["DIS09213"],"t":"parttime"},{"n":"Yvonne Trigueros","c":"","a":"grafico","p":"","g":"","k":[],"cs":["DIS09213"],"t":"parttime"},{"n":"Christian Oyarzun","c":"","a":"interaccion","p":"","g":"","k":[],"cs":["DIS09214"],"t":"parttime"},{"n":"Poli Mujica","c":"","a":"interaccion","p":"","g":"","k":[],"cs":["DIS09214"],"t":"parttime"},{"n":"Sofía Suazo","c":"","a":"interaccion","p":"","g":"","k":[],"cs":["DIS09214"],"t":"parttime"},{"n":"Matías Serrano","c":"","a":"interaccion","p":"","g":"","k":[],"cs":["DIS09214","DIS8644"],"t":"parttime"},{"n":"Gonzalo Muñoz Guerrero","c":"","a":"industrial","p":"","g":"","k":[],"cs":["DIS09215"],"t":"parttime"},{"n":"Roberto Vackflores","c":"","a":"industrial","p":"","g":"","k":[],"cs":["DIS09215"],"t":"parttime"},{"n":"Bayron Inostroza","c":"","a":"industrial","p":"","g":"","k":[],"cs":["DIS09215"],"t":"parttime"},{"n":"Emilio Troncoso","c":"","a":"industrial","p":"","g":"","k":[],"cs":["DIS09215"],"t":"parttime"},{"n":"Luca Dalbosco","c":"","a":"industrial","p":"","g":"","k":[],"cs":["DIS09215"],"t":"parttime"},{"n":"Carlos Muñoz","c":"","a":"cp","p":"","g":"","k":[],"cs":["DIS8010"],"t":"parttime"},{"n":"Andrés Fernández","c":"","a":"cp","p":"","g":"","k":[],"cs":["DIS8010"],"t":"parttime"},{"n":"Paulina Muena","c":"","a":"cp","p":"","g":"","k":[],"cs":["DIS8010"],"t":"parttime"},{"n":"Carina Sfeir","c":"","a":"cp","p":"","g":"","k":[],"cs":["DIS8012"],"t":"parttime"},{"n":"Macarena Torres","c":"","a":"cp","p":"","g":"","k":[],"cs":["DIS8012"],"t":"parttime"},{"n":"Rodrigo Bravo","c":"","a":"industrial","p":"","g":"","k":[],"cs":["DIS8620"],"t":"parttime"},{"n":"Diego Gajardo","c":"","a":"industrial","p":"","g":"","k":[],"cs":["DIS8620"],"t":"parttime"},{"n":"Alejandra Ruiz","c":"","a":"industrial","p":"","g":"","k":[],"cs":["DIS8626"],"t":"parttime"},{"n":"Aribel González","c":"","a":"industrial","p":"","g":"","k":[],"cs":["DIS8628","DIS8947"],"t":"parttime"},{"n":"Margarita Talep","c":"","a":"industrial","p":"","g":"","k":[],"cs":["DIS8643","DIS9032"],"t":"parttime"},{"n":"Vicente Stephens","c":"","a":"industrial","p":"","g":"","k":[],"cs":["DIS8643"],"t":"parttime"},{"n":"Renata Carreño","c":"","a":"grafico","p":"","g":"","k":[],"cs":["DIS8622","DIS8VIAT1_2"],"t":"parttime"},{"n":"Jennifer King","c":"","a":"grafico","p":"","g":"","k":[],"cs":["DIS8622"],"t":"parttime"},{"n":"Ariel Altamirano","c":"","a":"grafico","p":"","g":"","k":[],"cs":["DIS8634"],"t":"parttime"},{"n":"Sebastián Barrante","c":"","a":"grafico","p":"","g":"","k":[],"cs":["DIS8640","DIS9044"],"t":"parttime"},{"n":"Ma. Eugenia Ibarra","c":"","a":"textil","p":"","g":"","k":[],"cs":["DIS8630"],"t":"parttime"},{"n":"Sergio Mora","c":"","a":"interaccion","p":"","g":"","k":[],"cs":["DIS8652"],"t":"parttime"},{"n":"Sebastián Arancibia","c":"","a":"grafico","p":"","g":"","k":[],"cs":["DIS8640"],"t":"parttime"},{"n":"Roberto Herrera","c":"","a":"industrial","p":"","g":"","k":[],"cs":["DIS8651"],"t":"parttime"},{"n":"Loreto Martínez","c":"","a":"interaccion","p":"","g":"","k":[],"cs":["DIS9025"],"t":"parttime"},{"n":"Valentina Vega","c":"","a":"interaccion","p":"","g":"","k":[],"cs":["DIS9037"],"t":"parttime"},{"n":"Alexander Bustamante","c":"","a":"industrial","p":"","g":"","k":[],"cs":["DIS9039"],"t":"parttime"},{"n":"Benjamín Muller","c":"","a":"grafico","p":"","g":"","k":[],"cs":["DIS9040"],"t":"parttime"},{"n":"Juan Pablo Bravo","c":"","a":"grafico","p":"","g":"","k":[],"cs":["DIS9052"],"t":"parttime"},{"n":"Nicole Farfán","c":"","a":"textil","p":"","g":"","k":[],"cs":["DIS9078"],"t":"parttime"},{"n":"Rodrigo Córdova","c":"","a":"industrial","p":"","g":"","k":[],"cs":["DIS9080"],"t":"parttime"},{"n":"Claudio Carvajal","c":"","a":"grafico","p":"","g":"","k":[],"cs":["PRI0001"],"t":"parttime"},{"n":"Florencia Adriasola","c":"","a":"interaccion","p":"","g":"","k":[],"cs":["DIS8910"],"t":"parttime"},{"n":"Víctor Rocha","c":"","a":"grafico","p":"","g":"","k":[],"cs":["DIS8940"],"t":"parttime"},{"n":"Jimena Villaseca","c":"","a":"textil","p":"","g":"","k":[],"cs":["DIS8946"],"t":"parttime"},{"n":"Guillermo Montecinos","c":"","a":"interaccion","p":"","g":"","k":[],"cs":["DIS8948"],"t":"parttime"},{"n":"Francisco Parada","c":"","a":"interaccion","p":"","g":"","k":[],"cs":["DIS8970"],"t":"parttime"},{"n":"Elisa Errázuriz","c":"","a":"grafico","p":"","g":"","k":[],"cs":["DIS8VIAT1_2"],"t":"parttime"},{"n":"Cristian González","c":"","a":"industrial","p":"","g":"","k":[],"cs":["DIS8VIAT1_2"],"t":"parttime"},{"n":"Valentina Pizarro","c":"","a":"textil","p":"","g":"","k":[],"cs":["DIS8VIAT1_2"],"t":"parttime"},{"n":"Antonieta Aguayo","c":"","a":"interaccion","p":"","g":"","k":[],"cs":["DIS8VIAT1_2"],"t":"parttime"},{"n":"Guadalupe Gajardo","c":"","a":"grafico","p":"","g":"","k":[],"cs":["DIS8VIAT1_2"],"t":"parttime"},{"n":"Sergio Majluf","c":"","a":"industrial","p":"","g":"","k":[],"cs":["DIS8VIAT1_2"],"t":"parttime"},{"n":"Filipa Briones","c":"","a":"textil","p":"","g":"","k":[],"cs":["DIS8VIAT2_2"],"t":"parttime"},{"n":"Marycarmen Muñoz","c":"","a":"interaccion","p":"","g":"","k":[],"cs":["DIS8VIAT2_2"],"t":"parttime"}],"projs":[{"n":"01","name":"HDGCH · Historia del Diseño Gráfico en Chile","info":"Publicación · Evento — 2025"},{"n":"02","name":"Revista 180 N°56 – Lanzamiento edición bilingüe","info":"Publicación académica — 2026"},{"n":"03","name":"Revista zer081","info":"Publicación · Editorial — 2025"},{"n":"04","name":"Museo Futuro – Congreso Futuro","info":"Diseño Interacción · Exhibición — 2026"},{"n":"05","name":"Muestra Final Talleres de Indumentaria y Textil","info":"Diseño Textil · Muestra — 2025"},{"n":"06","name":"Discusiones Contemporáneas del Diseño – Centro Cultural Montecarmelo","info":"Exhibición · 30 aniversario — 2025"},{"n":"07","name":"Multiplicar las Voces – Museo Educación Gabriela Mistral","info":"Diseño · Exhibición pública — 2025"},{"n":"08","name":"Derechos en Juego","info":"Diseño · Intervención pública — 2025"},{"n":"09","name":"Laboratorio FaAAD – Santiago como red escultórica","info":"Taller · Investigación urbana — 2025"},{"n":"10","name":"Sala de Literatura Infantil Margarita Mieres","info":"Diseño Gráfico · Encargo institucional — 2025"},{"n":"11","name":"Taller Internacional FAAD – Máquinas de Archivar (Madrid)","info":"Taller Internacional — 2025"},{"n":"12","name":"Workshop Comic Sans Magazine","info":"Workshop · Diseño Gráfico — 2025"},{"n":"13","name":"Taller Máquinas Electrónicas – Sintetizadores Modulares","info":"Taller técnico · Interacción — 2025-2026"},{"n":"14","name":"Examen Taller Colectivo · Aves de la Región Metropolitana","info":"Diseño Industrial · Encargo — 2025"},{"n":"15","name":"Processing Community Day 2026","info":"Convocatoria · Evento — 2026"},{"n":"16","name":"Taller de Branding · Museo de los Museos","info":"Taller · Vínculo institucional — 2025"},{"n":"17","name":"Máquinas Percutoras · Splitting Absence (GAM)","info":"Diseño · Performance — 2025"},{"n":"18","name":"Primera Entrega Taller Bancas","info":"Taller · Diseño Industrial — 2025"}],"cnv":[{"a":"MSSA","name":"Museo Solidaridad S. Allende"},{"a":"CEINA","name":"Centro Cultural CEINA"},{"a":"MNBA","name":"Museo Nacional de Bellas Artes"},{"a":"BN","name":"Biblioteca Nacional de Chile"},{"a":"TM","name":"Teatro Municipal de Santiago"},{"a":"MIM","name":"Museo Interactivo Mirador"},{"a":"MAVI","name":"Museo de Artes Visuales"},{"a":"ATQN","name":"Museo Artequin"},{"a":"EFE","name":"Ferrocarriles del Estado"},{"a":"MMDDHH","name":"Museo de la Memoria y los DDHH"},{"a":"MEGM","name":"Museo Ed. Gabriela Mistral"},{"a":"TECHO","name":"Fundación TECHO Chile"},{"a":"RECOLETA","name":"I. Municipalidad de Recoleta"},{"a":"MOBIL","name":"MOBIL Arquitectos"},{"a":"AOA","name":"Asoc. Oficinas de Arquitectos"},{"a":"CROX","name":"Galería Isabel Croxatto"}],"pc":{"10":["BN"],"11":["AOA"],"12":[],"13":[],"14":[],"15":[],"16":["MNBA","MAVI","ATQN"],"17":["MEGM"],"18":["MOBIL"],"01":["BN"],"02":[],"03":[],"04":["MIM"],"05":[],"06":[],"07":["MEGM"],"08":["MMDDHH"],"09":["AOA"]}};
+  const AREA2NODE={dir:'dir',ci:'ci',cl:'cl',cp:'cp',aa:'aa',grafico:'gr',industrial:'in',textil:'tx',interaccion:'id'};
+  /* Unidad a la que se asocia cada proyecto (por validar con la Escuela) */
+  const PROJ_OWNER={'01':'lab360','02':'ce','03':'ce','04':'id','05':'tx','06':'dir','07':'vcm','08':'vcm','09':'cl','10':'gr','11':'int','12':'gr','13':'id','14':'in','15':'id','16':'gr','17':'id','18':'in'};
+  const DOCS=ECO.docs.map((d,i)=>({...d,i,node:AREA2NODE[d.a]}));
+  const DOCCOUNT={};DOCS.forEach(d=>DOCCOUNT[d.node]=(DOCCOUNT[d.node]||0)+1);
+  const CNVMAP=Object.fromEntries(ECO.cnv.map(c=>[c.a,c]));
+  const EXTRA=[],EXTRA_LINKS=[];
+  ECO.projs.forEach(p=>{
+    EXTRA.push({id:'p'+p.n,kind:'proj',lvl:4,owner:PROJ_OWNER[p.n],tag:'Proyecto',label:[p.n],short:p.n,title:p.name,sub:p.info,num:p.n});
+  });
+  const cnvOfProj={},projOfCnv={};
+  Object.entries(ECO.pc).forEach(([n,list])=>list.forEach(a=>{(cnvOfProj['p'+n]=cnvOfProj['p'+n]||[]).push('c_'+a);(projOfCnv['c_'+a]=projOfCnv['c_'+a]||[]).push('p'+n);}));
+  ECO.cnv.forEach(c=>{
+    const projs=projOfCnv['c_'+c.a]||[];
+    EXTRA.push({id:'c_'+c.a,kind:'cnv',lvl:4,owner:projs.length?PROJ_OWNER[projs[0].slice(1)]:'vcm',tag:'Convenio',label:[],short:'',title:c.name,sub:c.a});
+  });
+  EXTRA.forEach(x=>{BYID[x.id]=x;});
+  EXTRA.filter(x=>x.kind==='proj').forEach(p=>EXTRA_LINKS.push([p.owner,p.id,'pe']));
+  EXTRA.filter(x=>x.kind==='cnv').forEach(c=>{const ps=projOfCnv[c.id]||[];if(ps.length)ps.forEach(p=>EXTRA_LINKS.push([p,c.id,'ce']));else EXTRA_LINKS.push(['vcm',c.id,'ce']);});
+  /* Responsable de cada proyecto, cuando se conoce */
+  const RESP={'01':'Angelo García'};
+  /* Núcleo que no figura en el Diagrama 01 (dato de la Escuela: lo lleva Sebastián Rodríguez) */
+  const BIO={id:'bio',lvl:3,kind:'lab',parent:'in',tag:'Laboratorio',label:['BIO'],short:'BIO',title:'Biomateriales',coord:'Sebastián Rodríguez',role:'',desc:'',note:''};
+  NODES.push(BIO);BYID.bio=BIO;
+
+  /* ---------- Qué queda en el lugar de cada recuadro ---------- */
+  const UNIT={pedro:'dir',jorge:'ci',dominique:'cl',bejares:'cp',helga:'aa',zerene:'te',antonieta:'ce',paz:'vcm',
+    guisela:'gr',sebastian:'in',paulina:'tx',jgonzalez:'id',simon:'com',angelo:'adm',felipe:'int',ext:'ext',
+    lid:'lid',otf:'otf',ce:'ce',linc:'linc',labtex:'lt',lab360:'lab360',bio:'bio'};
+  /* áreas del organigrama sin recuadro en el equipo: ocupan la celda libre al final de su nivel */
+  const ADDED={1:['mc'],2:['ext'],3:['lamp','pd']};     /* áreas sin encargado del equipo pero que sí existen en la estructura */
+  const LEVELS=[
+    {k:'Nivel 01',t:'Dirección y secretaría',g:['dir','sec']},
+    {k:'Nivel 02',t:'Coordinaciones',g:['coord']},
+    {k:'Nivel 03',t:'Menciones y Vinculación con el Medio',g:['mencion','vcm']},
+    {k:'Nivel 04',t:'Núcleos productivos',g:['nucleo']}
+  ];
+  const STEPS=[
+    ['01 — Equipo','Pasa el cursor sobre un recuadro para ver el cargo y la información de cada persona.'],
+    ['02 — Organigrama','El mismo equipo, ahora como estructura: cada círculo es el área que esa persona lleva. Pasa el cursor sobre un círculo para ver sus docentes y con qué otras áreas se vincula.'],
+    ['03 — Orbital','El organigrama como ecosistema: tres órbitas principales agrupan las áreas por función — los ciclos académicos, el equipo administrativo y de vinculación con el medio, y el sistema general.']
+  ];
+
+  const D=window.dp03,CARDS=D.cards;
+  const morphEl=document.getElementById('morph'),stage=document.getElementById('stage'),svg=document.getElementById('cons'),
+        lvlsEl=document.getElementById('lvls'),capsEl=document.getElementById('caps'),legendEl=document.getElementById('legend2'),hint=document.getElementById('hint'),
+        stepK=document.getElementById('stepK'),stepT=document.getElementById('stepT'),topEl=stage.querySelector('.top');
+  const lv=LEVELS.map(L=>{const d=document.createElement('div');d.className='lvl';d.innerHTML=`<b>${L.k}</b> <span>${L.t}</span>`;lvlsEl.append(d);return {el:d,a:{x:0,y:0},b:{x:0,y:0}};});
+  CARDS.forEach(c=>{c.row=LEVELS.findIndex(L=>L.g.includes(c.key));});
+
+  /* ---------- Elementos del organigrama ---------- */
+  svg.innerHTML='<g id="gX"></g><g id="gE"></g><g id="gR"></g><g id="gI"></g><g id="gN"></g><g id="gD3"></g>';
+  const gX=svg.querySelector('#gX'),gE=svg.querySelector('#gE'),gR=svg.querySelector('#gR'),gI=svg.querySelector('#gI'),gN=svg.querySelector('#gN'),gD3=svg.querySelector('#gD3');
+  const nodes=[],byId={},edges=[],rels=[],items=[],dots=[];
+  /* ---------- Instancia 03 (D3): orbital simplificado · 3 órbitas principales que agrupan el sistema ---------- */
+  const D3GRP=[
+    {id:'ciclos',label:'Ciclos',members:['ci','cl','cp'],cls:'d3-ciclos'},
+    {id:'admin',label:'Administrativos',members:['vcm','com','adm','int','ext','linc'],cls:'d3-admin'},
+    {id:'general',label:'General',members:null,cls:'d3-general'}   /* null = todos los nodos del organigrama */
+  ];
+  const d3orbs=D3GRP.map(g=>{const o=el('circle',{class:'d3-orb '+g.cls});gD3.append(o);return {spec:g,el:o};});
+  const d3labs=D3GRP.map(g=>{const t=document.createElement('div');t.className='d3-lab';t.textContent=g.label;capsEl.append(t);return t;});
+  let bead=null;
+
+  function hover(target,fillFn,on,off){
+    target.addEventListener('mouseenter',e=>{on();D.open(target,fillFn,e);});
+    target.addEventListener('mousemove',e=>{if(D.isCur(target))D.placeAt(e.clientX,e.clientY);});
+    target.addEventListener('mouseleave',()=>{off();D.hide();});
+    target.addEventListener('focus',()=>{on();if(!D.isCur(target))D.open(target,fillFn);});
+    target.addEventListener('blur',()=>{off();D.hide();});
+    target.addEventListener('click',e=>{e.stopPropagation();on();D.open(target,fillFn,e);});
+  }
+  function addNode(spec){
+    const o={...spec,cell:null,cx:0,cy:0,r:0,col:0};
+    const n=o.n,label=o.kind==='staff'?`${o.doc.c}: ${o.doc.n}`:`${n.tag}: ${n.title}`;
+    o.g=el('g',{class:`node ${o.kind}${n&&n.kind?' '+n.kind:''}`,tabindex:-1,role:'button','aria-label':label});
+    o.circ=el('circle',{class:'c',pathLength:1,transform:'rotate(-100)'});o.g.append(o.circ);
+    o.txt=el('text');o.txt.textContent=n?n.short:o.doc.n.split(/\s+/).filter(w=>w&&!/^(de|del|la|las|los|y|ma\.)$/i.test(w)).slice(0,2).map(w=>w[0].toUpperCase()).join('');o.g.append(o.txt);
+    gN.append(o.g);
+    o.crz=el('g',{class:'crz'});o.crzL=[0,1,2,3].map(()=>{const l=el('line');o.crz.append(l);return l;});gX.append(o.crz);
+    /* niveles 01 y 02: nombre completo a la vista; niveles 03 y 04: al pasar el cursor */
+    if(o.row<2){o.cap=document.createElement('div');o.cap.className='cap';o.cap.textContent=o.kind==='staff'?o.doc.c:n.title;capsEl.append(o.cap);}
+    hover(o.g,()=>o.kind==='staff'?fillDoc(o.doc):fillNode(n),()=>hl(o,true),()=>hl(o,false));
+    nodes.push(o);return o;
+  }
+  LEVELS.forEach((L,row)=>{
+    CARDS.filter(c=>c.row===row).forEach(c=>{
+      const u=UNIT[c.p.id];let o;
+      if(u){o=addNode({id:byId[u]?u+'2':u,n:BYID[u],kind:byId[u]?'twin':'unit',card:c,row});if(o.kind==='unit')byId[u]=o;}
+      else o=addNode({id:c.p.id,doc:DOCS.find(d=>d.n===c.p.n),kind:'staff',card:c,row});
+      c.node=o;
+    });
+    (ADDED[row]||[]).forEach(u=>{byId[u]=addNode({id:u,n:BYID[u],kind:'unit',card:null,row});});
+  });
+  const staffNames=new Set(nodes.filter(o=>o.kind==='staff').map(o=>o.doc.n));
+
+  /* líneas de dependencia (las del organigrama) */
+  /* jerarquía ortogonal: cada edge es un path con enrutado perpendicular por un bus horizontal entre niveles */
+  const link=(a,b)=>{const lvl=Math.min(3,a.row+1),p=el('path',{class:'edge l'+lvl,pathLength:1});gE.append(p);edges.push({path:p,a,b,lvl});};
+  NODES.filter(n=>n.parent).forEach(n=>link(byId[n.parent],byId[n.id]));
+  nodes.filter(o=>o.kind==='twin').forEach(o=>link(byId[o.n.id],o));     // la misma unidad en dos niveles
+  bead=el('path',{class:'edge',pathLength:1});gE.append(bead);            // equipo de Dirección
+  /* vínculos transversales: se muestran al pasar el cursor por una de las dos áreas */
+  /* cada vínculo del organigrama es una órbita completa (circunferencia): sus dos áreas quedan en extremos opuestos de un diámetro */
+  REL.forEach(r=>{const c=el('circle',{class:'relx'});gR.append(c);rels.push({path:c,a:byId[r.a],b:byId[r.b]});});
+
+  /* Diagrama 03 muestra solo equipo humano. Proyectos y convenios se verán aparte, en otro diagrama. */
+  /* docentes: un punto por persona bajo su área (quienes ya tienen círculo propio en Dirección no se repiten) */
+  NODES.forEach(n=>{
+    DOCS.filter(d=>d.node===n.id&&!staffNames.has(d.n)).forEach(d=>{
+      const c=el('circle',{class:'doc',tabindex:-1,role:'button','aria-label':'Docente: '+d.n});gI.append(c);
+      dots.push({d,c,par:byId[n.id]});
+      hover(c,()=>fillDoc(d),()=>c.classList.add('is-on'),()=>c.classList.remove('is-on'));
+    });
+  });
+
+  /* ---------- Medidas del contenido de cada celda, según el ancho del recuadro ---------- */
+  nodes.forEach(o=>{o.cnt={proj:items.filter(it=>it.par===o&&it.x.kind==='proj').length,cnv:items.filter(it=>it.par===o&&it.x.kind==='cnv').length,doc:dots.filter(d=>d.par===o).length};});
+  const NTR=[0,0,0,0];            // pistas de líneas sobre cada nivel
+  {const seen=new Set();edges.forEach(e=>{const a=e.a,b=e.b;
+    if(b.row===a.row+1){const k=b.row+'|'+a.id;if(!seen.has(k)){seen.add(k);NTR[b.row]++;}}
+    else{NTR[a.row+1]++;NTR[b.row]++;}});}
+  const nameF=bw=>Math.min(15,Math.max(10.5,bw*.145)),nmH=bw=>nameF(bw)*1.18*2+bw*.12;
+  const met=bw=>{const arm=clamp(bw*.075,3,6),per=clamp(Math.floor(bw/5),5,11);
+    return {R:bw*.42,arm,TS:clamp(bw*.065,4,5.2),DROP:arm+5,pad:clamp(bw*.06,3,5),sep:clamp(bw*.04,2,3),
+      rp:clamp(bw*.115,6.2,10),gp:Math.min(2,bw*.03),rc:clamp(bw*.055,2.8,4.6),gc:1.3,per,dp:bw/per,rd:Math.min(2.4,bw/per*.34)};};
+  const perRow=(bw,r,g)=>Math.max(1,Math.floor((bw+g)/(2*r+g)+1e-6));
+  function unitH(o,bw,m){          // alto desde el borde superior de la celda
+    let h=bw/2+m.R;if(o.kind!=='unit')return h;
+    h+=m.pad;
+    [['proj',m.rp,m.gp],['cnv',m.rc,m.gc]].forEach(([k,r,g])=>{const n=o.cnt[k];if(n)h+=Math.ceil(n/perRow(bw,r,g))*(2*r+g)+m.sep;});
+    if(o.cnt.doc)h+=2*m.rd+(Math.ceil(o.cnt.doc/m.per)-1)*m.dp;
+    return h;
+  }
+  const bandH=(li,m)=>li>3||!NTR[li]?0:m.DROP+NTR[li]*m.TS;
+  const contH=(li,bw,m,cap)=>Math.max(cap&&li<2?1.5*bw+nameF(bw)*3.3:0,...nodes.filter(o=>o.row===li).map(o=>unitH(o,bw,m)));
+  /* separación entre niveles: la del equipo, o la que necesita el organigrama si es mayor (así nada se mueve) */
+  const gapAfter=(li,bw)=>{const m=met(bw);return Math.max(bw*.42,contH(li,bw,m,bw>=58)+bandH(li+1,m)+3-(1.5*bw+nmH(bw)));};
+
+  function hl(o,on){
+    o.g.classList.toggle('is-on',on);
+    const prim=o.kind==='twin'?byId[o.n.id]:o;
+    edges.forEach(e=>{if(e.a===o||e.b===o)e.path.classList.toggle('hot',on);});
+    /* al pasar el cursor por un área, SUS caminos de vínculo se encienden y el círculo compañero se marca */
+    rels.forEach(r=>{if(r.a===prim||r.b===prim){r.path.classList.toggle('on',on);(r.a===prim?r.b:r.a).g.classList.toggle('rel',on);}});
+  }
+  function hlItem(it,on){
+    it.g.classList.toggle('is-on',on);
+    const other=it.x.kind==='proj'?cnvOfProj[it.x.id]:projOfCnv[it.x.id];
+    (other||[]).forEach(id=>byId[id].g.classList.toggle('is-on',on));
+  }
+
+  /* ---------- Medidas: dónde va el equipo (a) y dónde va el organigrama (b) ---------- */
+  let PORT=false,MOVE=false,A0=.07,GAPX=16,TS=5,DROP=6,cellY=[0,0,0,0],BW=75;
+  function place(){
+    /* el alto del encabezado se mide con el texto más largo, para que la grilla no cambie de lugar entre pasos */
+    const keep=stepT.textContent;stepT.textContent=STEPS[1][1];
+    const W=stage.clientWidth,H=stage.clientHeight,top0=(topEl.offsetParent?topEl.offsetHeight:0)+14;
+    stepT.textContent=keep;
+    PORT=W<760;stage.classList.toggle('port',PORT);
+    const groups=LEVELS.map(L=>L.g.map(k=>CARDS.filter(c=>c.key===k)));
+    const added=li=>nodes.filter(o=>!o.card&&o.row===li);
+    const count=li=>groups[li].reduce((a,g)=>a+g.length,0)+added(li).length;
+    let names=true;
+    if(!PORT){
+      /* el recuadro más grande (máx. 100 px) que deja ver los cuatro niveles en una pantalla */
+      const side=32,availW=W-2*side,availH=H-top0-30,lblW=170;
+      const rowW=(li,bw,gap)=>{const n=count(li);return n*bw+(n-1)*gap+(groups[li].length-1)*gap*2;};
+      const hOf=bw=>4*(1.5*bw+nmH(bw))+gapAfter(0,bw)+gapAfter(1,bw)+gapAfter(2,bw);
+      let bw=100;
+      for(;bw>40;bw-=1){const gap=bw*.22;if(Math.max(...LEVELS.map((_,li)=>rowW(li,bw,gap)))+28+lblW<=availW&&hOf(bw)<=availH)break;}
+      const gap=bw*.22;
+      const widest=Math.max(...LEVELS.map((_,li)=>rowW(li,bw,gap))),x0=Math.max(side,(W-(widest+28+lblW))/2);
+      let y=top0+Math.max(0,(availH-hOf(bw))/2);
+      groups.forEach((gs,li)=>{
+        let x=x0;
+        gs.forEach((g,gi)=>{if(gi)x+=gap*2;g.forEach(c=>{c.a={x,y,bw};c.b={x,y,bw};x+=bw+gap;});});
+        lv[li].a={x:x-gap+28,y:y+.75*bw};
+        added(li).forEach(o=>{o.cell={x,y,bw};x+=bw+gap;});
+        lv[li].b={x:x0+widest+28,y:y+.75*bw};
+        cellY[li]=y;y+=1.5*bw+nmH(bw)+(li<3?gapAfter(li,bw):0);
+      });
+      MOVE=false;BW=bw;GAPX=gap;
+      /* Instancia 02 = organigrama ortogonal clásico (mismas celdas que la grilla del equipo). La constelación radial queda para el momento D3 futuro. */
+    }else{
+      /* celular · equipo: recuadros compactos que se envuelven por nivel */
+      const side=14,availW=W-2*side,availH=H-top0-22,lblH=24;
+      const fit=bw=>{const gap=bw*.22,c=Math.max(1,Math.floor((availW+gap)/(bw+gap))),nm=bw>=58,nameH=nm?nameF(bw)*1.18*2+8:6;
+        let h=0;groups.forEach(gs=>{const n=gs.reduce((a,g)=>a+g.length,0),r=Math.ceil(n/c);h+=lblH+r*(1.5*bw+nameH)+(r-1)*gap;});h+=3*14;
+        return {ok:h<=availH,c,nm,nameH,gap};};
+      let bw=110,f=fit(bw);for(;bw>28;bw-=1){f=fit(bw);if(f.ok)break;}
+      names=f.nm;
+      let y=top0;
+      groups.forEach((gs,li)=>{
+        lv[li].a={x:side,y};y+=lblH;
+        const list=gs.flat();
+        list.forEach((c,k)=>{c.a={x:side+(k%f.c)*(bw+f.gap),y:y+Math.floor(k/f.c)*(1.5*bw+f.nameH+f.gap),bw};});
+        const r=Math.ceil(list.length/f.c);y+=r*(1.5*bw+f.nameH)+(r-1)*f.gap+14;
+      });
+      /* celular · organigrama: una fila por nivel, con aire debajo de cada círculo para su contenido */
+      const cols=Math.max(...LEVELS.map((_,li)=>count(li))),bw2=availW/(cols+(cols-1)*.22),gap2=bw2*.22,m2=met(bw2),ys=[];
+      let y2=top0;
+      LEVELS.forEach((_,li)=>{ys.push(y2);y2+=20+(bandH(li,m2)||4)+contH(li,bw2,m2,false)+8;});
+      const extra=clamp((top0+availH-y2)/3,0,34);
+      groups.forEach((gs,li)=>{
+        const rt=ys[li]+li*extra;let x=side;
+        lv[li].b={x:side,y:rt};cellY[li]=rt+20+(bandH(li,m2)||4);
+        gs.flat().forEach(c=>{c.b={x,y:cellY[li],bw:bw2};x+=bw2+gap2;});
+        added(li).forEach(o=>{o.cell={x,y:cellY[li],bw:bw2};x+=bw2+gap2;});
+      });
+      MOVE=true;BW=bw2;GAPX=gap2;
+    }
+    A0=MOVE?.17:.07;
+    const bw1=CARDS[0].a.bw;
+    CARDS.forEach(c=>{c.name.style.fontSize=nameF(bw1).toFixed(1)+'px';c.name.style.width=bw1+'px';c.name.style.display=names?'':'none';});
+    layout();
+    frame(performance.now(),true);
+  }
+
+  /* trazo ortogonal con esquinas redondeadas */
+  function rpath(P,rad){
+    const Q=P.filter((p,i)=>!i||Math.hypot(p[0]-P[i-1][0],p[1]-P[i-1][1])>.5);
+    let d=`M${Q[0][0].toFixed(1)} ${Q[0][1].toFixed(1)}`;
+    for(let i=1;i<Q.length-1;i++){
+      const [x0,y0]=Q[i-1],[x1,y1]=Q[i],[x2,y2]=Q[i+1],l1=Math.hypot(x1-x0,y1-y0),l2=Math.hypot(x2-x1,y2-y1),r=Math.min(rad,l1/2,l2/2);
+      d+=`L${(x1-(x1-x0)/l1*r).toFixed(1)} ${(y1-(y1-y0)/l1*r).toFixed(1)}Q${x1.toFixed(1)} ${y1.toFixed(1)} ${(x1+(x2-x1)/l2*r).toFixed(1)} ${(y1+(y2-y1)/l2*r).toFixed(1)}`;
+    }
+    const L=Q[Q.length-1];return d+`L${L[0].toFixed(1)} ${L[1].toFixed(1)}`;
+  }
+  const perms=a=>a.length<2?[a]:a.flatMap((x,i)=>perms([...a.slice(0,i),...a.slice(i+1)]).map(p=>[x,...p]));
+
+  /* ---------- Organigrama sobre la grilla: círculos, contenido bajo cada uno y líneas ---------- */
+  function layout(){
+    const bw=BW,W=stage.clientWidth,H=stage.clientHeight;
+    svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+    const m=met(bw),R=m.R,arm=m.arm,fSig=clamp(bw*.17,7.5,14),capF=nameF(bw),showCap=bw>=58;
+    TS=m.TS;DROP=m.DROP;
+    const rows=[[],[],[],[]];
+    nodes.forEach(o=>{if(o.card)o.cell=o.card.b;rows[o.row].push(o);});
+    rows.forEach(r=>{r.sort((a,b)=>a.cell.x-b.cell.x);r.forEach((o,i)=>o.col=i);});
+    nodes.forEach(o=>{
+      const c=o.cell;o.cx=c.x+bw/2;o.cy=c.y+bw/2;o.r=o.kind==='staff'?bw*.3:R;
+      o.g.setAttribute('transform',`translate(${o.cx.toFixed(1)} ${o.cy.toFixed(1)})`);
+      o.circ.setAttribute('r',o.r.toFixed(1));
+      o.txt.setAttribute('font-size',(!o.n?fSig*.82:o.n.short.length>3?fSig*.9:fSig).toFixed(1));
+      /* cruces: donde estaban las esquinas superiores del recuadro */
+      const nx=rows[o.row][o.col+1],endG=!nx||nx.cell.x-c.x>bw+GAPX+1;
+      [[c.x,c.y],[c.x+bw,c.y]].forEach(([x,y],k)=>{
+        const h=o.crzL[k*2],v=o.crzL[k*2+1];h.style.display=v.style.display=k&&!endG?'none':'';
+        h.setAttribute('x1',x-arm);h.setAttribute('x2',x+arm);h.setAttribute('y1',y);h.setAttribute('y2',y);
+        v.setAttribute('x1',x);v.setAttribute('x2',x);v.setAttribute('y1',y-arm);v.setAttribute('y2',y+arm);
+      });
+      if(o.cap){o.cap.style.display=showCap?'':'none';o.cap.style.width=bw+'px';o.cap.style.fontSize=capF.toFixed(1)+'px';
+        o.cap.style.transform=`translate(${c.x.toFixed(1)}px,${(c.y+1.5*bw+.9*capF).toFixed(1)}px)`;}
+      o.delay=o.row*.035+o.col*.006;
+    });
+
+    /* contenido bajo cada círculo: proyectos, convenios y docentes */
+    const {rp,gp,rc,gc,per,dp,rd}=m;
+    const rowsOf=(list,r,g)=>{const n=perRow(bw,r,g);return list.map((it,i)=>[i%n,Math.floor(i/n)]);};
+    nodes.filter(o=>o.kind==='unit').forEach(o=>{
+      let y=o.cy+o.r+m.pad;const x0=o.cell.x,t0=A0+.62+o.row*.02+o.col*.004;
+      [['proj',rp,gp],['cnv',rc,gc]].forEach(([kind,r,g])=>{
+        const list=items.filter(it=>it.par===o&&it.x.kind===kind);if(!list.length)return;
+        const pos=rowsOf(list,r,g);
+        list.forEach((it,i)=>{it.r=r;it.px=x0+r+pos[i][0]*(2*r+g);it.py=y+r+pos[i][1]*(2*r+g);it.t0=t0+i*.006;
+          it.g.querySelector('circle').setAttribute('r',r.toFixed(1));if(it.txt)it.txt.setAttribute('font-size',(r*.98).toFixed(1));});
+        y+=(pos[pos.length-1][1]+1)*(2*r+g)+m.sep;
+      });
+      const mine=dots.filter(d=>d.par===o);
+      mine.forEach((d,i)=>{d.c.setAttribute('r',rd.toFixed(2));d.c.setAttribute('cx',(x0+dp*(i%per+.5)).toFixed(1));d.c.setAttribute('cy',(y+rd+Math.floor(i/per)*dp).toFixed(1));d.t0=t0+.04+i*.0012;});
+    });
+
+    /* líneas: salen por el costado izquierdo del círculo, bajan por el canal entre columnas,
+       corren sobre el nivel siguiente y entran a cada círculo por arriba */
+    const gut=o=>o.cell.x-GAPX/2,parents=new Set(edges.map(e=>e.a));
+    const bands=[[],[],[],[]],busOf=new Map();
+    /* Un único bus (puente) por banda: todas las ramas de ese nivel comparten la misma línea horizontal.
+       Para los edges que saltan niveles ('via') conservamos un bus separado para que no se confundan con las ramas directas. */
+    const bus=(row,key,stemX)=>{const direct=!key||key[0]!=='v'&&key[0]!=='w',k=row+'|'+(direct?'main':key);
+      if(!busOf.has(k)){const b={stemX,xs:[]};busOf.set(k,b);bands[row].push(b);}return busOf.get(k);};
+    const viaUse={};
+    edges.forEach(e=>{
+      const a=e.a,b=e.b;
+      if(b.row===a.row+1){e.b1=bus(b.row,a.id,gut(a));e.b1.xs.push(b.cx);e.b2=null;}
+      else{
+        /* salta un nivel: baja por un canal libre del nivel intermedio */
+        const mid=rows[a.row+1],cand=[];
+        for(let i=0;i<=mid.length;i++){
+          if(i<mid.length&&parents.has(mid[i]))continue;
+          const x=i===0?gut(mid[0]):i===mid.length?mid[i-1].cell.x+bw+GAPX/2:(mid[i-1].cell.x+bw+mid[i].cell.x)/2;
+          cand.push({x,w:i&&i<mid.length?mid[i].cell.x-mid[i-1].cell.x-bw:GAPX,c:Math.abs(x-gut(a))+Math.abs(x-b.cx)});
+        }
+        cand.sort((p,q)=>(p.c-q.c)||(q.w-p.w));
+        const g=cand[0],key=g.x.toFixed(0);viaUse[key]=(viaUse[key]||0)+1;
+        e.via=g;e.viaK=viaUse[key]-1;e.viaKey=key;
+      }
+    });
+    edges.filter(e=>e.via).forEach(e=>{
+      const n=viaUse[e.viaKey],sp=Math.min(7,e.via.w/(n+1)),x=e.via.x+(e.viaK-(n-1)/2)*sp;
+      e.vx=x;e.b1=bus(e.a.row+1,'v'+e.a.id+e.b.id,gut(e.a));e.b1.xs.push(x);
+      e.b2=bus(e.b.row,'w'+e.a.id+e.b.id,x);e.b2.xs.push(e.b.cx);
+    });
+    /* orden de las pistas de cada franja: el que menos cruces produce */
+    bands.forEach(list=>{
+      if(!list.length)return;
+      list.forEach(b=>{b.lo=Math.min(b.stemX,...b.xs);b.hi=Math.max(b.stemX,...b.xs);});
+      const inside=(x,b)=>x>b.lo+1&&x<b.hi-1;
+      let best=null,bc=1e9;
+      perms(list).forEach(p=>{                       // p[0] = pista más baja
+        let c=0;
+        for(let i=0;i<p.length;i++)for(let j=i+1;j<p.length;j++){
+          if(inside(p[i].stemX,p[j]))c++;
+          p[j].xs.forEach(x=>{if(inside(x,p[i]))c++;});
+        }
+        if(c<bc){bc=c;best=p;}
+      });
+      best.forEach((b,k)=>b.k=k);
+    });
+    const ty=(row,b)=>cellY[row]-DROP-b.k*TS,rad=clamp(bw*.07,3,5.5);
+    const bandT=[0,.44,.52,.60];   /* edges de jerarquía escalonados: bus 1 arranca cuando los círculos ya aparecieron */
+    /* Jerarquía ortogonal con dedupe de caminos: cada tramo padre→bus se dibuja UNA sola vez (compartido entre hermanos); solo cambian las ramas bus→hijo. */
+    const stems=new Set();
+    edges.forEach(e=>{
+      const a=e.a,b=e.b,gx=gut(a);
+      let P;
+      if(!e.via){
+        const by=ty(b.row,e.b1),stemKey=a.id+'@'+by.toFixed(1);
+        if(stems.has(stemKey)){P=[[gx,by],[b.cx,by],[b.cx,b.cy-b.r]];}
+        else{stems.add(stemKey);P=[[a.cx-a.r,a.cy],[gx,a.cy],[gx,by],[b.cx,by],[b.cx,b.cy-b.r]];}
+      }else{
+        const by1=ty(a.row+1,e.b1),by2=ty(b.row,e.b2),stemKey=a.id+'@'+by1.toFixed(1);
+        const tail=[[e.vx,by1],[e.vx,by2],[b.cx,by2],[b.cx,b.cy-b.r]];
+        if(stems.has(stemKey)){P=[[gx,by1],...tail];}
+        else{stems.add(stemKey);P=[[a.cx-a.r,a.cy],[gx,a.cy],[gx,by1],...tail];}
+      }
+      e.path.setAttribute('d',rpath(P,rad));
+      e.t0=A0+bandT[a.row+1];e.dur=e.via?.24:.16;
+      if(!b.card)b.t0=e.t0+e.dur-.03;
+    });
+    const r0=rows[0];
+    bead.setAttribute('d',`M${(r0[0].cx+r0[0].r).toFixed(1)} ${r0[0].cy.toFixed(1)}L${(r0[r0.length-1].cx-r0[r0.length-1].r).toFixed(1)} ${r0[0].cy.toFixed(1)}`);
+    bead.style.display='';
+    /* Órbitas: una circunferencia por vínculo. Centro = punto medio del par, radio = mitad de la distancia entre centros.
+       Cada órbita pasa por sus dos áreas en extremos opuestos del diámetro → simetría total respecto al centro. */
+    rels.forEach(r=>{
+      const a=r.a,b=r.b,cx=(a.cx+b.cx)/2,cy=(a.cy+b.cy)/2,rad=Math.hypot(b.cx-a.cx,b.cy-a.cy)/2;
+      r.path.setAttribute('cx',cx.toFixed(1));r.path.setAttribute('cy',cy.toFixed(1));r.path.setAttribute('r',rad.toFixed(1));
+    });
+    /* D3: cada órbita pasa por los centros de los nodos extremos del grupo (smallest enclosing circle, Welzl).
+       Así "pasa por" los círculos miembros clave, no los encierra con padding. */
+    const _c2=(p,q)=>({x:(p.x+q.x)/2,y:(p.y+q.y)/2,r:Math.hypot(p.x-q.x,p.y-q.y)/2});
+    const _c3=(p,q,s)=>{const ax=q.x-p.x,ay=q.y-p.y,bx=s.x-p.x,by=s.y-p.y,d=2*(ax*by-ay*bx);
+      if(Math.abs(d)<1e-10)return _c2(p,q);
+      const ux=(by*(ax*ax+ay*ay)-ay*(bx*bx+by*by))/d,uy=(ax*(bx*bx+by*by)-bx*(ax*ax+ay*ay))/d;
+      return {x:ux+p.x,y:uy+p.y,r:Math.hypot(ux,uy)};};
+    const _ins=(p,c)=>Math.hypot(p.x-c.x,p.y-c.y)<=c.r+1e-6;
+    const sec=pts=>{let c={x:pts[0].x,y:pts[0].y,r:0};for(let i=1;i<pts.length;i++)if(!_ins(pts[i],c)){
+      c={x:pts[i].x,y:pts[i].y,r:0};for(let j=0;j<i;j++)if(!_ins(pts[j],c)){
+        c=_c2(pts[i],pts[j]);for(let k=0;k<j;k++)if(!_ins(pts[k],c))c=_c3(pts[i],pts[j],pts[k]);}}return c;};
+    d3orbs.forEach((o,i)=>{
+      const g=o.spec,mem=g.members?g.members.map(id=>byId[id]).filter(Boolean):nodes.filter(n=>n.kind!=='staff');
+      if(!mem.length)return;
+      const pts=mem.map(n=>({x:n.cx,y:n.cy})),c=sec(pts);
+      o.el.setAttribute('cx',c.x.toFixed(1));o.el.setAttribute('cy',c.y.toFixed(1));o.el.setAttribute('r',c.r.toFixed(1));
+      d3labs[i].style.transform=`translate(${(c.x-55).toFixed(1)}px,${(c.y-c.r-18).toFixed(1)}px)`;
+      d3labs[i].style.width='110px';d3labs[i].style.textAlign='center';
+    });
+  }
+
+  /* ---------- Pop-up del organigrama ---------- */
+  function rowsDl(dl,list){list.forEach(([k,v])=>{if(!v||(Array.isArray(v)&&!v.length))return;D.add(dl,'dt',null,k);
+    const dd=D.add(dl,'dd');if(Array.isArray(v)){const ul=D.add(dd,'ul');v.forEach(t=>D.add(ul,'li',null,t));}else dd.textContent=v;});}
+  function fillNode(n){
+    /* Diagrama 03 · equipo humano: la ficha del área muestra quién coordina, cuántos docentes y con qué otras áreas se vincula. Proyectos y convenios se verán en otro diagrama. */
+    const P=D.pop;
+    D.add(P,'div','ptag',n.tag);D.add(P,'h3',null,n.title);
+    const dc=DOCCOUNT[n.id],vin=REL.filter(r=>r.a===n.id||r.b===n.id).map(r=>BYID[r.a===n.id?r.b:r.a].title);
+    rowsDl(D.add(P,'dl'),[['Coordina',n.coord],['Docentes',dc?String(dc):''],['Vínculos',vin]]);
+  }
+  /* nombre → slug del archivo en assets/img/docentes/ (sin tildes, minúsculas, con guiones) */
+  const docSlug=n=>n.normalize('NFKD').replace(/[̀-ͯ]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  function fillDoc(d){
+    const P=D.pop;
+    const face=D.add(P,'div','face');
+    const img=document.createElement('img');img.loading='lazy';img.alt='';
+    img.onerror=()=>face.classList.add('no');
+    img.src='../assets/img/docentes/'+docSlug(d.n)+'.jpg';
+    face.append(img);
+    D.add(P,'div','ptag',d.c||(d.t==='planta'?'Docente de planta':'Docente part-time'));
+    D.add(P,'h3',null,d.n);
+    rowsDl(D.add(P,'dl'),[['Formación',d.p&&d.p!=='—'?d.p:''],['Postgrado',d.g],['Cursos',d.cs]]);
+  }
+
+  /* ---------- Leyenda: siglas agrupadas por nivel + lenguaje visual que explica líneas y órbitas ---------- */
+  function buildLegend(){
+    legendEl.textContent='';
+    const grp=(title,cls)=>{const g=document.createElement('div');g.className='lg '+(cls||'');const h=document.createElement('h4');h.textContent=title;g.append(h);const ul=document.createElement('ul');g.append(ul);legendEl.append(g);return ul;};
+    const item=(ul,key,text,id,sym)=>{const li=document.createElement('li');
+      const b=document.createElement('b');if(sym)b.innerHTML=sym;else b.textContent=key;li.append(b);
+      const sp=document.createElement('span');sp.textContent=text;li.append(sp);ul.append(li);
+      if(id&&byId[id]){li.addEventListener('mouseenter',()=>byId[id].g.classList.add('is-on'));li.addEventListener('mouseleave',()=>byId[id].g.classList.remove('is-on'));}};
+    /* Siglas agrupadas por nivel (así se lee de un vistazo quién pertenece a qué) */
+    const LVLN=['Nivel 01 · Dirección','Nivel 02 · Coordinaciones','Nivel 03 · Menciones y Vinculación con el Medio','Nivel 04 · Núcleos productivos'];
+    const uls=LVLN.map(t=>grp(t,'g-sig'));
+    nodes.filter(o=>o.kind==='unit').forEach(o=>{const li=Math.min(3,o.row);item(uls[li],o.n.short,o.n.title,o.n.id);});
+    /* Lenguaje visual: qué significa cada tipo de línea y la órbita */
+    const lv=grp('Lenguaje visual','g-leng');
+    item(lv,'','Jerarquía: Dirección → coordinación',null,'<i class="line-l1"></i>');
+    item(lv,'','Jerarquía: coordinación → mención',null,'<i class="line-l2"></i>');
+    item(lv,'','Jerarquía: mención → núcleo',null,'<i class="line-l3"></i>');
+    item(lv,'','Órbita: colaboración entre dos áreas',null,'<i class="sym-orb"></i>');
+    item(lv,'',`Docente (${DOCS.length} en total)`,null,'<i class="sym-dot"></i>');
+  }
+
+  /* ---------- Transformación con el scroll: t = 0 equipo · t = 1 organigrama ---------- */
+  const scrollT=()=>{const r=morphEl.getBoundingClientRect(),tot=r.height-innerHeight;return tot>0?clamp(-r.top/tot):0;};
+  let cur=scrollT(),stepNow=-1,liveNow=null;
+  const draw=(e,p)=>{e.style.strokeDasharray=p>=.999?'none':'1 1';e.style.strokeDashoffset=(1-p).toFixed(4);e.style.opacity=p>0?'1':'0';};
+  function frame(now,force){
+    const tg=scrollT();
+    cur=(REDUCED||force)?tg:cur+(tg-cur)*.16;if(Math.abs(tg-cur)<.0005)cur=tg;
+    const t=cur;
+    const mv=MOVE?ease(clamp((t-.03)/.13)):0;                    // solo en celular: el equipo deja paso a la grilla del organigrama
+    const ls=MOVE?mv:ease(clamp((t-A0-.1)/.3));
+    hint.style.opacity=t<.03?'1':'0';
+    /* 3 momentos: transición 01→02 larga (equipo visible), ortho estable para leerlo, luego orbital */
+    const T3S=.88,step=t<A0+.42?0:(t<T3S?1:2);if(step!==stepNow){stepNow=step;stepK.textContent=STEPS[step][0];stepT.textContent=STEPS[step][1];}
+    const p3=ease(clamp((t-T3S)/.18));         /* progreso del tercer momento: 0 en organigrama → 1 en orbital */
+    /* los nombres de nivel entran con el organigrama (fase 2) y se desvanecen al pasar al orbital (fase 3) */
+    lvlsEl.style.opacity=(ease(clamp((t-A0-.1)/.3))*(1-p3)).toFixed(3);
+    lv.forEach(L=>{L.el.style.transform=`translate(${lerp(L.a.x,L.b.x,ls).toFixed(1)}px,${lerp(L.a.y,L.b.y,ls).toFixed(1)}px)${PORT?'':' translateY(-50%)'}`;});
+
+    nodes.forEach(o=>{
+      let pA,pB,sc=1;
+      if(o.card){pA=ease(clamp((t-A0-o.delay)/.26));pB=ease(clamp((t-A0-.30-o.delay)/.22));}   // 1) se dibuja el círculo · 2) la foto da paso a la sigla (ambas más lentas)
+      else{pA=1;pB=sc=ease(clamp((t-o.t0)/.07));}
+      o.pB=pB;
+      draw(o.circ,o.card?pA:1);o.circ.style.fillOpacity=pB.toFixed(3);
+      if(!o.card){o.g.style.opacity=pB.toFixed(3);o.g.setAttribute('transform',`translate(${o.cx.toFixed(1)} ${o.cy.toFixed(1)}) scale(${Math.max(sc,.001).toFixed(3)})`);}
+      o.txt.style.opacity=clamp((pB-.55)/.45).toFixed(3);
+      if(o.cap)o.cap.style.opacity=clamp((pB-.5)*2).toFixed(3);
+      o.crz.style.opacity=(.55*pB).toFixed(3);
+    });
+    CARDS.forEach(c=>{
+      /* escritorio: el recuadro no se mueve, se desvanece bajo su círculo · celular: el equipo se desvanece y el organigrama se dibuja en su propia grilla */
+      const a=c.a,bw=a.bw,pB=c.node.pB,op=(1-pB)*(1-mv);
+      c.card.style.transform=`translate(${a.x.toFixed(1)}px,${a.y.toFixed(1)}px)`;
+      c.frame.style.width=bw.toFixed(1)+'px';c.frame.style.height=(1.5*bw).toFixed(1)+'px';c.ph.style.fontSize=(bw*.2).toFixed(1)+'px';
+      c.frame.style.opacity=op.toFixed(3);
+      c.name.style.opacity=((1-clamp(pB*2))*(1-mv)).toFixed(3);
+      c.card.style.visibility=op<.001?'hidden':'';
+      c.card.style.pointerEvents=t<Math.min(A0,.05)?'auto':'none';
+    });
+    edges.forEach(e=>{draw(e.path,ease(clamp((t-e.t0)/e.dur)));e.path.style.opacity=((e.path.style.opacity||1)*(1-p3)).toFixed(3);});
+    /* D3 · las 3 órbitas de agrupación aparecen con el tercer momento */
+    d3orbs.forEach(o=>o.el.style.opacity=p3.toFixed(3));
+    d3labs.forEach(l=>l.style.opacity=p3.toFixed(3));
+    draw(bead,ease(clamp((t-A0-.40)/.14)));bead.style.opacity=((bead.style.opacity||1)*(1-p3)).toFixed(3);
+    items.forEach(it=>{const p=ease(clamp((t-it.t0)/.08));it.g.style.opacity=p.toFixed(3);
+      it.g.setAttribute('transform',`translate(${it.px.toFixed(1)} ${it.py.toFixed(1)}) scale(${Math.max(p,.001).toFixed(3)})`);});
+    dots.forEach(d=>{d.c.style.opacity=ease(clamp((t-d.t0)/.07)).toFixed(3);});
+    const live=t>A0+.8;
+    if(live!==liveNow){liveNow=live;svg.classList.toggle('live',live);
+      svg.querySelectorAll('.node,.it').forEach(g=>g.setAttribute('tabindex',live?0:-1));
+      CARDS.forEach(c=>{c.frame.tabIndex=live?-1:0;});}
+  }
+
+  let running=false;
+  function loop(now){if(!running)return;frame(now);requestAnimationFrame(loop);}
+  buildLegend();
+  place();
+  new IntersectionObserver(es=>es.forEach(en=>{
+    if(en.isIntersecting){if(!running){running=true;requestAnimationFrame(loop);}}else running=false;
+  }),{threshold:0}).observe(morphEl);
+  let rt=0;
+  addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(place,150);});
+  if(document.fonts&&document.fonts.ready)document.fonts.ready.then(place);
+})();
+
+</script>
+</body>
+</html>
