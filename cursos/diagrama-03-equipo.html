@@ -250,7 +250,6 @@
       {id:'lid',n:'Aarón Montoya',c:'LID · Lab Interacción Digital',foto:'aaron-montoya',f:[.50,.29],w:1.6,ar:1.064},
       {id:'otf',n:'Guisela Mendoza',c:'OTF',foto:'guisela-mendoza',f:[.60,.36]},
       {id:'ce',n:'Antonieta López',c:'CE · Centro Editorial',foto:'antonieta-lopez',f:[.53,.38]},
-      {id:'linc',n:'Joaquín Bejares',c:'LINC',foto:'joaquin-bejares',f:[.52,.29]},
       {id:'labtex',n:'Paulina Pavez',c:'Lab Textil'},
       {id:'lab360',n:'Angelo García',c:'LAB 360',foto:'angelo-garcia',f:[.51,.37],w:1.6,ar:1},
       {id:'bio',n:'Sebastián Rodríguez',c:'Biomateriales',foto:'sebastian-rodriguez',f:[.47,.31]},
@@ -463,7 +462,7 @@
     guisela:'gr',sebastian:'in',paulina:'tx',jgonzalez:'id',simon:'com',angelo:'adm',felipe:'int',ext:'ext',
     lid:'lid',otf:'otf',ce:'ce',linc:'linc',labtex:'lt',lab360:'lab360',bio:'bio'};
   /* áreas del organigrama sin recuadro en el equipo: ocupan la celda libre al final de su nivel */
-  const ADDED={1:['mc'],2:['ext'],3:['lamp','pd']};     /* áreas sin encargado del equipo pero que sí existen en la estructura */
+  const ADDED={1:['mc'],2:['ext','linc'],3:['lamp','pd']};     /* áreas sin encargado del equipo pero que sí existen en la estructura */
   const LEVELS=[
     {k:'Nivel 01',t:'Dirección y secretaría',g:['dir','sec']},
     {k:'Nivel 02',t:'Coordinaciones',g:['coord']},
@@ -473,7 +472,7 @@
   const STEPS=[
     ['01 — Equipo','Pasa el cursor sobre un recuadro para ver el cargo y la información de cada persona.'],
     ['02 — Organigrama','El mismo equipo, ahora como estructura: cada círculo es el área que esa persona lleva. Pasa el cursor sobre un círculo para ver sus docentes y con qué otras áreas se vincula.'],
-    ['03 — Orbital','El organigrama como ecosistema: tres órbitas principales agrupan las áreas por función — los ciclos académicos, el equipo administrativo y de vinculación con el medio, y el sistema general.']
+    ['03 — Orbital','El organigrama como ecosistema vivo: los docentes orbitan sus respectivas áreas, y tres anillos agrupan las áreas por función — ciclos académicos, equipo administrativo y vinculación con el medio, y el sistema general.']
   ];
 
   const D=window.dp03,CARDS=D.cards;
@@ -496,6 +495,38 @@
   const d3orbs=D3GRP.map(g=>{const o=el('circle',{class:'d3-orb '+g.cls});gD3.append(o);return {spec:g,el:o};});
   const d3labs=D3GRP.map(g=>{const t=document.createElement('div');t.className='d3-lab';t.textContent=g.label;capsEl.append(t);return t;});
   let bead=null;
+
+  /* ---------- Posiciones orbitales (Fase 3) ---------- */
+  /* Sector: 0=Ciclos  1=Admin/VCM  2=General */
+  const NODE_SECT={
+    dir:2,ci:0,cl:0,cp:0,aa:2,te:2,ce:2,vcm:1,mc:2,
+    gr:0,in:0,tx:0,id:0,com:1,adm:1,int:1,ext:1,linc:1,
+    lid:0,otf:0,lt:0,lab360:0,bio:0,lamp:0,pd:0
+  };
+  /* ángulo central de cada sector (grados → rad): Ciclos arriba-der, Admin abajo-izq, General arriba */
+  const SECT_A=[330,145,265].map(d=>d*Math.PI/180);
+  const SECT_W=[108,72,116].map(d=>d*Math.PI/180);
+  function computeOrbitalPositions(){
+    const W=stage.clientWidth,H=stage.clientHeight;
+    const oCX=(W-170)*0.46+16, oCY=H*0.5;
+    const rPerRow=[0,88,183,268,348];
+    const dirN=nodes.find(o=>o.n&&o.n.id==='dir');
+    if(dirN){dirN.ox=oCX;dirN.oy=oCY;}
+    [0,1,2,3].forEach(row=>{
+      const rNodes=nodes.filter(o=>o.row===row&&!(o.n&&o.n.id==='dir'));
+      if(!rNodes.length)return;
+      const r=rPerRow[row+1];
+      const bk=[[],[],[]];
+      rNodes.forEach(o=>{const s=NODE_SECT[o.n?.id??o.id]??2;bk[s].push(o);});
+      bk.forEach((list,s)=>{
+        if(!list.length)return;
+        list.forEach((o,i)=>{
+          const ang=SECT_A[s]+(list.length>1?(i/(list.length-1)-.5)*SECT_W[s]:0);
+          o.ox=oCX+r*Math.cos(ang); o.oy=oCY+r*Math.sin(ang);
+        });
+      });
+    });
+  }
 
   function hover(target,fillFn,on,off){
     target.addEventListener('mouseenter',e=>{on();D.open(target,fillFn,e);});
@@ -665,6 +696,17 @@
   const perms=a=>a.length<2?[a]:a.flatMap((x,i)=>perms([...a.slice(0,i),...a.slice(i+1)]).map(p=>[x,...p]));
 
   /* ---------- Organigrama sobre la grilla: círculos, contenido bajo cada uno y líneas ---------- */
+  /* SEC helpers (Welzl) — usadas en layout() y en frame() para recalcular d3orbs con posiciones lerpeadas */
+  const _c2=(p,q)=>({x:(p.x+q.x)/2,y:(p.y+q.y)/2,r:Math.hypot(p.x-q.x,p.y-q.y)/2});
+  const _c3=(p,q,s)=>{const ax=q.x-p.x,ay=q.y-p.y,bx=s.x-p.x,by=s.y-p.y,d=2*(ax*by-ay*bx);
+    if(Math.abs(d)<1e-10)return _c2(p,q);
+    const ux=(by*(ax*ax+ay*ay)-ay*(bx*bx+by*by))/d,uy=(ax*(bx*bx+by*by)-bx*(ax*ax+ay*ay))/d;
+    return {x:ux+p.x,y:uy+p.y,r:Math.hypot(ux,uy)};};
+  const _ins=(p,c)=>Math.hypot(p.x-c.x,p.y-c.y)<=c.r+1e-6;
+  const sec=pts=>{let c={x:pts[0].x,y:pts[0].y,r:0};for(let i=1;i<pts.length;i++)if(!_ins(pts[i],c)){
+    c={x:pts[i].x,y:pts[i].y,r:0};for(let j=0;j<i;j++)if(!_ins(pts[j],c)){
+      c=_c2(pts[i],pts[j]);for(let k=0;k<j;k++)if(!_ins(pts[k],c))c=_c3(pts[i],pts[j],pts[k]);}}return c;};
+
   function layout(){
     const bw=BW,W=stage.clientWidth,H=stage.clientHeight;
     svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
@@ -703,7 +745,21 @@
         y+=(pos[pos.length-1][1]+1)*(2*r+g)+m.sep;
       });
       const mine=dots.filter(d=>d.par===o);
-      mine.forEach((d,i)=>{d.c.setAttribute('r',rd.toFixed(2));d.c.setAttribute('cx',(x0+dp*(i%per+.5)).toFixed(1));d.c.setAttribute('cy',(y+rd+Math.floor(i/per)*dp).toFixed(1));d.t0=t0+.04+i*.0012;});
+      mine.forEach((d,i)=>{
+        const dcx=x0+dp*(i%per+.5), dcy=y+rd+Math.floor(i/per)*dp;
+        d.c.setAttribute('r',rd.toFixed(2));
+        d.c.setAttribute('cx',dcx.toFixed(1));
+        d.c.setAttribute('cy',dcy.toFixed(1));
+        d.t0=t0+.04+i*.0012;
+        d.lx=dcx; d.ly=dcy;
+        /* orbital: 2 anillos concéntricos, alternando sentido */
+        const half=Math.ceil(mine.length/2), ring=i<half?0:1;
+        const nR=ring===0?half:mine.length-half, iR=ring===0?i:i-half;
+        d.orR=o.r+(ring===0?22:40);
+        d.ang0=(iR/Math.max(nR,1))*Math.PI*2+(ring*Math.PI/Math.max(nR,1))-Math.PI/2;
+        d.orSpd=(ring===0?1:-0.7)*0.00022;
+        d.orCx=o.cx; d.orCy=o.cy;
+      });
     });
 
     /* líneas: salen por el costado izquierdo del círculo, bajan por el canal entre columnas,
@@ -784,15 +840,6 @@
     });
     /* D3: cada órbita pasa por los centros de los nodos extremos del grupo (smallest enclosing circle, Welzl).
        Así "pasa por" los círculos miembros clave, no los encierra con padding. */
-    const _c2=(p,q)=>({x:(p.x+q.x)/2,y:(p.y+q.y)/2,r:Math.hypot(p.x-q.x,p.y-q.y)/2});
-    const _c3=(p,q,s)=>{const ax=q.x-p.x,ay=q.y-p.y,bx=s.x-p.x,by=s.y-p.y,d=2*(ax*by-ay*bx);
-      if(Math.abs(d)<1e-10)return _c2(p,q);
-      const ux=(by*(ax*ax+ay*ay)-ay*(bx*bx+by*by))/d,uy=(ax*(bx*bx+by*by)-bx*(ax*ax+ay*ay))/d;
-      return {x:ux+p.x,y:uy+p.y,r:Math.hypot(ux,uy)};};
-    const _ins=(p,c)=>Math.hypot(p.x-c.x,p.y-c.y)<=c.r+1e-6;
-    const sec=pts=>{let c={x:pts[0].x,y:pts[0].y,r:0};for(let i=1;i<pts.length;i++)if(!_ins(pts[i],c)){
-      c={x:pts[i].x,y:pts[i].y,r:0};for(let j=0;j<i;j++)if(!_ins(pts[j],c)){
-        c=_c2(pts[i],pts[j]);for(let k=0;k<j;k++)if(!_ins(pts[k],c))c=_c3(pts[i],pts[j],pts[k]);}}return c;};
     d3orbs.forEach((o,i)=>{
       const g=o.spec,mem=g.members?g.members.map(id=>byId[id]).filter(Boolean):nodes.filter(n=>n.kind!=='staff');
       if(!mem.length)return;
@@ -801,6 +848,7 @@
       d3labs[i].style.transform=`translate(${(c.x-55).toFixed(1)}px,${(c.y-c.r-18).toFixed(1)}px)`;
       d3labs[i].style.width='110px';d3labs[i].style.textAlign='center';
     });
+    computeOrbitalPositions();
   }
 
   /* ---------- Pop-up del organigrama ---------- */
@@ -862,20 +910,27 @@
     /* 3 momentos: transición 01→02 larga (equipo visible), ortho estable para leerlo, luego orbital */
     const T3S=.88,step=t<A0+.42?0:(t<T3S?1:2);if(step!==stepNow){stepNow=step;stepK.textContent=STEPS[step][0];stepT.textContent=STEPS[step][1];}
     const p3=ease(clamp((t-T3S)/.18));         /* progreso del tercer momento: 0 en organigrama → 1 en orbital */
+    const ep3=ease(p3);
     /* los nombres de nivel entran con el organigrama (fase 2) y se desvanecen al pasar al orbital (fase 3) */
-    lvlsEl.style.opacity=(ease(clamp((t-A0-.1)/.3))*(1-p3)).toFixed(3);
+    lvlsEl.style.opacity=(ease(clamp((t-A0-.1)/.3))*lerp(1,0,ep3)).toFixed(3);
     lv.forEach(L=>{L.el.style.transform=`translate(${lerp(L.a.x,L.b.x,ls).toFixed(1)}px,${lerp(L.a.y,L.b.y,ls).toFixed(1)}px)${PORT?'':' translateY(-50%)'}`;});
-
     nodes.forEach(o=>{
       let pA,pB,sc=1;
       if(o.card){pA=ease(clamp((t-A0-o.delay)/.26));pB=ease(clamp((t-A0-.30-o.delay)/.22));}   // 1) se dibuja el círculo · 2) la foto da paso a la sigla (ambas más lentas)
       else{pA=1;pB=sc=ease(clamp((t-o.t0)/.07));}
       o.pB=pB;
       draw(o.circ,o.card?pA:1);o.circ.style.fillOpacity=pB.toFixed(3);
-      if(!o.card){o.g.style.opacity=pB.toFixed(3);o.g.setAttribute('transform',`translate(${o.cx.toFixed(1)} ${o.cy.toFixed(1)}) scale(${Math.max(sc,.001).toFixed(3)})`);}
+      if(!o.card){
+        o.g.style.opacity=pB.toFixed(3);
+        const nx=o.ox!==undefined?lerp(o.cx,o.ox,ep3):o.cx;
+        const ny=o.oy!==undefined?lerp(o.cy,o.oy,ep3):o.cy;
+        o.g.setAttribute('transform',`translate(${nx.toFixed(1)} ${ny.toFixed(1)}) scale(${Math.max(sc,.001).toFixed(3)})`);
+        /* actualiza el centro de órbita de los puntos de docentes para que sigan al nodo */
+        if(p3>0) dots.filter(d=>d.par===o).forEach(d=>{d.orCx=nx;d.orCy=ny;});
+      }
       o.txt.style.opacity=clamp((pB-.55)/.45).toFixed(3);
-      if(o.cap)o.cap.style.opacity=clamp((pB-.5)*2).toFixed(3);
-      o.crz.style.opacity=(.55*pB).toFixed(3);
+      if(o.cap)o.cap.style.opacity=(clamp((pB-.5)*2)*lerp(1,0,ep3)).toFixed(3);
+      o.crz.style.opacity=(.55*pB*lerp(1,0,ep3)).toFixed(3);
     });
     CARDS.forEach(c=>{
       /* escritorio: el recuadro no se mueve, se desvanece bajo su círculo · celular: el equipo se desvanece y el organigrama se dibuja en su propia grilla */
@@ -887,14 +942,34 @@
       c.card.style.visibility=op<.001?'hidden':'';
       c.card.style.pointerEvents=t<Math.min(A0,.05)?'auto':'none';
     });
-    edges.forEach(e=>{draw(e.path,ease(clamp((t-e.t0)/e.dur)));e.path.style.opacity=((e.path.style.opacity||1)*(1-p3)).toFixed(3);});
-    /* D3 · las 3 órbitas de agrupación aparecen con el tercer momento */
-    d3orbs.forEach(o=>o.el.style.opacity=p3.toFixed(3));
+    /* fase 3: líneas y bead se desvanecen completamente (la estructura orbital reemplaza la jerárquica) */
+    edges.forEach(e=>{draw(e.path,ease(clamp((t-e.t0)/e.dur)));e.path.style.opacity=(parseFloat(e.path.style.opacity||1)*lerp(1,0,ep3)).toFixed(3);});
+    draw(bead,ease(clamp((t-A0-.40)/.14)));bead.style.opacity=(parseFloat(bead.style.opacity||1)*lerp(1,0,ep3)).toFixed(3);
+    /* D3 · las 3 órbitas de agrupación aparecen con el tercer momento, recalculadas con posiciones lerpeadas */
+    d3orbs.forEach((o2,i)=>{
+      o2.el.style.opacity=p3.toFixed(3);
+      if(p3>0){
+        const g=o2.spec,mem=g.members?g.members.map(id=>byId[id]).filter(Boolean):nodes.filter(n=>n.kind!=='staff');
+        if(!mem.length)return;
+        const pts=mem.map(n=>({x:n.ox!==undefined?lerp(n.cx,n.ox,ep3):n.cx, y:n.oy!==undefined?lerp(n.cy,n.oy,ep3):n.cy}));
+        const c=sec(pts);
+        o2.el.setAttribute('cx',c.x.toFixed(1));o2.el.setAttribute('cy',c.y.toFixed(1));o2.el.setAttribute('r',c.r.toFixed(1));
+        d3labs[i].style.transform=`translate(${(c.x-55).toFixed(1)}px,${(c.y-c.r-18).toFixed(1)}px)`;
+      }
+    });
     d3labs.forEach(l=>l.style.opacity=p3.toFixed(3));
-    draw(bead,ease(clamp((t-A0-.40)/.14)));bead.style.opacity=((bead.style.opacity||1)*(1-p3)).toFixed(3);
     items.forEach(it=>{const p=ease(clamp((t-it.t0)/.08));it.g.style.opacity=p.toFixed(3);
       it.g.setAttribute('transform',`translate(${it.px.toFixed(1)} ${it.py.toFixed(1)}) scale(${Math.max(p,.001).toFixed(3)})`);});
-    dots.forEach(d=>{d.c.style.opacity=ease(clamp((t-d.t0)/.07)).toFixed(3);});
+    /* fase 3: los puntos de docentes orbitan su nodo */
+    dots.forEach(d=>{
+      d.c.style.opacity=ease(clamp((t-d.t0)/.07)).toFixed(3);
+      if(d.orR!==undefined&&p3>0){
+        const ang=d.ang0+(REDUCED?0:now*d.orSpd);
+        const ox=d.orCx+d.orR*Math.cos(ang), oy=d.orCy+d.orR*Math.sin(ang);
+        d.c.setAttribute('cx',lerp(d.lx,ox,ep3).toFixed(1));
+        d.c.setAttribute('cy',lerp(d.ly,oy,ep3).toFixed(1));
+      }
+    });
     const live=t>A0+.8;
     if(live!==liveNow){liveNow=live;svg.classList.toggle('live',live);
       svg.querySelectorAll('.node,.it').forEach(g=>g.setAttribute('tabindex',live?0:-1));
