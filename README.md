@@ -37,9 +37,12 @@ es además la **fuente para la migración a WordPress** que hará la agencia.
 | Noticias (incluye Laboral) | [ver](https://emiguerra.github.io/diseno-web-udp/noticias.html) | [noticias.html](noticias.html) |
 | Explora | [ver](https://emiguerra.github.io/diseno-web-udp/explora.html) | [explora.html](explora.html) |
 | Postula (incluye Visita FAAD) | [ver](https://emiguerra.github.io/diseno-web-udp/postula.html) | [postula.html](postula.html) |
-| Organigrama · escritorio | [ver](https://emiguerra.github.io/diseno-web-udp/cursos/constelacion.html) | [cursos/constelacion.html](cursos/constelacion.html) |
-| Organigrama · celular | [ver](https://emiguerra.github.io/diseno-web-udp/cursos/constelacion-mobile.html) | [cursos/constelacion-mobile.html](cursos/constelacion-mobile.html) |
+| Organigrama · escritorio (constelación original) | [ver](https://emiguerra.github.io/diseno-web-udp/cursos/constelacion.html) | [cursos/constelacion.html](cursos/constelacion.html) |
+| Organigrama · celular (constelación original) | [ver](https://emiguerra.github.io/diseno-web-udp/cursos/constelacion-mobile.html) | [cursos/constelacion-mobile.html](cursos/constelacion-mobile.html) |
+| Diagrama 01 · Organigrama → constelación (scrollytelling) | [ver](https://emiguerra.github.io/diseno-web-udp/cursos/diagrama-01-organigrama.html) | [cursos/diagrama-01-organigrama.html](cursos/diagrama-01-organigrama.html) |
+| Diagrama 01 · celular | [ver](https://emiguerra.github.io/diseno-web-udp/cursos/diagrama-01-organigrama-mobile.html) | [cursos/diagrama-01-organigrama-mobile.html](cursos/diagrama-01-organigrama-mobile.html) |
 | Diagrama 02 · Proyecto Académico | [ver](https://emiguerra.github.io/diseno-web-udp/cursos/diagrama-02-proyecto-academico.html) | [cursos/diagrama-02-proyecto-academico.html](cursos/diagrama-02-proyecto-academico.html) |
+| Diagrama 03 · Equipo → organigrama → ecosistema (scrollytelling) | [ver](https://emiguerra.github.io/diseno-web-udp/cursos/diagrama-03-equipo.html) | [cursos/diagrama-03-equipo.html](cursos/diagrama-03-equipo.html) |
 | Formulario oportunidad laboral | [ver](https://emiguerra.github.io/diseno-web-udp/formularios/oportunidad-laboral.html) | [formularios/oportunidad-laboral.html](formularios/oportunidad-laboral.html) |
 | Formulario visita FAAD | [ver](https://emiguerra.github.io/diseno-web-udp/formularios/visita.html) | [formularios/visita.html](formularios/visita.html) |
 
@@ -82,7 +85,10 @@ es además la **fuente para la migración a WordPress** que hará la agencia.
 ├── cursos/
 │   ├── constelacion.html          organigrama, versión escritorio
 │   ├── constelacion-mobile.html   organigrama, versión celular (≤ 768 px)
+│   ├── diagrama-01-organigrama.html         organigrama → constelación (scrollytelling)
+│   ├── diagrama-01-organigrama-mobile.html  ídem, versión celular
 │   ├── diagrama-02-proyecto-academico.html  diagrama del proyecto académico (scrollytelling)
+│   ├── diagrama-03-equipo.html    equipo → organigrama → ecosistema (scrollytelling)
 │   ├── datos_catalogo/            cursos.json, cursos.csv e imagenes/
 │   └── scraper_catalogo.py        regenera cursos.json desde el catálogo
 │
@@ -178,19 +184,61 @@ de fondo de Nosotros no se ve en el sitio en línea.
 
 ---
 
-## 7. Revertir un cambio
+## 7. Diagrama 03 · ecosistema del equipo
+
+[`cursos/diagrama-03-equipo.html`](cursos/diagrama-03-equipo.html) es una
+página autocontenida (un solo archivo: datos, estilos y lógica). Cuenta el
+equipo en tres momentos encadenados al scroll:
+
+1. **Equipo** — los retratos de quienes componen la Escuela.
+2. **Organigrama** — los mismos círculos ordenados por jerarquía, con las
+   líneas ortogonales de dependencia.
+3. **Ecosistema** — los círculos migran a un sistema de anillos: el radio
+   marca el nivel jerárquico y las órbitas punteadas son las colaboraciones
+   entre áreas. A los costados aparecen los 49 ramos (izquierda) y los 87
+   docentes agrupados por mención (derecha); al pasar el cursor por un ramo
+   se encienden sus docentes y sus menciones, y viceversa.
+
+Reglas de diagramación que conviene no romper al editar:
+
+- **El radio significa nivel jerárquico, y solo eso.** Por eso la escala es
+  uniforme, nunca elíptica: estirar un eje haría que unas áreas parecieran
+  más cercanas al centro que sus pares del mismo nivel. Lo único que se
+  ajusta para acomodar el dibujo es la rotación del conjunto, que no altera
+  ninguna relación.
+- **El ecosistema vive dentro de un bloque fijo** (32.22%–72.22% del ancho,
+  24.44%–95.56% del alto), medido para que nunca pise las listas laterales
+  —ni siquiera mientras los círculos flotan—. El tamaño y el centrado se
+  calculan solos a partir de ese bloque.
+- **Dos módulos nunca se tocan.** El reparto angular y la escala se calculan
+  iterando hasta concordar; si el conjunto pide más de 360°, los círculos y
+  sus halos se achican lo justo para que quepan.
+
+**Modo coordenadas** (herramienta de autor): con la página abierta, la tecla
+`C`, el botón *+ coordenadas* o `?coord=1` activan una grilla direccionable
+sobre la trama de cruces. Cada clic copia una coordenada tipo `O6 (696, 264)`
+para dictar dónde va cada bloque.
+
+Los datos del equipo, los ramos y las menciones están **dentro del archivo**
+(constantes `ECO`, `CURSOS` y `NODES`), no en los JSON del sitio.
+
+---
+
+## 8. Revertir un cambio
 
 En GitHub: abrir el historial del archivo, elegir la versión anterior y
 restaurarla (*revert*). El sitio se vuelve a publicar solo.
 
 ---
 
-## 8. Pendientes
+## 9. Pendientes
 
 1. **Portafolio:** depurar los datos de autores con las planillas de
    cohortes 2023–2026; corregir 3 proyectos con columnas corridas (Veo Leo,
    Diáfano, Dosimar); reemplazar las 23 portadas provisorias por las definitivas.
 2. **Docentes:** identificar y nombrar las fotos de ~10 docentes que faltan.
+   En el Diagrama 03 quedan **20 ramos sin docente asignado** y el código
+   `DIS8VIAT1_2` figura en la base pero no en el catálogo de 49 cursos.
 3. **Formularios:** agregar el correo de Admisión para los avisos de visitas.
 4. **Videos:** subir `Facultad.mp4` o pasar los videos a Vimeo/YouTube.
 5. **Repositorio:** transferirlo a la organización GitHub `disenoUDP`.
