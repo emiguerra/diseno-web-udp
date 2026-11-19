@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Malla Curricular · Diseño UDP</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+<link rel="stylesheet" href="../assets/css/styles.css?v=dev">
+<style>
+    /* Copia de trabajo: aísla la malla interactiva fuera de nosotros.html. */
+    body{background:#f4f4f4; padding:40px 24px;}
+    .malla-bloque{max-width:1400px; margin:0 auto;}
+</style>
+</head>
+<body>
+
+    <article id="malla" class="malla-bloque" aria-labelledby="malla-titulo">
+        <div class="malla-topbar">
+            <h2 id="malla-titulo">Malla Curricular · Diseño UDP</h2>
+            <div class="malla-topbar-actions">
+                <span class="malla-topbar-meta">Malla · 10 semestres · 3 ciclos</span>
+            </div>
+        </div>
+
+        <!-- Etiquetas de mención -->
+        <div class="malla-controles" id="malla-controles">
+            <button class="mi-filtro-btn activo" data-filtro="" onclick="mallaFiltrar(this)">Plan Completo</button>
+            <button class="mi-filtro-btn" data-filtro="grafico" onclick="mallaFiltrar(this)">Diseño Gráfico</button>
+            <button class="mi-filtro-btn" data-filtro="industrial" onclick="mallaFiltrar(this)">Diseño Industrial</button>
+            <button class="mi-filtro-btn" data-filtro="interaccion" onclick="mallaFiltrar(this)">Diseño de Interacción</button>
+            <button class="mi-filtro-btn" data-filtro="indumentaria" onclick="mallaFiltrar(this)">Textil e Indumentaria</button>
+            <button class="mi-filtro-btn mi-filtro-doble" data-filtro="doble" onclick="mallaToggleDoble(this)">+ Doble Mención</button>
+        </div>
+
+        <!-- Navegación por categoría de ramo -->
+        <div class="malla-controles" id="malla-controles-categoria">
+            <button class="mi-ciclo-btn" data-categoria="interdisciplinar" onclick="mallaFiltrarCategoria(this)">Interdisciplinar FAAD</button>
+            <button class="mi-ciclo-btn" data-categoria="talleres" onclick="mallaFiltrarCategoria(this)">Talleres y Laboratorios</button>
+            <button class="mi-ciclo-btn" data-categoria="teoria" onclick="mallaFiltrarCategoria(this)">Historia, Teoría e Investigación</button>
+            <button class="mi-ciclo-btn" data-categoria="medios" onclick="mallaFiltrarCategoria(this)">Medios y Lenguajes Visuales</button>
+            <button class="mi-ciclo-btn" data-categoria="fabricacion" onclick="mallaFiltrarCategoria(this)">Fabricación y Producción</button>
+            <button class="mi-ciclo-btn" data-categoria="innovacion" onclick="mallaFiltrarCategoria(this)">Innovación y Gestión</button>
+            <button class="mi-ciclo-btn" data-categoria="practicas" onclick="mallaFiltrarCategoria(this)">Prácticas</button>
+            <button class="mi-ciclo-btn" data-categoria="electivos" onclick="mallaFiltrarCategoria(this)">Electivos</button>
+            <button class="mi-ciclo-btn" data-categoria="general" onclick="mallaFiltrarCategoria(this)">Formación General / Inglés</button>
+        </div>
+
+        <!-- Banda de ciclos -->
+        <div class="mi-ciclo-bar">
+            <div class="mi-ciclo" data-ciclo="inicial" style="grid-column:1/5">Ciclo Inicial</div>
+            <div class="mi-ciclo" data-ciclo="licenciatura" style="grid-column:5/9">Ciclo Licenciatura</div>
+            <div class="mi-ciclo" data-ciclo="profesional" style="grid-column:9/11">Ciclo Profesional</div>
+        </div>
+
+        <!-- Bloque dashboard: malla -->
+        <div class="malla-dashboard">
+            <div class="malla-interactiva-wrap">
+                <div class="malla-interactiva">
+
+                <!-- ROW 1: Semestre headers -->
+                <div class="mi-cell mi-header" data-sem="1" style="grid-column:1;grid-row:1">Semestre 1<span class="mi-header-sub">base</span></div>
+                <div class="mi-cell mi-header" data-sem="2" style="grid-column:2;grid-row:1">Semestre 2<span class="mi-header-sub">base</span></div>
+                <div class="mi-cell mi-header" data-sem="3" style="grid-column:3;grid-row:1">Semestre 3<span class="mi-header-sub">base</span></div>
+                <div class="mi-cell mi-header" data-sem="4" style="grid-column:4;grid-row:1">Semestre 4<span class="mi-header-sub">base</span></div>
+                <div class="mi-cell mi-header" data-sem="5" style="grid-column:5;grid-row:1">Semestre 5<span class="mi-header-sub" id="mi-sub-sem5"></span></div>
+                <div class="mi-cell mi-header" data-sem="6" style="grid-column:6;grid-row:1">Semestre 6<span class="mi-header-sub" id="mi-sub-sem6"></span></div>
+                <div class="mi-cell mi-header" data-sem="7" style="grid-column:7;grid-row:1">Semestre 7<span class="mi-header-sub" id="mi-sub-sem7"></span></div>
+                <div class="mi-cell mi-header" data-sem="8" style="grid-column:8;grid-row:1">Semestre 8<span class="mi-header-sub" id="mi-sub-sem8"></span></div>
+                <div class="mi-cell mi-header" data-sem="9" style="grid-column:9;grid-row:1">Semestre 9<span class="mi-header-sub" id="mi-sub-sem9"></span></div>
+                <div class="mi-cell mi-header" data-sem="10" style="grid-column:10;grid-row:1">Semestre 10<span class="mi-header-sub" id="mi-sub-sem10"></span></div>
+
+                <!-- ROW 2: Taller Internacional banner -->
+                <div class="mi-cell mi-empty" style="grid-column:1/5;grid-row:2"></div>
+                <div class="mi-cell mi-taller-int" data-categoria="talleres" style="grid-column:5/9;grid-row:2;cursor:pointer" data-nombre="Taller Internacional / Latitud Sur" data-cat="Talleres Verticales" data-codigo="FAD1018 / FAD1017" data-semestre="Año · semestre" data-duracion="Semestral" onclick="mostrarDetalles(this)">Taller Internacional / Latitud Sur ⊕</div>
+                <div class="mi-cell mi-empty" style="grid-column:9/11;grid-row:2"></div>
+
+                <!-- ROW 3: Talleres + Labs + Seminario + Proyecto -->
+                <div class="mi-cell mi-tipo-taller" data-categoria="talleres" style="grid-column:1;grid-row:3"
+    data-nombre="Taller I Exploración Creativa"
+    data-codigo="DIS09111"
+    data-creditos="8 cr SCT"
+    data-duracion="Semestral · 3 cátedras + 3 prácticas + 2 ayudantías"
+    data-semestre="1er año · 1er semestre · Req: Admisión"
+    data-desc="Asignatura vertebral de integración teórico-práctica que inicia la línea de Talleres y Laboratorios. Ejercita la observación y descripción como procesos para resolver encargos, y la articulación de discursos desde lo descriptivo hacia lo analítico. Desarrolla competencias en búsqueda de referencias disciplinares, experimentación y colaboración en entornos dinámicos mediante ejercicios, charlas y visitas culturales. Enfatiza coherencia entre fundamentos conceptuales y materialización formal mediante un tema conductor. Facilita el tránsito a la educación universitaria fortaleciendo pensamiento crítico y expresión oral y escrita. Línea curricular: Taller I y II → Taller III y IV → Lab Interdisciplinar I-IV."
+    onclick="mostrarDetalles(this)"><span class="mi-cell-name">Taller I<br>Exploración Creativa</span></div>
+                <div class="mi-cell mi-tipo-taller" data-categoria="talleres" style="grid-column:2;grid-row:3"
+    data-nombre="Taller II Exploración Creativa"
+    data-codigo="DIS09121"
+    data-creditos="8 cr SCT"
+    data-duracion="Semestral · 3 cátedras + 3 prácticas + 2 ayudantías"
+    data-semestre="1er año · 2do semestre · Req: Admisión"
+    data-desc="Asignatura vertebral de integración teórico-práctica de la línea de Talleres y Laboratorios. Consolida las habilidades de observación y descripción del semestre anterior como base metodológica, ejercitando la abstracción y conceptualización para resolver proyectos de diseño. Desarrolla competencias disciplinares mediante encargos, charlas con actores del medio nacional e internacional y visitas a terreno, con un primer acercamiento a la industria. Fortalece pensamiento crítico, expresión oral y escrita, autonomía y capacidad de abordar prácticas materiales, visuales y digitales, con énfasis en coherencia desde los fundamentos hasta la propuesta formal. Línea curricular: Taller III y IV → Lab Interdisciplinar I-IV."
+    onclick="mostrarDetalles(this)"><span class="mi-cell-name">Taller II<br>Exploración Creativa</span></div>
+                <div class="mi-cell mi-tipo-taller" data-categoria="talleres" style="grid-column:3;grid-row:3" data-nombre="Taller III Problema y Concepto" data-codigo="DIS09211" data-creditos="8 cr" data-semestre="Año · semestre" data-duracion="Semestral" data-desc="Curso teórico-práctico con dimensión instrumental aplicada a cada mención. Ejercita el análisis crítico de la realidad mediante la identificación autónoma de una problemática y una aproximación metodológica al proyecto, con foco en trabajo de campo, estado del arte, análisis de referentes y definición de objetivos, para delimitar un problema de diseño y su propuesta de valor." data-cat="Taller III" onclick="mostrarDetalles(this)"><span class="mi-cell-name">Taller III<br>Problema y Concepto</span><span class="mi-star">★</span></div>
+                <div class="mi-cell mi-tipo-taller" data-categoria="talleres" style="grid-column:4;grid-row:3" data-nombre="Taller IV Problema y Concepto" data-codigo="DIS09221" data-creditos="8 cr" data-semestre="Año · semestre" data-duracion="Semestral" data-desc="Curso teórico-práctico que profundiza el análisis crítico de la realidad y el tránsito hacia la identificación autónoma de una problemática, con foco en delimitar el problema de diseño y su ámbito de innovación. Cierra el ciclo inicial de la carrera, fomentando estrategias esenciales para el ejercicio profesional del diseño." onclick="mostrarDetalles(this)"><span class="mi-cell-name">Taller IV<br>Problema y Concepto</span><span class="mi-star">★</span></div>
+                <div class="mi-cell mi-tipo-taller" data-categoria="talleres" style="grid-column:5;grid-row:3" data-nombre="Laboratorio Interdisciplinario I" data-creditos="8 cr" data-semestre="Año · semestre" data-duracion="Semestral" data-cat="Talleres Verticales" data-desc="Asignatura que ejercita la proyectación disciplinar en el abordaje de problemas interdisciplinarios, con foco en procesos iterativos que amplían los espacios de desarrollo profesional. Fortalece habilidades para representar y comunicar proyectos de diseño con perspectiva crítica, creativa e innovadora, trabajando con contrapartes reales." onclick="mostrarDetalles(this)"><span class="mi-cell-name">Laboratorio<br>Interdisciplinario I</span><span class="mi-star">★</span></div>
+                <div class="mi-cell mi-tipo-taller" data-categoria="talleres" style="grid-column:6;grid-row:3" data-nombre="Laboratorio Interdisciplinario II" data-creditos="8 cr" data-semestre="Año · semestre" data-duracion="Semestral" data-cat="Talleres Verticales" data-desc="Progresión del laboratorio anterior, que profundiza el trabajo en el territorio y con actores clave, desarrollando habilidades de gestión de proyectos y visión crítica para identificar el aporte disciplinar en propuestas de diseño interdisciplinario." onclick="mostrarDetalles(this)"><span class="mi-cell-name">Laboratorio<br>Interdisciplinario II</span><span class="mi-star">★</span></div>
+                <div class="mi-cell mi-tipo-taller" data-categoria="talleres" style="grid-column:7;grid-row:3" data-nombre="Laboratorio Interdisciplinario III" data-creditos="8 cr" data-semestre="Año · semestre" data-duracion="Semestral" data-cat="Talleres Verticales" data-desc="Orienta la detección y resolución de problemas complejos en escenarios emergentes y especulativos, ejercitando el trabajo en el territorio con contrapartes reales y la comunicación efectiva del proyecto a diversas audiencias dentro y fuera del ámbito académico." onclick="mostrarDetalles(this)"><span class="mi-cell-name">Laboratorio<br>Interdisciplinario III</span><span class="mi-star">★</span></div>
+                <div class="mi-cell mi-tipo-taller" data-categoria="talleres" style="grid-column:8;grid-row:3" data-nombre="Laboratorio Interdisciplinario IV" data-creditos="8 cr" data-semestre="Año · semestre" data-duracion="Semestral" data-cat="Talleres Verticales" data-desc="Cierra la línea de Talleres y Laboratorios Interdisciplinares ejercitando la autonomía y el criterio disciplinar del estudiantado mediante la gestión, validación y transferencia de soluciones viables al medio, en preparación directa para el ciclo de Titulación." onclick="mostrarDetalles(this)"><span class="mi-cell-name">Laboratorio<br>Interdisciplinario IV</span><span class="mi-star">★</span></div>
+                <div class="mi-cell mi-tipo-taller" data-categoria="talleres" style="grid-column:9;grid-row:3/5" data-nombre="Seminario de Título" data-codigo="DIS09511 · DIS09512 · DIS09513" data-creditos="15 cr c/u" data-semestre="Año · semestre" data-duracion="Semestral" data-desc="Representa el cierre académico y profesional de la carrera: un espacio de integración que permite consolidar y demostrar las competencias disciplinares mediante el desarrollo de un proyecto, una investigación o una experiencia profesional. Se delimita un marco conceptual, se analiza el estado del arte y se formula una metodología de trabajo, según la vía elegida (proyecto, investigación o profesional)." data-cat="Seminario de Título" onclick="mostrarDetalles(this)"><span class="mi-cell-name">Seminario<br>de Título</span></div>
+                <div class="mi-cell mi-tipo-taller" data-categoria="talleres" style="grid-column:10;grid-row:3/8" data-nombre="Proyecto de Título" data-codigo="DIS09521 · DIS09522 · DIS09523" data-creditos="30 cr c/u" data-semestre="Año · semestre" data-duracion="Semestral" data-desc="Etapa culminante del proceso formativo: implementación y materialización completa del proyecto, investigación o experiencia profesional formulada en el Seminario de Título, con documentación sistemática, evaluación crítica de resultados y comunicación final de la propuesta." onclick="mostrarDetalles(this)"><span class="mi-cell-name">Proyecto<br>de Título</span></div>
+
+                <!-- ROW 4: Teoría e Investigación -->
+                <div class="mi-cell mi-tipo-regular" data-categoria="teoria" style="grid-column:1;grid-row:4" data-nombre="Visualidad y cultura" data-codigo="DIS09112" data-creditos="5 cr SCT" data-duracion="Semestral · 2 cátedras + 2 ayudantías" data-semestre="1er año · 1er semestre · Req: Admisión" data-desc="Asignatura teórica de la línea Historia, Teoría e Investigación. Introduce la dimensión visual de la cultura facilitando el tránsito a la educación universitaria mediante pensamiento crítico y expresión oral y escrita. Aborda la historia moderna de la cultura occidental desde la visualidad: modernidad e Ilustración, vanguardias artísticas del siglo XX, arte pop, arte conceptual y cultura digital. Desarrolla herramientas de análisis visual aplicables a manifestaciones del diseño, arte y arquitectura globales y latinoamericanas. Línea curricular: Cultura del Diseño → Análisis Crítico → Investigación en Diseño → Formulación de Proyectos." onclick="mostrarDetalles(this)"><span class="mi-cell-name">Visualidad y cultura</span></div>
+                <div class="mi-cell mi-tipo-regular" data-categoria="teoria" style="grid-column:2;grid-row:4"
+    data-nombre="Cultura del Diseño"
+    data-codigo="DIS09122"
+    data-creditos="5 cr SCT"
+    data-duracion="Semestral · 2 cátedras + 2 ayudantías"
+    data-semestre="1er año · 2do semestre · Req: DIS09112"
+    data-desc="Asignatura teórica de la línea Historia, Teoría e Investigación. Entrega antecedentes sobre el desarrollo histórico del diseño y su surgimiento como disciplina a nivel global y desde América Latina, delimitando principios y conceptos propios del diseño en la modernidad. Aporta conocimientos para la comprensión crítica de los antecedentes de las prácticas contemporáneas del diseño, fortaleciendo pensamiento crítico, expresión oral y escrita, y autonomía para desarrollar proyectos informados y fundamentados. Línea curricular: Análisis Crítico del Diseño → Discusiones Contemporáneas → Investigación en Diseño → Herramientas de Investigación → Formulación de Proyectos."
+    onclick="mostrarDetalles(this)"><span class="mi-cell-name">Cultura del Diseño</span></div>
+                <div class="mi-cell mi-tipo-regular" data-categoria="teoria" style="grid-column:3;grid-row:4" data-nombre="Análisis crítico del diseño" data-codigo="DIS09212" data-creditos="5 cr" data-semestre="Año · semestre" data-duracion="Semestral" data-desc="Asignatura teórica que profundiza en el análisis e interpretación de manifestaciones contemporáneas de la cultura del diseño mediante herramientas de las humanidades y ciencias sociales, comprendiendo el diseño como agente de comunicación, identidad y poder en la sociedad." onclick="mostrarDetalles(this)"><span class="mi-cell-name">Análisis crítico del diseño</span></div>
+                <div class="mi-cell mi-tipo-regular" data-categoria="teoria" style="grid-column:4;grid-row:4" data-nombre="Discusiones Contemporáneas" data-codigo="DIS09222" data-creditos="5 cr" data-semestre="Año · semestre" data-duracion="Semestral" data-desc="Explora el rol del diseño en el contexto actual, desde sus fundamentos epistemológicos hasta sus implicancias éticas, sociales y políticas, movilizando las herramientas críticas adquiridas previamente para analizar debates y problemáticas contemporáneas de la disciplina." onclick="mostrarDetalles(this)"><span class="mi-cell-name">Discusiones Contemporáneas</span></div>
+                <div class="mi-cell mi-tipo-regular" data-categoria="teoria" style="grid-column:6;grid-row:4" data-nombre="Investigación en Diseño" data-codigo="DIS09322" data-creditos="5 cr" data-semestre="Año · semestre" data-duracion="Semestral" data-desc="Introduce principios y herramientas para la investigación en diseño: exploración del estado del arte, formulación de una problemática de investigación y elaboración de un marco conceptual, como base para detectar oportunidades de investigación en distintos contextos." onclick="mostrarDetalles(this)"><span class="mi-cell-name">Investigación en Diseño</span></div>
+                <div class="mi-cell mi-tipo-regular" data-categoria="teoria" style="grid-column:7;grid-row:4" data-nombre="Herramientas de Investigación" data-codigo="DIS09412" data-creditos="5 cr" data-semestre="Año · semestre" data-duracion="Semestral" data-desc="Introduce metodologías de investigación para la producción y análisis de datos cualitativos y cuantitativos orientados a proyectos de investigación en diseño, con técnicas tradicionales y disruptivas para la construcción de datos y la toma de decisiones informadas." onclick="mostrarDetalles(this)"><span class="mi-cell-name">Herramientas de Investigación</span></div>
+                <div class="mi-cell mi-tipo-regular" data-categoria="teoria" style="grid-column:8;grid-row:4" data-nombre="Formulación de Proyectos" data-codigo="DIS09422" data-creditos="5 cr" data-semestre="Año · semestre" data-duracion="Semestral" data-desc="Orientado a la ideación, formulación, planificación y comunicación de proyectos de diseño capaces de responder a problemáticas y oportunidades del territorio nacional, integrando los conocimientos de los cursos de investigación para postular a fondos concursables." onclick="mostrarDetalles(this)"><span class="mi-cell-name">Formulación de Proyectos</span></div>
+
+                <!-- ROW 5: Electivos y Habilidades -->
+                <div class="mi-cell mi-tipo-regular" data-categoria="medios" style="grid-column:1;grid-row:5"
+    data-nombre="Comunicación Visual"
+    data-codigo="DIS09113"
+    data-creditos="5 cr SCT"
+    data-duracion="Semestral · 1 cátedra + 1 práctica + 2 ayudantías"
+    data-semestre="1er año · 1er semestre · Req: Admisión"
+    data-desc="Asignatura teórico-práctica de la línea Medios y Lenguajes. Promueve el desarrollo de habilidades comunicacionales a través del diseño de piezas gráficas en medios análogos y digitales, abordando proyectos bidimensionales y tridimensionales de manera integral. Introduce la concepción y ejecución de proyectos de diseño comunicacional, entregando fundamentos de la comunicación visual, métodos y técnicas aplicadas, y dominio del lenguaje disciplinar para presentar soluciones comunicativas efectivas. Línea curricular: Medios de Expresión Digital → Tipografía y Diagramación → Experimentación Audiovisual."
+    onclick="mostrarDetalles(this)"><span class="mi-cell-name">Comunicación Visual</span></div>
+                <div class="mi-cell mi-tipo-regular" data-categoria="medios" style="grid-column:2;grid-row:5"
+    data-nombre="Geometría Aplicada"
+    data-codigo="DIS09124"
+    data-creditos="5 cr SCT"
+    data-duracion="Semestral · 1 cátedra + 1 práctica + 2 ayudantías"
+    data-semestre="1er año · 2do semestre · Req: DIS09113"
+    data-desc="Asignatura teórico-práctica de la línea Medios y Lenguajes. Proporciona herramientas procedimentales para la representación de proyectos fundamentados en conceptos geométricos y volumétricos de la forma, concibiendo el dibujo geométrico como base del lenguaje disciplinar para la expresión planimétrica y productiva. Promueve la comprensión de figuras bidimensionales que se traducen en volúmenes mediante exploración de procesos creativos y prácticas 2D y 3D, integrando recursos análogos y software especializado para la representación geométrica en proyectos de diseño. Línea curricular: Tipografía y Diagramación → Experimentación Audiovisual."
+    onclick="mostrarDetalles(this)"><span class="mi-cell-name">Geometría Aplicada</span></div>
+                <div class="mi-cell mi-tipo-regular" data-categoria="medios" style="grid-column:3;grid-row:5" data-nombre="Tipografía y Diagramación" data-codigo="DIS09213" data-creditos="5 cr" data-semestre="Año · semestre" data-duracion="Semestral" data-desc="Instruye sobre las bases formales y de aplicación de la tipografía como herramienta fundacional de la comunicación visual, estudiando la arquitectura de la letra desde lo técnico, funcional y expresivo, junto a composición y diagramación para estructurar mensajes visuales claros y efectivos." onclick="mostrarDetalles(this)"><span class="mi-cell-name">Tipografía y Diagramación</span></div>
+                <div class="mi-cell mi-tipo-regular" data-categoria="medios" style="grid-column:4;grid-row:5" data-nombre="Experimentación Audiovisual" data-codigo="DIS09223" data-creditos="5 cr" data-semestre="Año · semestre" data-duracion="Semestral" data-desc="Desarrolla competencias en creación y manipulación de material audiovisual con técnicas análogas y digitales, explorando el lenguaje audiovisual y tendencias innovadoras de la expresión visual y sonora para generar propuestas expresivas adaptadas a la creación, circulación y consumo de contenido actual." onclick="mostrarDetalles(this)"><span class="mi-cell-name">Experimentación Audiovisual</span></div>
+                <div class="mi-cell mi-tipo-electivo" data-categoria="electivos" style="grid-column:5;grid-row:5" data-nombre="Electivo de mención" data-creditos="5 cr" data-semestre="Año · semestre" data-duracion="Semestral" data-cat="Electivos de Mención" onclick="mostrarDetalles(this)"><span class="mi-cell-name">Electivo de mención</span><span class="mi-star">★</span></div>
+                <div class="mi-cell mi-tipo-electivo" data-categoria="electivos" style="grid-column:6;grid-row:5" data-nombre="Electivo de mención" data-creditos="5 cr" data-semestre="Año · semestre" data-duracion="Semestral" data-cat="Electivos de Mención" onclick="mostrarDetalles(this)"><span class="mi-cell-name">Electivo de mención</span><span class="mi-star">★</span></div>
+                <div class="mi-cell mi-tipo-electivo" data-categoria="electivos" style="grid-column:7;grid-row:5" data-nombre="Electivo de mención" data-creditos="5 cr" data-semestre="Año · semestre" data-duracion="Semestral" data-cat="Electivos de Mención" onclick="mostrarDetalles(this)"><span class="mi-cell-name">Electivo de mención</span><span class="mi-star">★</span></div>
+                <div class="mi-cell mi-tipo-electivo" data-categoria="electivos" style="grid-column:8;grid-row:5" data-nombre="Electivo de mención" data-creditos="5 cr" data-semestre="Año · semestre" data-duracion="Semestral" data-cat="Electivos de Mención" onclick="mostrarDetalles(this)"><span class="mi-cell-name">Electivo de mención</span><span class="mi-star">★</span></div>
+                <div class="mi-cell mi-tipo-taller" data-categoria="practicas" style="grid-column:9;grid-row:5/7" data-nombre="Práctica Profesional" data-codigo="DIS09514" data-creditos="10 cr" data-semestre="Año · semestre" data-duracion="Semestral" data-desc="Brinda una experiencia de inmersión en un entorno profesional real donde se aplican y consolidan los conocimientos y habilidades adquiridos, fortaleciendo competencias para el ejercicio profesional y estableciendo redes de contacto relevantes para la futura inserción laboral." onclick="mostrarDetalles(this)"><span class="mi-cell-name">Práctica Profesional</span></div>
+
+                <!-- ROW 6: Diseño aplicado -->
+                <div class="mi-cell mi-tipo-regular" data-categoria="medios" style="grid-column:1;grid-row:6" data-nombre="Dibujo y Observación" data-codigo="DIS09114" data-creditos="4 cr SCT" data-duracion="Semestral · 1 cátedra + 1 práctica + 2 ayudantías" data-semestre="1er año · 1er semestre · Req: Admisión" data-desc="Asignatura práctica de la línea Medios y Lenguajes. Desarrolla habilidades para utilizar el dibujo como herramienta de observación y análisis del cuerpo y sus entornos, entendiéndolo como proceso de síntesis para aprehender el mundo. Trabaja representación y conceptualización visual aplicables a los procesos de diseño mediante técnicas análogas: punto, línea, plano, perspectiva cónica (1 y 2 puntos de fuga) y proyecciones axonométricas. Línea curricular: Medios y Lenguajes → Geometría Aplicada → Pensamiento Computacional → Diseño Basado en Datos." onclick="mostrarDetalles(this)"><span class="mi-cell-name">Dibujo y Observación</span></div>
+                <div class="mi-cell mi-tipo-regular" data-categoria="medios" style="grid-column:2;grid-row:6"
+    data-nombre="Medios de Expresión Digital"
+    data-codigo="DIS09123"
+    data-creditos="4 cr SCT"
+    data-duracion="Semestral · 1 cátedra + 1 práctica + 2 ayudantías"
+    data-semestre="1er año · 2do semestre · Req: DIS09114"
+    data-desc="Asignatura práctica de la línea Medios y Lenguajes. De carácter instrumental, integra las herramientas de expresión bi y tridimensionales del primer semestre para desarrollar visualizaciones de mayor complejidad. Explora diversas técnicas y formatos digitales para fomentar la creatividad y la comunicación visual, analizando críticamente nuevos formatos mediante el estudio de referentes, con el fin de comunicar proyectos de diseño efectivamente a través de medios digitales. Línea curricular: Pensamiento Computacional → Diseño Basado en Datos."
+    onclick="mostrarDetalles(this)"><span class="mi-cell-name">Medios de Expresión Digital</span></div>
+                <div class="mi-cell mi-tipo-regular" data-categoria="medios" style="grid-column:3;grid-row:6" data-nombre="Pensamiento Computacional" data-codigo="DIS09214" data-creditos="4 cr" data-semestre="Año · semestre" data-duracion="Semestral" data-desc="Desarrolla aprendizajes vinculados a la escritura y uso de lenguajes de programación aplicados al diseño: variables, algoritmos, sensores y actuadores, y publicación y mantenimiento de software y hardware de fuente abierta." onclick="mostrarDetalles(this)"><span class="mi-cell-name">Pensamiento Computacional</span></div>
+                <div class="mi-cell mi-tipo-regular" data-categoria="medios" style="grid-column:4;grid-row:6" data-nombre="Diseño Basado en Datos" data-codigo="DIS09224" data-creditos="4 cr" data-semestre="Año · semestre" data-duracion="Semestral" data-desc="Entrega comprensión de los conceptos fundamentales del diseño paramétrico y su aplicación en la resolución de proyectos mediante exploración creativa, usando herramientas y software para crear diseños basados en algoritmos, evaluando su eficiencia y flexibilidad." onclick="mostrarDetalles(this)"><span class="mi-cell-name">Diseño Basado en Datos</span></div>
+                <div class="mi-cell mi-tipo-regular" data-categoria="innovacion" style="grid-column:5;grid-row:6" data-nombre="Diseño crítico y estratégico" data-codigo="DIS09323" data-creditos="4 cr" data-semestre="Año · semestre" data-duracion="Semestral" data-desc="Introduce el diseño crítico como herramienta interrogativa, discursiva y experimental, transformando la percepción del rol del diseño mediante metodologías que desafían normas establecidas, contextualizan decisiones de diseño y exploran sus dimensiones sociopolíticas y éticas." onclick="mostrarDetalles(this)"><span class="mi-cell-name">Diseño crítico y estratégico</span></div>
+                <div class="mi-cell mi-tipo-regular" data-categoria="innovacion" style="grid-column:6;grid-row:6" data-nombre="Innovación y Escenarios Futuros" data-codigo="DIS09413" data-creditos="4 cr" data-semestre="Año · semestre" data-duracion="Semestral" data-desc="Explora el diseño contemporáneo con énfasis en innovación y anticipación de escenarios futuros, desarrollando metodologías especulativas para la creación de escenarios y la resolución de problemas con miras al futuro, integrando tecnologías emergentes y sostenibilidad." onclick="mostrarDetalles(this)"><span class="mi-cell-name">Innovación y Escenarios Futuros</span></div>
+                <div class="mi-cell mi-tipo-regular" data-categoria="innovacion" style="grid-column:7;grid-row:6" data-nombre="Emprendimiento y Gestión" data-codigo="DIS09312" data-creditos="4 cr" data-semestre="Año · semestre" data-duracion="Semestral" data-desc="Entrega comprensión de los principios para la gestión de proyectos, explorando fundamentos de innovación y emprendimiento en diseño, con herramientas para gestión de recursos, presupuestos, cronogramas y equipos, a partir del análisis de casos reales de la industria creativa." onclick="mostrarDetalles(this)"><span class="mi-cell-name">Emprendimiento y Gestión</span></div>
+                <div class="mi-cell mi-tipo-cfgral" data-categoria="general" style="grid-column:8;grid-row:6" data-nombre="Curso de Formación General V" data-codigo="CFG5 6" data-creditos="5 cr" data-semestre="Año · semestre" data-duracion="Semestral" data-desc="Curso de Formación General orientado a aportar con materias complementarias al quehacer profesional y personal, formando al estudiantado con una visión crítica de la sociedad desde un enfoque transdisciplinario." onclick="mostrarDetalles(this)"><span class="mi-cell-name">Curso de Formación General V</span></div>
+
+                <!-- ROW 7: Formación general -->
+                <div class="mi-cell mi-tipo-regular" data-categoria="fabricacion" style="grid-column:1;grid-row:7"
+    data-nombre="Experimentación Material"
+    data-codigo="DIS09115"
+    data-creditos="4 cr SCT"
+    data-duracion="Semestral · 1 cátedra + 1 práctica + 2 ayudantías"
+    data-semestre="1er año · 1er semestre · Req: Admisión"
+    data-desc="Asignatura práctica de la línea Fabricación y Producción. Orienta a los estudiantes en la exploración guiada de distintas tipologías y procesos materiales, desarrollando comprensión de sus posibilidades técnicas y manipulación mediante procesos mecánicos, físicos y químicos con máquinas y herramientas de complejidad inicial. Desarrolla el oficio y las habilidades prácticas en relación a sustratos de diseño, introduciendo la sistematización mediante registro del proceso de trabajo. Línea curricular: Procesos Productivos → Fabricación Digital."
+    onclick="mostrarDetalles(this)"><span class="mi-cell-name">Experimentación Material</span></div>
+                <div class="mi-cell mi-tipo-regular" data-categoria="fabricacion" style="grid-column:2;grid-row:7"
+    data-nombre="Procesos Productivos"
+    data-codigo="DIS09125"
+    data-creditos="4 cr SCT"
+    data-duracion="Semestral · 1 cátedra + 1 práctica + 2 ayudantías"
+    data-semestre="1er año · 2do semestre · Req: DIS09115"
+    data-desc="Asignatura teórico-práctica de la línea Fabricación y Producción. Avanza sobre Experimentación Material hacia la aplicación de procesos y sistemas de fabricación estandarizada y producción seriada de la industria manufacturera nacional, como elementos determinantes del desarrollo de proyectos. Introduce conocimientos de sostenibilidad de producción y competencias en maquinaria para procesos optimizados, aplicados al marco productivo local y al desarrollo de productos factibles. Incluye charlas de profesionales y visitas a espacios del diseño nacional. Línea curricular: Fabricación Digital."
+    onclick="mostrarDetalles(this)"><span class="mi-cell-name">Procesos Productivos</span></div>
+                <div class="mi-cell mi-tipo-regular" data-categoria="fabricacion" style="grid-column:3;grid-row:7" data-nombre="Fabricación Digital" data-codigo="DIS09215" data-creditos="4 cr" data-semestre="Año · semestre" data-duracion="Semestral" data-desc="Asignatura práctica orientada a la comprensión y aplicación de tecnologías de fabricación asistida por computador (impresión 3D, corte láser, fresado CNC), explorando la personalización masiva y la optimización de procesos para traducir modelos digitales en prototipos físicos." onclick="mostrarDetalles(this)"><span class="mi-cell-name">Fabricación Digital</span></div>
+                <div class="mi-cell mi-tipo-cfgral" data-categoria="general" style="grid-column:4;grid-row:7" data-nombre="Curso de Formación General I" data-codigo="CFG1 6" data-creditos="5 cr" data-semestre="Año · semestre" data-duracion="Semestral" data-desc="Curso de Formación General orientado a aportar con materias complementarias al quehacer profesional y personal, formando al estudiantado con una visión crítica de la sociedad desde un enfoque transdisciplinario." onclick="mostrarDetalles(this)"><span class="mi-cell-name">Curso de Formación General I</span></div>
+                <div class="mi-cell mi-tipo-cfgral" data-categoria="general" style="grid-column:5;grid-row:7" data-nombre="Curso de Formación General II" data-codigo="CFG2 6" data-creditos="5 cr" data-semestre="Año · semestre" data-duracion="Semestral" data-desc="Curso de Formación General orientado a aportar con materias complementarias al quehacer profesional y personal, formando al estudiantado con una visión crítica de la sociedad desde un enfoque transdisciplinario." onclick="mostrarDetalles(this)"><span class="mi-cell-name">Curso de Formación General II</span></div>
+                <div class="mi-cell mi-tipo-cfgral" data-categoria="general" style="grid-column:6;grid-row:7" data-nombre="Curso de Formación General III" data-codigo="CFG3 6" data-creditos="5 cr" data-semestre="Año · semestre" data-duracion="Semestral" data-desc="Curso de Formación General orientado a aportar con materias complementarias al quehacer profesional y personal, formando al estudiantado con una visión crítica de la sociedad desde un enfoque transdisciplinario." onclick="mostrarDetalles(this)"><span class="mi-cell-name">Curso de Formación General III</span></div>
+                <div class="mi-cell mi-tipo-cfgral" data-categoria="general" style="grid-column:7;grid-row:7" data-nombre="Curso de Formación General IV" data-codigo="CFG4 6" data-creditos="5 cr" data-semestre="Año · semestre" data-duracion="Semestral" data-desc="Curso de Formación General orientado a aportar con materias complementarias al quehacer profesional y personal, formando al estudiantado con una visión crítica de la sociedad desde un enfoque transdisciplinario." onclick="mostrarDetalles(this)"><span class="mi-cell-name">Curso de Formación General IV</span></div>
+                <div class="mi-cell mi-tipo-cfgral" data-categoria="general" style="grid-column:8;grid-row:7" data-nombre="Curso de Formación General VI" data-codigo="CFG6 6" data-creditos="5 cr" data-semestre="Año · semestre" data-duracion="Semestral" data-desc="Curso de Formación General orientado a aportar con materias complementarias al quehacer profesional y personal, formando al estudiantado con una visión crítica de la sociedad desde un enfoque transdisciplinario." onclick="mostrarDetalles(this)"><span class="mi-cell-name">Curso de Formación General VI</span></div>
+                <div class="mi-cell mi-empty" style="grid-column:9;grid-row:7"></div>
+
+                <!-- ROW 8: Lab FAAD e Inglés -->
+                <div class="mi-cell mi-tipo-especial" data-categoria="interdisciplinar" style="grid-column:1;grid-row:8" data-nombre="Laboratorio FAAD" data-img="../assets/img/lab_faAAd.JPG" data-codigo="FAD2025" data-creditos="2 cr" data-duracion="Semestral · 4 días" data-semestre="1er Semestre · sin requisitos" data-desc="Asignatura compartida entre las Escuelas de Arquitectura, Arte y Diseño orientada a facilitar el tránsito del sistema escolar al universitario. Introduce una metodología de aprendizaje basada en proyectos que enfatiza el trabajo colaborativo y la construcción de identidad de facultad. El Laboratorio FAAD 2026 propone un ejercicio interdisciplinario de observación, registro y traducción formal de la escultura pública en Santiago, trabajando sobre ocho circuitos urbanos. El trabajo se organiza en cinco dimensiones: Recorrido / Constelación · Imagen / Registro Fotográfico · Gráfica / Frottage · Volumen / Traducción Material · Montaje. Evaluación: Asistencia 40% + Valoración docente 60%." onclick="mostrarDetalles(this)"><span class="mi-cell-name">Laboratorio FAAD</span></div>
+                <div class="mi-cell mi-tipo-ingles" data-categoria="general" style="grid-column:2;grid-row:8" data-nombre="Inglés General I" data-codigo="CIG1012" data-creditos="5 cr" data-semestre="Año · semestre" data-duracion="Semestral" data-desc="Curso de la secuencia estandarizada del Programa de Inglés General UDP, orientado a alcanzar el nivel B1 o B1+, fortaleciendo una habilidad transversal clave para la integración al mundo laboral y el desarrollo profesional." onclick="mostrarDetalles(this)"><span class="mi-cell-name">Inglés General I</span></div>
+                <div class="mi-cell mi-tipo-ingles" data-categoria="general" style="grid-column:3;grid-row:8" data-nombre="Inglés General II" data-codigo="CIG1013" data-creditos="5 cr" data-semestre="Año · semestre" data-duracion="Semestral" data-desc="Curso de la secuencia estandarizada del Programa de Inglés General UDP, orientado a alcanzar el nivel B1 o B1+, fortaleciendo una habilidad transversal clave para la integración al mundo laboral y el desarrollo profesional." onclick="mostrarDetalles(this)"><span class="mi-cell-name">Inglés General II</span></div>
+                <div class="mi-cell mi-tipo-ingles" data-categoria="general" style="grid-column:4;grid-row:8" data-nombre="Inglés General III" data-codigo="CIG1014" data-creditos="5 cr" data-semestre="Año · semestre" data-duracion="Semestral" data-desc="Curso de la secuencia estandarizada del Programa de Inglés General UDP, orientado a alcanzar el nivel B1 o B1+, fortaleciendo una habilidad transversal clave para la integración al mundo laboral y el desarrollo profesional." onclick="mostrarDetalles(this)"><span class="mi-cell-name">Inglés General III</span></div>
+                <div class="mi-cell mi-empty" style="grid-column:5;grid-row:8"></div>
+                <div class="mi-cell mi-tipo-cfgral" data-categoria="practicas" style="grid-column:6;grid-row:8" data-nombre="Práctica de Servicio" data-codigo="DIS09324" data-creditos="5 cr" data-semestre="Año · semestre" data-duracion="Semestral" data-desc="Experiencia profesional introductoria bajo el modelo aprendizaje+servicio, donde el estudiantado se inserta en contextos vinculados con el medio —ONGs, organizaciones sin fines de lucro o centros productivos de la UDP— para aportar desde una perspectiva profesional a la resolución de problemas de diseño con impacto social." onclick="mostrarDetalles(this)"><span class="mi-cell-name">Práctica de Servicio</span></div>
+                <div class="mi-cell mi-empty" style="grid-column:7;grid-row:8"></div>
+                <div class="mi-cell mi-empty" style="grid-column:8;grid-row:8"></div>
+                <div class="mi-cell mi-empty" style="grid-column:9;grid-row:8"></div>
+                <div class="mi-cell mi-empty" style="grid-column:10;grid-row:8"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Barra inferior dashboard -->
+        <div class="malla-footbar">
+            <div class="mi-legend">
+                <span class="mi-legend-item"><span class="mi-legend-box" style="background:#111;border-color:#111"></span>Talleres / Labs</span>
+                <span class="mi-legend-item"><span class="mi-legend-box" style="background:#e0dfd8;border-color:#ccc"></span>Electivos ★</span>
+                <span class="mi-legend-item"><span class="mi-legend-box" style="background:#f4f4f4;border-color:#ccc"></span>Regulares</span>
+                <span class="mi-legend-item"><span class="mi-legend-box" style="background:#eeeeed;border-color:#ccc"></span>Form. General / Inglés</span>
+                <span class="mi-legend-item"><span class="mi-legend-box" style="background:#9a9a97;border-color:#9a9a97"></span>Categoría activa</span>
+            </div>
+            <span class="mi-ciclo-nota">27 cr base · 36 cr máx</span>
+            <span class="malla-pdf-link"><a href="../assets/documentos/MALLA-DISENO-2025-1.pdf" target="_blank" rel="noopener">PDF normativo ↗</a></span>
+        </div>
+
+        <!-- Popup detalle de curso -->
+        <div class="mi-popup-overlay" id="mi-popup-overlay">
+            <div class="mi-popup-panel">
+                <div class="mi-popup-header">
+                    <span class="mi-popup-header-title">Información del Curso</span>
+                    <button class="mi-popup-close" onclick="cerrarDetalles()" aria-label="Cerrar">✕</button>
+                </div>
+                <div class="mi-popup-scroll" id="mi-popup-scroll"></div>
+            </div>
+        </div>
+
+        <!-- POPUP MADRE DE CURSOS -->
+        <div class="mc-overlay" id="mc-overlay">
+            <div class="mc-panel">
+                <div class="mc-header">
+                    <div class="mc-header-inner">
+                        <span class="mc-header-title">Diseño UDP · Malla 2026</span>
+                        <span class="mc-header-course" id="mc-header-course">Programa Curricular</span>
+                    </div>
+                    <button class="mc-close" onclick="cerrarMCPopup()" aria-label="Cerrar">✕</button>
+                </div>
+                <div class="mc-body">
+                    <nav class="mc-nav" id="mc-nav"></nav>
+                    <div class="mc-content" id="mc-content">
+                        <div class="mc-empty">Selecciona un curso</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <script src="../assets/js/main.js"></script>
+</body>
+</html>

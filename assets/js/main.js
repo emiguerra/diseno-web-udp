@@ -38,9 +38,10 @@
         const hasHero = !!document.getElementById('home');
 
         // Páginas sin hero arrancan con header sólido y no lo pierden
-        if (!hasHero) header.classList.add('header-solid');
+        if (!hasHero) header?.classList.add('header-solid');
 
         window.addEventListener('scroll', () => {
+            if (!header) return;
             if (hasHero) {
                 if (window.scrollY > videoHeight() - 100) {
                     header.classList.add('header-solid');
@@ -513,6 +514,7 @@
 
         let modoDoble = false;
         const mencionesActivas = [];
+        let categoriaActiva = '';
 
         function celdasCamino() {
             return document.querySelectorAll('.malla-interactiva .mi-tipo-taller, .malla-interactiva .mi-tipo-electivo');
@@ -531,10 +533,16 @@
                 document.querySelector('.mi-filtro-btn[data-filtro=""]').classList.add('activo');
             }
             aplicarCamino();
-            actualizarInfo();
+            actualizarEstado();
         }
 
         function mallaFiltrar(btn) {
+            // Mención y categoría son mutuamente excluyentes: elegir una apaga la otra.
+            if (categoriaActiva) {
+                categoriaActiva = '';
+                document.querySelectorAll('#malla-controles-categoria .mi-ciclo-btn').forEach(c => c.classList.remove('activo'));
+                document.querySelectorAll('.mi-camino-ciclo').forEach(c => c.classList.remove('mi-camino-ciclo'));
+            }
             const filtro = btn.dataset.filtro;
             if (!filtro) {
                 if (modoDoble) {
@@ -546,7 +554,7 @@
                 document.querySelectorAll('.mi-filtro-btn').forEach(b => b.classList.remove('activo'));
                 btn.classList.add('activo');
                 aplicarCamino();
-                actualizarInfo();
+                actualizarEstado();
                 return;
             }
             if (modoDoble) {
@@ -570,7 +578,7 @@
                 btn.classList.add('activo');
             }
             aplicarCamino();
-            actualizarInfo();
+            actualizarEstado();
         }
 
         function aplicarCamino() {
@@ -600,25 +608,36 @@
             });
         }
 
-        function actualizarInfo() {
-            const info = document.getElementById('mi-filtro-info');
-            if (!info) return;
-            if (modoDoble) {
-                if (mencionesActivas.length === 0) info.innerHTML = 'Modo doble mención · selecciona dos menciones';
-                else if (mencionesActivas.length === 1) info.innerHTML = 'Selecciona la segunda mención';
-                else info.innerHTML = mencionesActivas.map(m => MENCIONES_MI[m].label).join(' + ');
-            } else {
-                info.innerHTML = '';
+        function actualizarEstado() {
+            const estado = document.getElementById('mi-estado-actual');
+            if (!estado) return;
+            if (categoriaActiva) {
+                const btn = document.querySelector(`#malla-controles-categoria .mi-ciclo-btn[data-categoria="${categoriaActiva}"]`);
+                estado.textContent = 'Mostrando: categoría — ' + (btn ? btn.textContent : categoriaActiva);
+                return;
             }
+            if (modoDoble) {
+                if (mencionesActivas.length === 0) estado.textContent = 'Mostrando: doble mención — selecciona dos menciones';
+                else if (mencionesActivas.length === 1) estado.textContent = 'Mostrando: doble mención — ' + MENCIONES_MI[mencionesActivas[0]].label + ' + selecciona la segunda';
+                else estado.textContent = 'Mostrando: doble mención — ' + mencionesActivas.map(m => MENCIONES_MI[m].label).join(' + ');
+                return;
+            }
+            if (mencionesActivas.length) {
+                estado.textContent = 'Mostrando: mención — ' + MENCIONES_MI[mencionesActivas[0]].label;
+                return;
+            }
+            estado.textContent = 'Mostrando: Plan completo';
         }
 
         /* ── Catálogo de cursos scrapeado ── */
         var _catalogData = null;
         var _currentCatCursos = [];
         var _currentCatMallaNombre = '';
-        var IMGS_BASE_MALLA = 'cursos/datos_catalogo/imagenes/';
+        var _mcMencionFiltro = '';
+        var _MALLA_ROOT = /\/cursos\/[^\/]*$/.test(location.pathname) ? '../cursos/' : 'cursos/';
+        var IMGS_BASE_MALLA = _MALLA_ROOT + 'datos_catalogo/imagenes/';
 
-        fetch('cursos/datos_catalogo/cursos.json')
+        fetch(_MALLA_ROOT + 'datos_catalogo/cursos.json')
             .then(r => r.json())
             .then(data => { _catalogData = data; })
             .catch(() => { _catalogData = []; });
@@ -633,10 +652,24 @@
             const yaActivo = el.classList.contains('activo');
             document.querySelectorAll('#malla-controles-categoria .mi-ciclo-btn').forEach(c => c.classList.remove('activo'));
             document.querySelectorAll('.mi-camino-ciclo').forEach(c => c.classList.remove('mi-camino-ciclo'));
-            if (yaActivo) return;
-            el.classList.add('activo');
-            document.querySelectorAll(`.malla-interactiva .mi-cell[data-categoria="${cat}"]`)
-                .forEach(cell => cell.classList.add('mi-camino-ciclo'));
+            categoriaActiva = '';
+            if (!yaActivo) {
+                // Mención y categoría son mutuamente excluyentes: elegir una apaga la otra.
+                modoDoble = false;
+                document.getElementById('malla-controles').classList.remove('modo-doble');
+                const btnDoble = document.querySelector('.mi-filtro-doble');
+                if (btnDoble) btnDoble.classList.remove('activo');
+                mencionesActivas.length = 0;
+                document.querySelectorAll('#malla-controles .mi-filtro-btn').forEach(b => b.classList.remove('activo'));
+                document.querySelector('.mi-filtro-btn[data-filtro=""]')?.classList.add('activo');
+                aplicarCamino();
+
+                el.classList.add('activo');
+                categoriaActiva = cat;
+                document.querySelectorAll(`.malla-interactiva .mi-cell[data-categoria="${cat}"]`)
+                    .forEach(cell => cell.classList.add('mi-camino-ciclo'));
+            }
+            actualizarEstado();
         }
 
         function _renderCatalogList(scroll, mallaNombre, cat, cursos) {
@@ -868,6 +901,7 @@
                     _currentCatCursos = cursos;
                     _currentCatMallaNombre = nombre;
                     _mcCurrentCatalogCell = cell;
+                    _mcMencionFiltro = '';
                     _mcRenderCatalog(content, cell);
                     return;
                 }
@@ -915,8 +949,23 @@
         function _mcRenderCatalog(content, malaCell) {
             const cat = malaCell.dataset.cat || '';
             const nombre = malaCell.dataset.nombre || '';
-            const cursos = _currentCatCursos;
-            const cards = cursos.map((c, idx) => {
+            const esElectivo = cat === 'Electivos de Mención';
+            const menciones = esElectivo
+                ? [...new Set(_currentCatCursos.map(c => c.mencion).filter(Boolean))].sort()
+                : [];
+            const cursos = (esElectivo && _mcMencionFiltro)
+                ? _currentCatCursos.filter(c => c.mencion === _mcMencionFiltro)
+                : _currentCatCursos;
+            // los índices de _mcAbrirCurso deben apuntar a _currentCatCursos, no a la lista filtrada
+            const idxMap = cursos.map(c => _currentCatCursos.indexOf(c));
+            const filtrosHtml = esElectivo && menciones.length
+                ? `<div class="malla-controles mc-cat-filtros">
+                    <button class="mi-filtro-btn${_mcMencionFiltro === '' ? ' activo' : ''}" onclick="_mcFiltrarMencion('')">Todas</button>
+                    ${menciones.map(m => `<button class="mi-filtro-btn${_mcMencionFiltro === m ? ' activo' : ''}" onclick="_mcFiltrarMencion('${m.replace(/'/g, "\\'")}')">${m}</button>`).join('')}
+                  </div>`
+                : '';
+            const cards = cursos.map((c, i) => {
+                const idx = idxMap[i];
                 const imgSrc = c.imagenes && c.imagenes[0] ? `${IMGS_BASE_MALLA}${c.imagenes[0]}` : null;
                 const imgEl = imgSrc
                     ? `<img class="crs-card-img" src="${imgSrc}" alt="${c.nombre_taller || ''}" loading="lazy">`
@@ -936,8 +985,15 @@
                     <span class="crs-cat-tag">${cat}</span>
                     <h2 class="crs-popup-grid-title">${nombre}</h2>
                 </div>
+                ${filtrosHtml}
                 <div class="crs-cards-grid">${cards}</div>
             </div>`);
+        }
+
+        function _mcFiltrarMencion(mencion) {
+            _mcMencionFiltro = mencion;
+            const content = document.getElementById('mc-content');
+            if (content && _mcCurrentCatalogCell) _mcRenderCatalog(content, _mcCurrentCatalogCell);
         }
 
         function _mcAbrirCurso(idx) {
@@ -1731,6 +1787,41 @@
 
         /* ── POPUP DOCENTE ── */
         const DOCENTES = {
+            'pedro-silva': {
+                nombre: 'Pedro Silva Mardones',
+                cargo: 'Director',
+                mencion: 'Dirección',
+                antiguedad: '—',
+                bio: 'Diseñador Industrial (UDP), Magíster en Territorio y Paisaje. Descripción provisional — información pendiente de confirmar con Dirección.',
+            },
+            'claudio-fredes': {
+                nombre: 'Claudio Fredes',
+                cargo: 'Secretario Académico',
+                mencion: 'Dirección',
+                antiguedad: '—',
+                bio: 'Arquitecto (FSM), Diplomado en Diseño y Tecnología, Magíster en Ciencias del Diseño. Descripción provisional — información pendiente de confirmar con Dirección.',
+            },
+            'laura-gonzalez': {
+                nombre: 'Laura González',
+                cargo: 'Secretaria de Estudios',
+                mencion: 'Dirección',
+                antiguedad: '—',
+                bio: 'Arquitecta (PUC), Magíster en Arquitectura (Católica). Descripción provisional — información pendiente de confirmar con Dirección.',
+            },
+            'patricia-reyes': {
+                nombre: 'Patricia Reyes',
+                cargo: 'Secretaria Dirección',
+                mencion: 'Dirección',
+                antiguedad: '—',
+                bio: 'Administración de Empresas. Descripción provisional — información pendiente de confirmar con Dirección.',
+            },
+            'sandra-orellana': {
+                nombre: 'Sandra Orellana',
+                cargo: 'Secretaria de Estudios',
+                mencion: 'Dirección',
+                antiguedad: '—',
+                bio: 'Descripción provisional — información pendiente de confirmar con Dirección.',
+            },
             'sergio-majluf': {
                 nombre: 'Sergio Majluf Jadue',
                 cargo: 'Profesor Titular',
@@ -1825,7 +1916,7 @@
                 antiguedad: '18 años',
                 instagram: '@reobserva',
                 bio: 'Diseñador Industrial UDP y amante de la naturaleza. Ha trazado su trayectoria profesional entre el paisaje, lo audiovisual y el desarrollo de productos. Cuenta con una maestría en Territorio y Paisaje de la UDP, estudios de Diseño Avanzado de Productos en NAVA y más de 18 años de carrera docente. Actualmente es académico en la Universidad Católica de Temuco, a cargo de coordinación y docencia en título.',
-                asignaturas: ['Taller Diseño en Áreas Protegidas'],
+                asignaturas: ['Proyecto de Título', 'Taller Diseño en Áreas Protegidas'],
                 areas: ['Territorio y paisaje'],
                 fortalezas: ['Conocimiento interdisciplinar', 'Trabajo en equipo'],
             },
@@ -1937,9 +2028,9 @@
             overlay.querySelector('.dp-cargo').textContent = d.cargo;
             overlay.querySelector('.dp-tag').textContent = d.mencion;
             overlay.querySelector('.dp-bio').textContent = d.bio;
-            overlay.querySelector('[data-dp="email"]').textContent = d.email;
-            overlay.querySelector('[data-dp="antiguedad"]').textContent = d.antiguedad;
-            overlay.querySelector('[data-dp="instagram"]').textContent = d.instagram;
+            overlay.querySelector('[data-dp="email"]').textContent = d.email || '—';
+            overlay.querySelector('[data-dp="antiguedad"]').textContent = d.antiguedad || '—';
+            overlay.querySelector('[data-dp="instagram"]').textContent = d.instagram || '—';
 
             // Foto de perfil
             const fotoEl = overlay.querySelector('.dp-foto');

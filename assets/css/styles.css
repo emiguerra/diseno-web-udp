@@ -1332,6 +1332,19 @@
         /* =========================================
            EQUIPO DOCENTE — TARJETAS
         ========================================= */
+        /* Cruces del manual de marca: mismo patrón de fondo que el Diagrama 01,
+           para unificar el lenguaje visual entre "Equipo" y el organigrama. */
+        #equipo { position: relative; }
+        #equipo::before {
+            content: '';
+            position: absolute;
+            top: -20px; left: -20px; right: -20px; bottom: -20px;
+            z-index: -1;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60'><g stroke='%23111' stroke-width='0.8' stroke-linecap='square'><line x1='27' y1='30' x2='33' y2='30'/><line x1='30' y1='27' x2='30' y2='33'/></g></svg>");
+            background-repeat: repeat;
+            background-size: 60px 60px;
+            opacity: 0.1;
+        }
         .equipo-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -1514,7 +1527,7 @@
             background: var(--bg); color: #bbb; cursor: pointer; transition: all 0.18s;
         }
         .mi-ciclo-btn:hover { border-color: #111; color: #111; }
-        .mi-ciclo-btn.activo { background: #111; color: var(--bg); border-color: #111; }
+        .mi-ciclo-btn.activo { background: #9a9a97; color: var(--bg); border-color: #9a9a97; }
         .malla-controles.modo-doble .mi-filtro-btn[data-filtro=""] { opacity: 0.4; }
         .mi-filtro-info {
             font-family: 'NectoMono', monospace; font-size: 0.5rem;
@@ -1522,6 +1535,24 @@
             color: #999; padding: 4px 10px; border-left: 1px solid #d0d0d0; margin-left: 4px;
         }
         .mi-filtro-info:empty { display: none; }
+        .malla-controles-select { gap: 10px; }
+        .mi-select-label {
+            display: flex; align-items: center; gap: 6px;
+            font-family: 'NectoMono', monospace; font-size: 0.5rem;
+            letter-spacing: 0.08em; text-transform: uppercase; color: #999;
+        }
+        .mi-select-label select {
+            font-family: 'NectoMono', monospace; font-size: 0.56rem;
+            letter-spacing: 0.04em; text-transform: uppercase; color: #111;
+            padding: 6px 8px; border: 1px solid #d0d0d0; background: var(--bg);
+            cursor: pointer; transition: border-color 0.18s;
+        }
+        .mi-select-label select:hover, .mi-select-label select:focus { border-color: #111; outline: none; }
+        .mi-estado-actual {
+            font-family: 'NectoMono', monospace; font-size: 0.5rem;
+            letter-spacing: 0.06em; text-transform: uppercase; color: #999;
+            padding: 4px 10px; border-left: 1px solid #d0d0d0; margin-left: 4px;
+        }
         .mi-ciclo-bar {
             display: grid; grid-template-columns: repeat(10, 1fr);
             gap: 20px; padding: 4px 0 12px; min-width: 900px;
@@ -1592,8 +1623,8 @@
         }
         .mi-taller-int:hover { background: #ebebea; }
         /* Tipos de celda — jerarquía visual coordinada con el sitio */
-        .mi-tipo-taller   { background: #111; color: var(--bg); }     /* negro = columna vertebral */
-        .mi-tipo-taller:hover   { background: #2a2a2a; color: var(--bg); }
+        .mi-tipo-taller   { background: #111; color: var(--bg); }      /* negro = columna vertebral, siempre visible */
+        .mi-tipo-taller:hover { background: #2a2a2a; color: var(--bg); }
         .mi-tipo-electivo { background: #e0dfd8; color: #111; }        /* tono medio = electivos */
         .mi-tipo-regular  { background: var(--bg); color: #111; }      /* blanco = teoría */
         .mi-tipo-cfgral   { background: #eeeeed; color: #111; }        /* ligeramente más oscuro */
@@ -1611,13 +1642,13 @@
         .mi-h-interaccion .mi-star, .mi-h-indumentaria .mi-star { color: var(--bg) !important; opacity: 1; }
         .mi-h-grafico:hover, .mi-h-industrial:hover,
         .mi-h-interaccion:hover, .mi-h-indumentaria:hover { background: #2a2a2a !important; }
-        /* Camino de ciclo activo (sin color, siempre negro) */
+        /* Camino de categoría de ramo activo (gris, para distinguir del camino de mención en negro) */
         .mi-camino-ciclo {
-            background: #111 !important; color: var(--bg) !important;
+            background: #9a9a97 !important; color: var(--bg) !important;
             transition: background 0.2s, color 0.2s;
         }
         .mi-camino-ciclo .mi-cell-name, .mi-camino-ciclo .mi-star { color: var(--bg) !important; opacity: 1; }
-        .mi-camino-ciclo:hover { background: #2a2a2a !important; }
+        .mi-camino-ciclo:hover { background: #828280 !important; }
         /* Footbar */
         .malla-footbar {
             display: flex; align-items: center; gap: 16px;
@@ -2305,7 +2336,7 @@
         @media (max-width: 1100px) { .crs-cards-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 640px)  { .crs-cards-grid { grid-template-columns: 1fr; } }
         .crs-card {
-            border: 1px solid rgba(0,0,0,0.10); cursor: pointer; border-radius: 12px; overflow: hidden;
+            border: 1px solid rgba(0,0,0,0.10); cursor: pointer; overflow: hidden;
             transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
             display: flex; flex-direction: column; background: #edecea;
         }
@@ -2322,7 +2353,7 @@
             display: inline-flex; align-items: center; gap: 6px;
             font-family: 'NectoMono', monospace; font-size: 0.42rem; letter-spacing: 0.18em;
             text-transform: uppercase; color: #888; background: rgba(0,0,0,0.07); border: none;
-            padding: 6px 14px; border-radius: 20px; cursor: pointer; margin-bottom: 32px;
+            padding: 6px 14px; cursor: pointer; margin-bottom: 32px;
             transition: background 0.15s, color 0.15s;
         }
         .crs-back-btn:hover { background: rgba(0,0,0,0.13); color: #111; }
@@ -2341,7 +2372,7 @@
         .crs-detail-label { font-family: 'NectoMono', monospace; font-size: 0.4rem; letter-spacing: 0.22em; text-transform: uppercase; color: #aaa; margin-bottom: 4px; display: block; }
         .crs-detail-value { font-family: 'WorkSans', sans-serif; font-size: 0.82rem; color: #111; line-height: 1.5; }
         .crs-detail-thumbs { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 28px; }
-        .crs-detail-thumb { width: 74px; height: 74px; object-fit: cover; cursor: pointer; border-radius: 6px; border: 2px solid transparent; transition: border-color 0.15s, transform 0.15s; }
+        .crs-detail-thumb { width: 74px; height: 74px; object-fit: cover; cursor: pointer; border: 2px solid transparent; transition: border-color 0.15s, transform 0.15s; }
         .crs-detail-thumb:hover, .crs-detail-thumb.activo { border-color: #111; transform: scale(1.04); }
 
         /* Vista detalle de curso: popup sin scroll, imagen + info en una sola pantalla */
@@ -2349,7 +2380,7 @@
         .mc-course-detail .crs-back-btn { flex-shrink: 0; margin-bottom: 24px; }
         .crs-course-scene { flex: 1; min-height: 0; display: grid; grid-template-columns: 42% 1fr; gap: 44px; }
         .crs-course-media { display: flex; flex-direction: column; min-height: 0; }
-        .crs-course-media .crs-detail-hero { flex: 1; min-height: 0; width: 100%; max-height: none; object-fit: cover; margin-bottom: 12px; border-radius: 4px; }
+        .crs-course-media .crs-detail-hero { flex: 1; min-height: 0; width: 100%; max-height: none; object-fit: cover; margin-bottom: 12px; }
         .crs-course-media .crs-detail-thumbs { flex-shrink: 0; margin-top: 0; }
         .crs-course-info { display: flex; flex-direction: column; min-height: 0; }
         .crs-meta-row {
@@ -2382,13 +2413,12 @@
         .mc-panel {
             background: #f4f3ee; width: calc(100% - 40px); height: calc(100vh - 48px);
             max-width: 1400px; display: grid; grid-template-rows: auto 1fr; overflow: hidden;
-            border-radius: 18px; box-shadow: 0 28px 80px rgba(0,0,0,0.55);
+            box-shadow: 0 28px 80px rgba(0,0,0,0.55);
             animation: mcPanelIn 0.26s cubic-bezier(0.4,0,0.2,1);
         }
         .mc-header {
             background: #111; color: #f4f3ee; padding: 14px 26px; flex-shrink: 0;
             display: flex; align-items: center; justify-content: space-between; gap: 12px;
-            border-radius: 18px 18px 0 0;
         }
         .mc-header-inner { display: flex; flex-direction: column; gap: 2px; min-width: 0; overflow: hidden; }
         .mc-header-title {
@@ -2429,7 +2459,7 @@
         .mc-card {
             background: #ededea; padding: 18px 18px 20px;
             display: flex; flex-direction: column; justify-content: space-between;
-            min-height: 220px; cursor: pointer; border-radius: 10px;
+            min-height: 220px; cursor: pointer;
             outline: 1px solid transparent; outline-offset: -1px;
             transition: background 0.15s, outline-color 0.15s, transform 0.15s;
         }
@@ -2464,7 +2494,7 @@
         .mc-course-pill-cr { background: #111; color: var(--bg); }
         .mc-course-title {
             font-family: 'WorkFaAAD', 'Helvetica Neue', sans-serif;
-            font-size: clamp(2rem, 4vw, 3.4rem); letter-spacing: -0.03em; line-height: 0.92;
+            font-size: clamp(2rem, 4vw, 3.4rem); letter-spacing: -0.03em; line-height: 1.05;
             color: #111; margin: 0 0 22px; font-weight: 700;
         }
         .mc-course-meta-bar {

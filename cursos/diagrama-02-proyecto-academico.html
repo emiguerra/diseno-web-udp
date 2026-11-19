@@ -44,21 +44,28 @@
   .tag{font-family:'NectoMono',monospace; font-size:14px; letter-spacing:.22em; text-transform:uppercase; color:var(--ink);}
   .tag small{display:block; opacity:.6; margin-top:3px; letter-spacing:.16em;}
 
-  /* ---------- Escenario (dos columnas, pegajoso) ---------- */
+  /* ---------- Escenario (tres columnas, diagrama centrado, pegajoso) ---------- */
   .scrolly{position:relative;}
   .stage{position:sticky; top:0; height:100vh; display:flex; align-items:stretch; overflow:hidden;}
 
-  /* Riel narrativo ligado al diagrama */
-  .rail{position:relative; width:min(520px,38vw); flex:none;}
+  /* Riel narrativo ligado al diagrama: punteo a la izquierda, definiciones a la derecha */
+  .rail{position:relative; width:min(300px,22vw); flex:none;}
+  .rail-left .railstep{align-items:flex-end;}
+  .rail-left .railstep ol{margin-top:0; width:100%;}
+  .rail-right{width:min(460px,34vw);}
   .railstep{position:absolute; left:0; right:0; top:88px; bottom:56px; padding:0 44px; opacity:0; transition:opacity .45s ease; pointer-events:none; overflow:auto; display:flex; flex-direction:column; justify-content:safe center;}
   .railstep.is-active{opacity:1; pointer-events:auto;}
   .railstep .k{font-family:'NectoMono',monospace; font-size:14px; letter-spacing:.18em; text-transform:uppercase; color:var(--dim); display:block; margin-bottom:16px;}
   .railstep h2{font-family:'WorkFaAAD','WorkSans',sans-serif; font-weight:400; font-size:clamp(30px,2.7vw,42px); line-height:1.08; margin-bottom:18px;}
   .railstep p{font-family:'WorkSans',sans-serif; font-size:clamp(18px,1.35vw,21px); line-height:1.5; color:var(--dim);}
-  .railstep ol,.railstep ul{list-style:none; margin-top:18px; display:grid; gap:4px; counter-reset:it;}
+  .railstep ol,.railstep ul{list-style:none; margin-top:18px; display:grid; gap:8px; counter-reset:it;}
   .railstep li{counter-increment:it;}
-  .railstep li button{all:unset; box-sizing:border-box; display:block; width:100%; cursor:pointer; font-family:'WorkSans',sans-serif; font-size:clamp(16px,1.2vw,18px); line-height:1.3; color:var(--dim); padding:7px 10px 7px 46px; position:relative; border-radius:8px; transition:color .2s, background .2s;}
-  .railstep li button::before{content:counter(it,decimal-leading-zero); position:absolute; left:10px; top:8px; font-family:'NectoMono',monospace; font-size:14px; color:var(--ink);}
+  /* El contador va como ítem flex, no con ::before absoluto: así nunca se monta sobre texto que envuelve a varias líneas. */
+  .railstep li button{all:unset; box-sizing:border-box; display:flex; align-items:flex-start; gap:10px; width:100%; cursor:pointer; font-family:'WorkSans',sans-serif; font-size:clamp(16px,1.2vw,18px); line-height:1.3; color:var(--dim); padding:7px 10px; border-radius:8px; transition:color .2s, background .2s;}
+  .railstep li button span{flex:1 1 auto; min-width:0;}
+  .railstep li button::before{content:counter(it,decimal-leading-zero); flex:none; font-family:'NectoMono',monospace; font-size:14px; line-height:1.3; color:var(--ink);}
+  .rail-left li button{flex-direction:row-reverse;}
+  .rail-left li button span{text-align:right;}
   .railstep li button:hover,.railstep li button:focus-visible,.railstep li.is-hot button{color:var(--ink); background:var(--hover);}
   .railstep li button:focus-visible{outline:1px solid var(--ink);}
 
@@ -84,7 +91,13 @@
   .sello circle.dot{pointer-events:all; transition:fill .2s, stroke .2s;}
   .sello .num{font-family:'NectoMono',monospace; font-size:26px; fill:var(--ink); text-anchor:middle; dominant-baseline:central; letter-spacing:.04em;}
 
-  .modelo-ring{fill:none; stroke:var(--faint); stroke-width:1; stroke-dasharray:2 8;}
+  .modelo-ring,.sello-ring,.eje-ring{fill:none; stroke:var(--faint); stroke-width:1; stroke-dasharray:2 8;}
+
+  /* ---------- Nombres de las 3 órbitas (se "encienden" en su etapa) ---------- */
+  .orbit-label{font-family:'NectoMono',monospace; font-size:13px; letter-spacing:.16em; text-transform:uppercase; text-anchor:middle; dominant-baseline:central; fill:var(--faint); pointer-events:none; transition:fill .4s ease;}
+  .stage-root[data-stage="1"] .ol-sello,.stage-root[data-stage="2"] .ol-sello,.stage-root[data-stage="5"] .ol-sello{fill:var(--ink);}
+  .stage-root[data-stage="2"] .ol-modelo,.stage-root[data-stage="5"] .ol-modelo{fill:var(--ink);}
+  .stage-root[data-stage="3"] .ol-eje,.stage-root[data-stage="4"] .ol-eje,.stage-root[data-stage="5"] .ol-eje{fill:var(--ink);}
   .modelo .dotc{fill:none; pointer-events:all; stroke:var(--faint); stroke-width:1.2; transition:fill .2s, stroke .2s;}
   .modelo .mnum{font-family:'NectoMono',monospace; font-size:16px; fill:var(--ink); text-anchor:middle; dominant-baseline:central; pointer-events:none; transition:fill .2s;}
   .modelo{cursor:pointer;}
@@ -94,27 +107,25 @@
   .sello:hover circle.dot,.sello:focus-visible circle.dot,.sello.is-hot circle.dot,.sello.is-active circle.dot{stroke:var(--ink); stroke-width:2; fill:var(--ink);}
   .sello:hover .num,.sello:focus-visible .num,.sello.is-hot .num,.sello.is-active .num{fill:var(--paper);}
   .eje:hover circle.core,.eje:focus-visible circle.core,.eje.is-hot circle.core,.eje.is-active circle.core{fill:var(--ink);}
-  .eje:hover .ttl,.eje:focus-visible .ttl,.eje.is-hot .ttl,.eje.is-active .ttl{fill:var(--paper);}
-  .eje circle.core,.eje .ttl,.modelo .mnum,.sello .num{transition:fill .2s, stroke .2s;}
+  .eje:hover .ini,.eje:focus-visible .ini,.eje.is-hot .ini,.eje.is-active .ini{fill:var(--paper);}
+  .eje circle.core,.eje .ini,.modelo .mnum,.sello .num{transition:fill .2s, stroke .2s;}
   .sello.is-hot .ring,.modelo.is-hot .ring,.sello.is-active .ring,.modelo.is-active .ring,.eje.is-active .ring{opacity:1;}
 
   .eje circle.halo{fill:none; stroke:var(--line); stroke-width:1;}
   .eje circle.core{fill:none; pointer-events:all; stroke:var(--ink); stroke-width:1.6;}
-  .eje .ttl{font-family:'NectoMono',monospace; font-size:15px; letter-spacing:.05em; text-transform:uppercase; text-anchor:middle; dominant-baseline:central; fill:var(--ink);}
+  .eje .ini{font-family:'NectoMono',monospace; font-size:32px; letter-spacing:.04em; text-anchor:middle; dominant-baseline:central; fill:var(--ink); pointer-events:none;}
 
   /* estados por etapa */
   .stage-root[data-stage="0"] .l-hub{opacity:1;}
-  .stage-root[data-stage="1"] .l-hub,.stage-root[data-stage="1"] .l-sellos,.stage-root[data-stage="1"] .e-hub-sello{opacity:1;}
-  .stage-root[data-stage="2"] .l-hub,.stage-root[data-stage="2"] .l-sellos,.stage-root[data-stage="2"] .l-modelo,.stage-root[data-stage="2"] .e-hub-sello{opacity:1;}
+  .stage-root[data-stage="1"] .l-hub,.stage-root[data-stage="1"] .l-sellos{opacity:1;}
+  .stage-root[data-stage="2"] .l-hub,.stage-root[data-stage="2"] .l-sellos,.stage-root[data-stage="2"] .l-modelo{opacity:1;}
   .stage-root[data-stage="2"] .l-sellos{opacity:.6;}
-  .stage-root[data-stage="3"] .layer,.stage-root[data-stage="3"] .e-hub-sello,.stage-root[data-stage="3"] .e-hub-eje{opacity:1;}
+  .stage-root[data-stage="3"] .layer{opacity:1;}
   .stage-root[data-stage="3"] .l-modelo{opacity:.65;}
   .stage-root[data-stage="4"] .layer{opacity:1;}
   .stage-root[data-stage="4"] .l-sellos,.stage-root[data-stage="4"] .l-modelo{opacity:.5;}
-  .stage-root[data-stage="4"] .e-hub-eje{opacity:1;}
-  .stage-root[data-stage="5"] .layer,.stage-root[data-stage="5"] .edge{opacity:1;}
+  .stage-root[data-stage="5"] .layer{opacity:1;}
   .stage-root[data-stage="5"] .l-modelo{opacity:.85;}
-  .stage-root[data-stage="5"] .e-constel{opacity:.45;}
 
 
   /* ---------- Panel de detalle ---------- */
@@ -126,6 +137,7 @@
   .panel .psub{font-family:'WorkSans',sans-serif; font-size:17px; color:var(--dim); margin-bottom:14px;}
   .panel p.body{font-family:'WorkSans',sans-serif; font-size:17px; line-height:1.55; color:var(--ink);}
   .panel .edit-note{margin-top:16px; font-family:'WorkSans',sans-serif; font-size:13px; line-height:1.45; color:var(--dim); border-top:1px solid var(--line); padding-top:12px;}
+  .panel .edit-note:empty{display:none;}
   .panel .pclose{position:absolute; top:14px; right:14px; width:34px; height:34px; background:transparent; border:1px solid var(--line); border-radius:50%; color:var(--ink); font-size:18px; cursor:pointer; line-height:1;}
   .panel .pclose:hover{background:var(--ink); color:var(--paper);}
 
@@ -150,13 +162,16 @@
   /* ---------- Mobile: diagrama arriba, texto abajo ---------- */
   @media (max-width:820px){
     .stage{flex-direction:column;}
-    .diagram{order:-1; height:54vh; flex:none;}
-    .rail{width:auto; height:46vh;}
+    .diagram{order:-1; height:42vh; flex:none;}
+    .rail{width:auto; height:29vh;}
+    .rail-left .railstep{align-items:flex-start;}
+    .rail-left li button{flex-direction:row;}
+    .rail-left li button span{text-align:left;}
     .railstep{padding:14px 20px; top:0; bottom:0;}
     .railstep h2{font-size:24px; margin-bottom:10px;}
     .railstep p{font-size:16px;}
-    .railstep li button{font-size:15px; padding:5px 8px 5px 40px;}
-    .railstep li button::before{top:6px; font-size:13px;}
+    .railstep li button{font-size:15px; padding:5px 8px;}
+    .railstep li button::before{font-size:13px;}
     .progress{display:none;}
   }
 </style>
@@ -171,7 +186,33 @@
 
     <!-- Escenario pegajoso: riel + diagrama -->
     <div class="stage">
-      <div class="rail" id="rail">
+      <div class="rail rail-left" id="railLeft">
+        <div class="railstep is-active" data-stage="0"></div>
+        <div class="railstep" data-stage="1">
+          <ol id="selloList"></ol>
+        </div>
+        <div class="railstep" data-stage="2">
+          <ol id="modeloList"></ol>
+        </div>
+        <div class="railstep" data-stage="3">
+          <ol id="ejeList"></ol>
+        </div>
+        <div class="railstep" data-stage="5"></div>
+      </div>
+
+      <div class="diagram">
+        <svg class="stage-root" id="stageRoot" data-stage="0" viewBox="-20 -20 1440 1440"
+             preserveAspectRatio="xMidYMid meet" role="img"
+             aria-label="Diagrama del proyecto académico: un núcleo central conecta seis sellos formativos, un anillo con los principios del Modelo Educativo UDP y tres líneas de trabajo.">
+          <g id="gEdges"></g>
+          <g id="gModelo" class="layer l-modelo"></g>
+          <g id="gSellos" class="layer l-sellos"></g>
+          <g id="gEjes"   class="layer l-ejes"></g>
+          <g id="gHub"    class="layer l-hub hub"></g>
+        </svg>
+      </div>
+
+      <div class="rail rail-right" id="railRight">
         <div class="railstep is-active" data-stage="0">
           <span class="k">01 — Punto de partida</span>
           <h2>El proyecto académico como sistema</h2>
@@ -179,43 +220,29 @@
         </div>
         <div class="railstep" data-stage="1">
           <span class="k">02 — Sellos formativos</span>
-          <h2>Ocho principios que orientan la formación</h2>
-          <p>Rodean el núcleo, numerados del 01 al 08. Elige uno de la lista o del diagrama para leer su descripción.</p>
-          <ol id="selloList"></ol>
+          <h2>Seis principios que orientan la formación</h2>
+          <p>Rodean el núcleo, numerados del 01 al 06. Elige uno de la lista o del diagrama para leer su descripción.</p>
         </div>
         <div class="railstep" data-stage="2">
-          <span class="k">03 — Modelo formativo</span>
-          <h2>Cómo se articula la experiencia educativa</h2>
-          <p>Diez componentes conectan los principios con la práctica. Pasa el cursor por la lista o por los puntos de la órbita.</p>
-          <ol id="modeloList"></ol>
+          <span class="k">03 — Modelo Educativo UDP</span>
+          <h2>El marco institucional del proyecto académico</h2>
+          <p>Cinco principios organizan la propuesta del Modelo Educativo UDP. Pasa el cursor por la lista o por los puntos de la órbita.</p>
         </div>
         <div class="railstep" data-stage="3">
-          <span class="k">04 — Ejes temáticos</span>
+          <span class="k">04 — Líneas de trabajo</span>
           <h2>Tres áreas de exploración</h2>
-          <p>Interdisciplina, prácticas emergentes en Latinoamérica y emergencias tecnológicas orientan investigación, docencia y práctica.</p>
+          <p>Interdisciplina y prácticas colaborativas, prácticas situadas y diseño latinoamericano, y emergencias tecnológicas orientan la docencia, la investigación y los proyectos de colaboración.</p>
         </div>
         <div class="railstep" data-stage="4">
           <span class="k">05 — Exploración</span>
-          <h2>Cada eje, en detalle</h2>
-          <p>Haz clic en un eje para expandir su descripción y su relación con los sellos y el modelo.</p>
+          <h2>Cada línea, en detalle</h2>
+          <p>Haz clic en una línea de trabajo para expandir su descripción y su relación con los sellos y el modelo.</p>
         </div>
         <div class="railstep" data-stage="5">
           <span class="k">06 — Visualización integrada</span>
           <h2>Un ecosistema de relaciones</h2>
           <p>Sellos, modelo y ejes conviven como una constelación: la identidad académica de la Escuela como sistema vivo.</p>
         </div>
-      </div>
-
-      <div class="diagram">
-        <svg class="stage-root" id="stageRoot" data-stage="0" viewBox="0 0 1400 1400"
-             preserveAspectRatio="xMidYMid meet" role="img"
-             aria-label="Diagrama del proyecto académico: un núcleo central conecta ocho sellos formativos, un anillo de modelo formativo y tres ejes temáticos.">
-          <g id="gEdges"></g>
-          <g id="gModelo" class="layer l-modelo"></g>
-          <g id="gSellos" class="layer l-sellos"></g>
-          <g id="gEjes"   class="layer l-ejes"></g>
-          <g id="gHub"    class="layer l-hub hub"></g>
-        </svg>
       </div>
     </div>
 
@@ -251,31 +278,24 @@
 
   /* ---------- Contenido (editable) ---------- */
   const SELLOS=[
-    {n:1,t:"Diversidad y pluralismo",d:"La Escuela reúne trayectorias, miradas y culturas distintas como base de su comunidad y de su manera de proyectar."},
-    {n:2,t:"Impacto en la esfera pública",d:"El diseño se entiende como una práctica que interviene en lo común y aporta a los debates y necesidades de la sociedad."},
-    {n:3,t:"Formación integral y pensamiento crítico",d:"Se forma a personas capaces de analizar, cuestionar y fundamentar sus decisiones proyectuales."},
-    {n:4,t:"Formación especializada y flexibilidad curricular",d:"Una base común se combina con itinerarios que cada estudiante adapta a sus intereses y campo de especialización."},
-    {n:5,t:"Prácticas situadas y basadas en evidencia",d:"El trabajo parte del contexto real y se sostiene en información, investigación y experimentación."},
-    {n:6,t:"Interdisciplina y abordaje de problemas complejos",d:"El diseño dialoga con otras disciplinas para responder a problemas que ninguna resuelve por sí sola."},
-    {n:7,t:"Tecnología e innovación continua",d:"La incorporación permanente de nuevas herramientas y lenguajes es parte estructural de la formación."},
-    {n:8,t:"Docentes de excelencia y conexión con el medio profesional",d:"El cuerpo docente vincula la formación con la práctica profesional vigente y el medio laboral."}
+    {n:1,t:"Diversidad y pluralismo",d:"En la Escuela conviven distintas maneras de ver el mundo, como ocurre en la sociedad de la que formamos parte. Esa diversidad nos permite aprender de experiencias distintas a las nuestras. En la universidad, dialogar implica escuchar, dar razones de lo que pensamos y estar dispuestos a revisar nuestras ideas."},
+    {n:2,t:"Pensamiento crítico y prácticas situadas",d:"La formación entrelaza teoría, técnica y experiencia práctica para examinar qué se da por hecho al definir un problema y qué consecuencias tienen las decisiones de diseño. La observación, el diagnóstico y el análisis de evidencia ayudan a construir un criterio propio. América Latina es el punto de partida desde el cual se aprende a leer las condiciones sociales, culturales y ambientales de cada contexto."},
+    {n:3,t:"Flexibilidad curricular",d:"El Plan Común permite explorar distintos ámbitos del diseño antes de elegir una especialización. A partir de esa base, la posibilidad de cursar una mención o una doble mención permite construir una trayectoria acorde con los intereses que se van definiendo durante la carrera."},
+    {n:4,t:"Interdisciplina y problemas complejos",d:"La interdisciplina articula conocimientos y amplía el campo de acción del diseño. El trabajo con otras disciplinas permite revisar cómo se plantea un problema, reconocer dimensiones que una sola perspectiva puede pasar por alto y desarrollar proyectos que respondan a esa complejidad."},
+    {n:5,t:"Tecnología y experimentación",d:"Las tecnologías se incorporan a los proyectos de cada mención como parte del aprendizaje del diseño. Experimentar con herramientas y procesos permite comprender qué posibilidades abre cada tecnología, cuáles son sus límites y cuándo tiene sentido incorporarla a un proyecto. Ese criterio permite seguir aprendiendo a medida que cambia la profesión."},
+    {n:6,t:"Ejercicio profesional y esfera pública",d:"La experiencia académica y profesional del equipo docente acerca al estudiantado, desde etapas tempranas, a las decisiones que se toman al ejercer el diseño. Los proyectos con empresas e instituciones permiten trabajar con las condiciones de un encargo real. La colaboración con organizaciones y comunidades abre, a su vez, un espacio para que el diseño contribuya a asuntos de interés público y asuma responsabilidad por sus efectos sociales y ambientales."}
   ];
   const MODELO=[
-    "Formación intelectual, profesional y social",
-    "Articulación entre teoría, técnica y experiencia práctica",
-    "Docencia aplicada en escenarios reales de trabajo",
-    "Experiencia profesional temprana",
-    "Formación académica rigurosa",
-    "Investigación, análisis y comprensión teórica",
-    "Compromiso con el impacto social del diseño",
-    "Emprendimiento, creatividad y colaboración interdisciplinaria",
-    "Desarrollo metodológico de proyectos",
-    "Vinculación con el medio"
+    {t:"Formación de calidad centrada en el estudiantado",d:"La UDP sitúa el aprendizaje del estudiantado en el centro de la formación. Sobre una base teórica, metodológica y práctica, promueve la participación activa, la retroalimentación oportuna y el desarrollo progresivo de la autonomía."},
+    {t:"Formación integral y comprometida con el entorno",d:"La formación universitaria vincula los conocimientos de cada disciplina con el pensamiento crítico, el diálogo interdisciplinario y el compromiso ético. Reconocer distintos puntos de vista permite comprender los problemas de nuestro tiempo y participar en la vida pública con criterio propio."},
+    {t:"Formación conectada con la investigación, innovación y creación",d:"La docencia se nutre de la investigación y de la producción intelectual y creativa de la comunidad universitaria. Esa relación permite aprender a formular preguntas, experimentar y aplicar el conocimiento con rigor frente a problemas relevantes."},
+    {t:"Formación con enfoque internacional, intercultural y de competencias globales",d:"La UDP incorpora experiencias internacionales e interculturales a lo largo de la formación. El intercambio con personas de distintos contextos permite comprender cómo se abordan los problemas desde otras perspectivas y desarrollar las capacidades lingüísticas y de cooperación necesarias para desenvolverse en entornos diversos."},
+    {t:"Formación para el aprendizaje permanente",d:"La UDP entiende la formación como un proceso que continúa a lo largo de la vida. Por eso promueve trayectorias flexibles que conectan el pregrado, el posgrado y la educación continua. Esa articulación permite reconocer qué se necesita aprender en cada etapa, actualizar conocimientos, profundizar en un área o reorientar el rumbo profesional."}
   ];
   const EJES=[
-    {t:"Interdisciplina",sub:"Abordaje de problemas complejos",d:"Colaboración entre distintas áreas del conocimiento para desarrollar respuestas integrales y sistémicas frente a problemáticas contemporáneas."},
-    {t:"Prácticas emergentes en Latinoamérica",sub:"Diseño situado y contextual",d:"Prácticas de diseño que reconocen las determinantes culturales, sociales y ambientales del contexto latinoamericano, integrando una perspectiva crítica y situada."},
-    {t:"Emergencias tecnológicas",sub:"Innovación y transformación disciplinar",d:"Exploración e incorporación de tecnologías emergentes, herramientas digitales y metodologías de última generación en los procesos de diseño y en sus distintas áreas de especialización."}
+    {t:"Interdisciplina y prácticas colaborativas",ini:"IPC",sub:"Trabajo conjunto con otras disciplinas",d:"La interdisciplina se desarrolla progresivamente a lo largo de la carrera. A medida que avanzan en su formación, quienes estudian Diseño aprenden a trabajar con otras disciplinas desde la formulación de las preguntas hasta la toma de decisiones. Esa colaboración amplía lo que un proyecto puede abordar y transforma la manera de plantearlo."},
+    {t:"Prácticas situadas y diseño latinoamericano",ini:"PSD",sub:"Diseñar desde el contexto propio",d:"Diseñar desde América Latina implica partir de las historias, los recursos y las formas de organización de los lugares donde trabajamos. Esas condiciones orientan las decisiones de cada proyecto y son una fuente de conocimiento. Lo que aprendemos al diseñar en la región nos da herramientas para intervenir en otros contextos, atendiendo a las condiciones de cada lugar."},
+    {t:"Emergencias tecnológicas",ini:"ET",sub:"Criterio propio frente a nuevas herramientas",d:"Aprender a trabajar con la tecnología implica comprender cómo funciona, examinar las decisiones que le dieron forma y reconocer qué podemos modificar. La formación en diseño desarrolla ese criterio al experimentar con herramientas y procesos, adaptarlos a las preguntas de un proyecto y proponer otros modos de usarlos o construirlos."}
   ];
 
   const NS="http://www.w3.org/2000/svg";
@@ -370,14 +390,10 @@
         gModelo=document.getElementById('gModelo'),gEjes=document.getElementById('gEjes'),
         gEdges=document.getElementById('gEdges');
 
-  /* Línea entre dos círculos: parte y termina exactamente sobre el borde de cada uno */
   const R_HUB=108;
-  function link(cls,c1,r1,c2,r2,m1,m2){
-    const dx=c2[0]-c1[0],dy=c2[1]-c1[1],L=Math.hypot(dx,dy),ux=dx/L,uy=dy/L;
-    const x1=c1[0]+ux*r1,y1=c1[1]+uy*r1,x2=c2[0]-ux*r2,y2=c2[1]-uy*r2;
-    const line=el('line',{class:'edge '+cls,x1,y1,x2,y2});
-    gEdges.append(line); links.push({line,x1,y1,x2,y2,m1,m2});
-  }
+  /* Arco entre dos puntos de un mismo anillo (mismo radio r): usado por las 3 órbitas
+     — líneas de trabajo, sellos formativos, Modelo Educativo UDP — en vez de líneas rectas. */
+  function arcD(r,p0,p1){return `M${p0[0].toFixed(2)} ${p0[1].toFixed(2)}A${r} ${r} 0 0 1 ${p1[0].toFixed(2)} ${p1[1].toFixed(2)}`;}
 
   /* Hub */
   const mHub=floaty(gHub,50,8),mSello=[],mEje=[];
@@ -386,8 +402,9 @@
 
   /* Sellos — número dentro del círculo; nombre va en el riel y en <title> */
   const selloAngles=[];
+  const SELLO_STEP=360/SELLOS.length;
   SELLOS.forEach((s,i)=>{
-    const deg=22.5+i*45; selloAngles.push(deg);
+    const deg=SELLO_STEP/2+i*SELLO_STEP; selloAngles.push(deg);
     const [x,y]=pt(deg,R_SELLO);
     const g=el('g',{class:'node sello',tabindex:0,role:'button','aria-label':`Sello ${s.n}: ${s.t}`});
     g.dataset.kind='sello'; g.dataset.i=i;
@@ -396,30 +413,39 @@
     const num=el('text',{class:'num',x:x+.5,y:y}); num.textContent=s.n; g.append(num);
     mSello[i]=floaty(g,i+1,11);
     gSellos.append(g);
-    link('e-hub-sello',[CX,CY],R_HUB,[x,y],40,mHub,mSello[i]);
   });
+  /* Órbita de sellos formativos: arco segmentado que se detiene en el borde de cada círculo. */
+  const R_SELLO_DOT=50,SELLO_DELTA=2*Math.asin(R_SELLO_DOT/(2*R_SELLO))*180/Math.PI;
+  SELLOS.forEach((s,i)=>{
+    const p0=pt(SELLO_STEP/2+i*SELLO_STEP+SELLO_DELTA,R_SELLO),p1=pt(SELLO_STEP/2+(i+1)*SELLO_STEP-SELLO_DELTA,R_SELLO);
+    const path=el('path',{class:'sello-ring',d:arcD(R_SELLO,p0,p1)});
+    gSellos.prepend(path); arcs.push({path,p0,p1,m0:mSello[i],m1:mSello[(i+1)%SELLOS.length]});
+  });
+  { const [lx,ly]=pt(0,R_SELLO+16); const t=el('text',{class:'orbit-label ol-sello',x:lx,y:ly}); t.textContent='Sellos formativos'; gSellos.append(t); }
 
-  /* Modelo — anillo punteado + 10 puntos (sin etiquetas en el lienzo) */
+  /* Modelo — anillo punteado + puntos del Modelo Educativo UDP (sin etiquetas en el lienzo) */
   const mDot=[];
+  const MODELO_STEP=360/MODELO.length;
   MODELO.forEach((m,i)=>{
-    const [x,y]=pt(i*36+18,R_MODELO);
-    const g=el('g',{class:'node modelo',tabindex:0,role:'button','aria-label':`Modelo formativo ${i+1}: ${m}`});
+    const [x,y]=pt(i*MODELO_STEP+MODELO_STEP/2,R_MODELO);
+    const g=el('g',{class:'node modelo',tabindex:0,role:'button','aria-label':`Modelo Educativo UDP ${i+1}: ${m.t}`});
     g.dataset.kind='modelo'; g.dataset.i=i;
-    const tt=el('title'); tt.textContent=`${i+1}. ${m}`; g.append(tt);
+    const tt=el('title'); tt.textContent=`${i+1}. ${m.t}`; g.append(tt);
     g.append(el('circle',{class:'dotc',cx:x,cy:y,r:21}), el('circle',{class:'ring',cx:x,cy:y,r:29}));
     const mn=el('text',{class:'mnum',x:x+.4,y:y+.7}); mn.textContent=String(i+1).padStart(2,'0'); g.append(mn);
     mDot[i]=floaty(g,i+11,8);
     gModelo.append(g);
   });
-  /* Órbita mayor: 10 arcos que se detienen en el borde de cada punto y continúan en el siguiente,
-     sin atravesar los números. Sus extremos siguen la flotación de los puntos. */
+  /* Órbita del Modelo Educativo UDP: un arco por principio, que se detiene en el borde de cada
+     punto y continúa en el siguiente, sin atravesar los números. Sus extremos siguen la
+     flotación de los puntos. */
   const R_DOT=21,DELTA=2*Math.asin(R_DOT/(2*R_MODELO))*180/Math.PI;
-  function arcD(p0,p1){return `M${p0[0].toFixed(2)} ${p0[1].toFixed(2)}A${R_MODELO} ${R_MODELO} 0 0 1 ${p1[0].toFixed(2)} ${p1[1].toFixed(2)}`;}
   MODELO.forEach((m,i)=>{
-    const p0=pt(i*36+18+DELTA,R_MODELO),p1=pt((i+1)*36+18-DELTA,R_MODELO);
-    const path=el('path',{class:'modelo-ring',d:arcD(p0,p1)});
+    const p0=pt(i*MODELO_STEP+MODELO_STEP/2+DELTA,R_MODELO),p1=pt((i+1)*MODELO_STEP+MODELO_STEP/2-DELTA,R_MODELO);
+    const path=el('path',{class:'modelo-ring',d:arcD(R_MODELO,p0,p1)});
     gModelo.prepend(path); arcs.push({path,p0,p1,m0:mDot[i],m1:mDot[(i+1)%MODELO.length]});
   });
+  { const [lx,ly]=pt(0,R_MODELO+16); const t=el('text',{class:'orbit-label ol-modelo',x:lx,y:ly}); t.textContent='Modelo Educativo UDP'; gModelo.append(t); }
 
   /* Ejes — triada externa (0,120,240), título Necto dentro */
   EJES.forEach((e,i)=>{
@@ -429,20 +455,20 @@
     g.append(el('circle',{class:'halo',cx:x,cy:y,r:rEje+13}),
              el('circle',{class:'core',cx:x,cy:y,r:rEje}),
              el('circle',{class:'ring',cx:x,cy:y,r:rEje+22}));
-    const ttl=el('text',{class:'ttl',x:x,y:y}); wrapTitle(ttl,e.t,x,y); g.append(ttl);
+    const ini=el('text',{class:'ini',x:x+.5,y:y}); ini.textContent=e.ini; g.append(ini);
     mEje[i]=floaty(g,i+21,11);
     gEjes.append(g);
-    link('e-hub-eje',[CX,CY],R_HUB,[x,y],rEje,mHub,mEje[i]);
   });
-
-  /* Constelación: cada eje a sus 2 sellos más cercanos (solo etapa final) */
+  /* Órbita de líneas de trabajo: mismo tratamiento, arco segmentado al radio de los ejes
+     (ángulos no equiespaciados: cada arco cubre el hueco real hasta el siguiente eje). */
+  const R_EJE_DOT=rEje+13,EJE_DELTA=2*Math.asin(R_EJE_DOT/(2*R_EJE))*180/Math.PI;
   EJES.forEach((e,i)=>{
-    const degE=EJE_DEG[i]; const ce=pt(degE,R_EJE);
-    selloAngles.map((a,si)=>({si,diff:Math.min(Math.abs(a-degE),360-Math.abs(a-degE))}))
-      .sort((p,q)=>p.diff-q.diff).slice(0,2).forEach(({si})=>{
-        link('e-constel',ce,rEje,pt(selloAngles[si],R_SELLO),40,mEje[i],mSello[si]);
-      });
+    const degNext0=EJE_DEG[(i+1)%EJES.length],degNext=degNext0<=EJE_DEG[i]?degNext0+360:degNext0;
+    const p0=pt(EJE_DEG[i]+EJE_DELTA,R_EJE),p1=pt(degNext-EJE_DELTA,R_EJE);
+    const path=el('path',{class:'eje-ring',d:arcD(R_EJE,p0,p1)});
+    gEjes.prepend(path); arcs.push({path,p0,p1,m0:mEje[i],m1:mEje[(i+1)%EJES.length]});
   });
+  { const [lx,ly]=pt(67.5,R_EJE+16); const t=el('text',{class:'orbit-label ol-eje',x:lx,y:ly}); t.textContent='Líneas de trabajo'; gEjes.append(t); }
 
   /* helpers de texto (solo para títulos DENTRO de círculos) */
   function wrap(textEl,str,x,y,max,lh,ls=0){
@@ -458,26 +484,28 @@
 
   /* listas del riel */
   const ol=document.getElementById('selloList');
-  const lis={sello:[],modelo:[]};
+  const lis={sello:[],modelo:[],eje:[]};
   function listItem(kind,i,text,host){
-    const li=document.createElement('li'),b=document.createElement('button');
-    b.type='button'; b.textContent=text; li.append(b); host.append(li); lis[kind].push(li);
+    const li=document.createElement('li'),b=document.createElement('button'),s=document.createElement('span');
+    b.type='button'; s.textContent=text; b.append(s); li.append(b); host.append(li); lis[kind].push(li);
     b.addEventListener('mouseenter',()=>hot(kind,i,true));
     b.addEventListener('mouseleave',()=>hot(kind,i,false));
     b.addEventListener('focus',()=>hot(kind,i,true));
     b.addEventListener('blur',()=>hot(kind,i,false));
     b.addEventListener('click',()=>open(kind,i));
   }
-  const nodes={sello:[...gSellos.querySelectorAll('.sello')],modelo:[...gModelo.querySelectorAll('.modelo')]};
+  const nodes={sello:[...gSellos.querySelectorAll('.sello')],modelo:[...gModelo.querySelectorAll('.modelo')],eje:[...gEjes.querySelectorAll('.eje')]};
   function hot(kind,i,on){
     nodes[kind][i].classList.toggle('is-hot',on);
     lis[kind][i].classList.toggle('is-hot',on);
   }
   SELLOS.forEach((s,i)=>listItem('sello',i,s.t,ol));
   const ul=document.getElementById('modeloList');
-  MODELO.forEach((m,i)=>listItem('modelo',i,m,ul));
+  MODELO.forEach((m,i)=>listItem('modelo',i,m.t,ul));
+  const el2=document.getElementById('ejeList');
+  EJES.forEach((e,i)=>listItem('eje',i,e.t,el2));
   // el hover sobre el círculo también ilumina el ítem del riel
-  ['sello','modelo'].forEach(k=>nodes[k].forEach((n,i)=>{
+  ['sello','modelo','eje'].forEach(k=>nodes[k].forEach((n,i)=>{
     n.addEventListener('mouseenter',()=>hot(k,i,true));
     n.addEventListener('mouseleave',()=>hot(k,i,false));
     n.addEventListener('focus',()=>hot(k,i,true));
@@ -486,12 +514,13 @@
 
   /* ---------- Scrollytelling ---------- */
   const root=document.getElementById('stageRoot');
-  const rails=[...document.querySelectorAll('.railstep')];
+  const railsLeft=[...document.querySelectorAll('.rail-left .railstep')];
+  const railsRight=[...document.querySelectorAll('.rail-right .railstep')];
   const steps=[...document.querySelectorAll('.triggers .step')];
   const bars=[...document.querySelectorAll('#progress b')];
   const hint=document.getElementById('hint');
   /* cámara: acerca el diagrama mientras solo hay sellos y modelo */
-  let vb=[0,0,1400,1400],raf=0;
+  let vb=[-20,-20,1440,1440],raf=0;
   function zoomTo(to){
     cancelAnimationFrame(raf);
     if(document.body.classList.contains('no-motion')){vb=to.slice();root.setAttribute('viewBox',vb.join(' '));return;}
@@ -506,8 +535,10 @@
     es.forEach(en=>{ if(en.isIntersecting&&en.intersectionRatio>=0.5){
       const stg=+en.target.dataset.stage;
       root.setAttribute('data-stage',stg);
-      zoomTo(stg<=2?[190,190,1020,1020]:[100,5,1200,1230]);
-      rails.forEach(r=>r.classList.toggle('is-active',+r.dataset.stage===stg));
+      zoomTo(stg<=2?[190,190,1020,1020]:[-20,-20,1440,1440]);
+      const leftStg=stg===4?3:stg; // el punteo de líneas de trabajo se mantiene visible durante la exploración
+      railsLeft.forEach(r=>r.classList.toggle('is-active',+r.dataset.stage===leftStg));
+      railsRight.forEach(r=>r.classList.toggle('is-active',+r.dataset.stage===stg));
       bars.forEach((b,k)=>b.classList.toggle('on',k<=stg));
       hint.style.opacity=stg===0?'1':'0';
     }});
@@ -519,8 +550,9 @@
   const pTag=document.getElementById('pTag'),pTitle=document.getElementById('pTitle'),
         pSub=document.getElementById('pSub'),pBody=document.getElementById('pBody'),pNote=document.getElementById('pNote');
   let lastFocus=null;
-  function openSello(i){const s=SELLOS[i];pTag.textContent=`Sello formativo · 0${s.n}`;pTitle.textContent=s.t;pSub.hidden=true;pBody.textContent=s.d;pNote.textContent='Descripción provisional (síntesis editorial). Reemplazar por el texto institucional oficial.';show();}
-  function openModelo(i){pTag.textContent=`Modelo formativo · ${String(i+1).padStart(2,'0')}`;pTitle.textContent=MODELO[i];pSub.hidden=true;pBody.textContent='Componente del modelo formativo: una de las diez dimensiones que articulan los sellos con la experiencia educativa de la Escuela.';pNote.textContent='Descripción provisional. Reemplazar por el texto institucional oficial.';show();}
+  function openSello(i){const s=SELLOS[i];pTag.textContent=`Sello formativo · 0${s.n}`;pTitle.textContent=s.t;pSub.hidden=true;pBody.textContent=s.d;pNote.textContent='';show();}
+  function openModelo(i){const m=MODELO[i];pTag.textContent=`Modelo Educativo UDP · ${String(i+1).padStart(2,'0')}`;pTitle.textContent=m.t;pSub.hidden=true;pBody.textContent=m.d;pNote.textContent='';show();}
+  let openedVia=null;
   function nodeFor(k,i){return k==='eje'?gEjes.querySelectorAll('.eje')[i]:nodes[k][i];}
   /* La tarjeta flota junto al círculo elegido (a su derecha o izquierda según el espacio) */
   function place(n){
@@ -538,18 +570,25 @@
   function open(k,i){if(k==='sello')openSello(i);else if(k==='modelo')openModelo(i);else openEje(i);setActive(nodeFor(k,i));place(nodeFor(k,i));}
   let activeNode=null;
   function setActive(n){if(activeNode)activeNode.classList.remove('is-active');activeNode=n;if(n)n.classList.add('is-active');}
-  function openEje(i){const e=EJES[i];pTag.textContent='Eje temático';pTitle.textContent=e.t;pSub.hidden=false;pSub.textContent=e.sub;pBody.textContent=e.d;pNote.textContent='Síntesis editorial del material, no un texto institucional aprobado.';show();}
-  function show(){if(!panel.classList.contains('open'))lastFocus=document.activeElement;panel.classList.add('open');panel.focus({preventScroll:true});}
-  function close(){panel.classList.remove('open');setActive(null);if(lastFocus&&lastFocus.focus&&(viaKey||!lastFocus.closest('.node')))lastFocus.focus();else if(document.activeElement===panel)panel.blur();}
+  function openEje(i){const e=EJES[i];pTag.textContent='Línea de trabajo';pTitle.textContent=e.t;pSub.hidden=false;pSub.textContent=e.sub;pBody.textContent=e.d;pNote.textContent='';show();}
+  function show(){if(!panel.classList.contains('open'))lastFocus=document.activeElement;panel.classList.add('open');if(openedVia!=='hover')panel.focus({preventScroll:true});}
+  function close(){panel.classList.remove('open');setActive(null);openedVia=null;if(lastFocus&&lastFocus.focus&&(viaKey||!lastFocus.closest('.node')))lastFocus.focus();else if(document.activeElement===panel)panel.blur();}
   let viaKey=false;
   document.getElementById('pClose').addEventListener('click',close);
   document.addEventListener('click',e=>{if(panel.classList.contains('open')&&!panel.contains(e.target)&&!e.target.closest('.node,.railstep li'))close();});
   addEventListener('resize',close);
   document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
-  function activate(g,k){viaKey=!!k;open(g.dataset.kind,+g.dataset.i);}
+  function activate(g,k){viaKey=!!k;openedVia='click';open(g.dataset.kind,+g.dataset.i);}
   [gSellos,gModelo,gEjes].forEach(layer=>{
     layer.addEventListener('click',e=>{const g=e.target.closest('.node');if(g)activate(g,false);});
     layer.addEventListener('keydown',e=>{const g=e.target.closest('.node');if(g&&(e.key==='Enter'||e.key===' ')){e.preventDefault();activate(g,true);}});
+    layer.addEventListener('mouseover',e=>{
+      const g=e.target.closest('.node');if(!g)return;
+      if(openedVia==='click'||activeNode===g)return;
+      openedVia='hover';
+      open(g.dataset.kind,+g.dataset.i);
+    });
+    layer.addEventListener('mouseleave',()=>{if(openedVia==='hover')close();});
   });
 
   /* ---------- Movimiento: se respeta la preferencia del sistema ---------- */

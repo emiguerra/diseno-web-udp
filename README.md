@@ -43,6 +43,8 @@ es además la **fuente para la migración a WordPress** que hará la agencia.
 | Diagrama 01 · celular | [ver](https://emiguerra.github.io/diseno-web-udp/cursos/diagrama-01-organigrama-mobile.html) | [cursos/diagrama-01-organigrama-mobile.html](cursos/diagrama-01-organigrama-mobile.html) |
 | Diagrama 02 · Proyecto Académico | [ver](https://emiguerra.github.io/diseno-web-udp/cursos/diagrama-02-proyecto-academico.html) | [cursos/diagrama-02-proyecto-academico.html](cursos/diagrama-02-proyecto-academico.html) |
 | Diagrama 03 · Equipo → organigrama → ecosistema (scrollytelling) | [ver](https://emiguerra.github.io/diseno-web-udp/cursos/diagrama-03-equipo.html) | [cursos/diagrama-03-equipo.html](cursos/diagrama-03-equipo.html) |
+| Malla Curricular · interactiva por mención y categoría | [ver](https://emiguerra.github.io/diseno-web-udp/cursos/malla-interactiva.html) | [cursos/malla-interactiva.html](cursos/malla-interactiva.html) |
+| Mapa interactivo de convenios | [ver](https://emiguerra.github.io/diseno-web-udp/cursos/mapa-convenios.html) | [cursos/mapa-convenios.html](cursos/mapa-convenios.html) |
 | Formulario oportunidad laboral | [ver](https://emiguerra.github.io/diseno-web-udp/formularios/oportunidad-laboral.html) | [formularios/oportunidad-laboral.html](formularios/oportunidad-laboral.html) |
 | Formulario visita FAAD | [ver](https://emiguerra.github.io/diseno-web-udp/formularios/visita.html) | [formularios/visita.html](formularios/visita.html) |
 
