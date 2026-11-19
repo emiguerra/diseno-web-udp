@@ -909,7 +909,10 @@
 
             // Celda regular → ficha rediseñada
             const desc  = cell.dataset.desc || '';
-            const img   = cell.dataset.img  || '';
+            const imgs  = (cell.dataset.imgs || cell.dataset.img || '')
+                .split(',')
+                .map(src => src.trim())
+                .filter(Boolean);
             const tipo  = _getCellTipo(cell);
             const cr    = cell.dataset.creditos || '';
             const cod   = cell.dataset.codigo   || '';
@@ -932,11 +935,18 @@
 
             const descHtml = desc ? `<p class="mc-course-desc">${desc}</p>` : '';
             const codeHtml = cod  ? `<div class="mc-course-code">${cod}</div>` : '';
-            const heroHtml = img  ? `<img class="crs-detail-hero" src="${img}" alt="${nombre}" style="margin-bottom:32px">` : '';
+            const heroHtml = imgs.length
+                ? `<img class="crs-detail-hero" id="crs-hero-img" src="${imgs[0]}" alt="${nombre}" style="margin-bottom:32px">`
+                : '';
+            const thumbsHtml = imgs.length > 1
+                ? `<div class="crs-detail-thumbs">${imgs.map((src, i) =>
+                    `<img class="crs-detail-thumb${i === 0 ? ' activo' : ''}" src="${src}" alt="${nombre} — imagen ${i + 1}" onclick="_switchHero(this, '${src}')" loading="lazy">`
+                ).join('')}</div>`
+                : '';
 
             _mcFadeContent(`<div class="mc-detail">
                 <button class="crs-back-btn" onclick="_mcShowBrowse(_mcBrowseActiveCell)">← Todos los cursos</button>
-                ${heroHtml}<div class="mc-course-view">
+                ${heroHtml}${thumbsHtml}<div class="mc-course-view">
                     <div class="mc-course-pills">${pillsHtml}</div>
                     <h2 class="mc-course-title">${nombre}</h2>
                     ${metaHtml}
